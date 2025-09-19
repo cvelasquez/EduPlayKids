@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" msdata:Ordinal="5" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- Application General -->
+  <data name="AppName" xml:space="preserve">
+    <value>EduPlayKids</value>
+    <comment>Application name displayed to users</comment>
+  </data>
+  <data name="AppTagline" xml:space="preserve">
+    <value>Learn and Play Together!</value>
+    <comment>Application tagline for children</comment>
+  </data>
+
+  <!-- Navigation -->
+  <data name="Home" xml:space="preserve">
+    <value>Home</value>
+    <comment>Home navigation label</comment>
+  </data>
+  <data name="Activities" xml:space="preserve">
+    <value>Activities</value>
+    <comment>Activities navigation label</comment>
+  </data>
+  <data name="Progress" xml:space="preserve">
+    <value>Progress</value>
+    <comment>Progress navigation label</comment>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
+    <comment>Settings navigation label</comment>
+  </data>
+
+  <!-- Child-friendly Messages -->
+  <data name="Loading" xml:space="preserve">
+    <value>Loading your learning adventure...</value>
+    <comment>Loading message for children</comment>
+  </data>
+  <data name="WellDone" xml:space="preserve">
+    <value>Well done!</value>
+    <comment>Success message for children</comment>
+  </data>
+  <data name="TryAgain" xml:space="preserve">
+    <value>Let's try again!</value>
+    <comment>Encouragement message for children</comment>
+  </data>
+  <data name="GreatJob" xml:space="preserve">
+    <value>Great job!</value>
+    <comment>Praise message for children</comment>
+  </data>
+
+  <!-- Subjects -->
+  <data name="Math" xml:space="preserve">
+    <value>Math</value>
+    <comment>Mathematics subject</comment>
+  </data>
+  <data name="Reading" xml:space="preserve">
+    <value>Reading</value>
+    <comment>Reading and phonics subject</comment>
+  </data>
+  <data name="Science" xml:space="preserve">
+    <value>Science</value>
+    <comment>Science subject</comment>
+  </data>
+  <data name="Logic" xml:space="preserve">
+    <value>Logic</value>
+    <comment>Logic and thinking subject</comment>
+  </data>
+  <data name="BasicConcepts" xml:space="preserve">
+    <value>Basic Concepts</value>
+    <comment>Basic concepts subject (colors, shapes, etc.)</comment>
+  </data>
+
+  <!-- Error Messages -->
+  <data name="ErrorOccurred" xml:space="preserve">
+    <value>Oops! Something went wrong.</value>
+    <comment>General error message for children</comment>
+  </data>
+  <data name="TryAgainLater" xml:space="preserve">
+    <value>Please try again later.</value>
+    <comment>Error recovery message</comment>
+  </data>
+
+  <!-- Buttons -->
+  <data name="OK" xml:space="preserve">
+    <value>OK</value>
+    <comment>OK button text</comment>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+    <comment>Cancel button text</comment>
+  </data>
+  <data name="Continue" xml:space="preserve">
+    <value>Continue</value>
+    <comment>Continue button text</comment>
+  </data>
+  <data name="Start" xml:space="preserve">
+    <value>Start</value>
+    <comment>Start button text</comment>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Next</value>
+    <comment>Next button text</comment>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Back</value>
+    <comment>Back button text</comment>
+  </data>
+
+</root>

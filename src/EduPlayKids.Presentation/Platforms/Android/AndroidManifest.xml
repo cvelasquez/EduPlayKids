@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<!-- Child-safe application configuration for EduPlayKids -->
+	<application
+		android:allowBackup="true"
+		android:icon="@mipmap/appicon"
+		android:roundIcon="@mipmap/appicon_round"
+		android:supportsRtl="true"
+		android:hardwareAccelerated="true"
+		android:largeHeap="true"
+		android:theme="@style/ChildFriendlyTheme">
+
+		<!-- Configure for educational content -->
+		<meta-data android:name="com.google.android.gms.ads.AD_MANAGER_APP" android:value="false" />
+		<meta-data android:name="com.eduplaykids.CHILD_SAFE_MODE" android:value="true" />
+	</application>
+
+	<!-- Minimal permissions for offline-first educational app -->
+	<!-- Network state for checking connectivity (optional features only) -->
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+	<!-- Audio permissions for educational content -->
+	<uses-permission android:name="android.permission.RECORD_AUDIO" android:maxSdkVersion="22" />
+
+	<!-- Storage permissions for saving user progress (scoped storage) -->
+	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
+
+	<!-- Vibrate permission for tactile feedback -->
+	<uses-permission android:name="android.permission.VIBRATE" />
+
+	<!-- EXPLICITLY REMOVED: No internet permission for child safety -->
+	<!-- <uses-permission android:name="android.permission.INTERNET" /> -->
+
+	<!-- Target child-appropriate device configurations -->
+	<uses-feature
+		android:name="android.hardware.touchscreen"
+		android:required="true" />
+
+	<uses-feature
+		android:name="android.hardware.audio.output"
+		android:required="true" />
+
+	<!-- Support for large touch targets (accessibility) -->
+	<supports-screens
+		android:largeScreens="true"
+		android:normalScreens="true"
+		android:smallScreens="false"
+		android:xlargeScreens="true" />
+
+</manifest>
