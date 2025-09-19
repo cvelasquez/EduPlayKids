@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arquitectura del Sistema - EduPlayKids</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255,255,255,0.05) 10px,
+                rgba(255,255,255,0.05) 20px
+            );
+            animation: float 20s linear infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .nav {
+            background: #2c3e50;
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+        
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .nav a:hover {
+            background: #34495e;
+            transform: translateY(-2px);
+        }
+        
+        .content {
+            padding: 2rem;
+        }
+        
+        .document-section {
+            margin-bottom: 3rem;
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .document-section h2 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 0.5rem;
+        }
+        
+        .document-section h3 {
+            color: #34495e;
+            margin: 1.5rem 0 1rem 0;
+            font-size: 1.4rem;
+        }
+        
+        .document-section h4 {
+            color: #34495e;
+            margin: 1.2rem 0 0.8rem 0;
+            font-size: 1.2rem;
+        }
+        
+        .document-section p {
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+        
+        .document-section ul, .document-section ol {
+            margin: 1rem 0 1rem 2rem;
+        }
+        
+        .document-section li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .mermaid {
+            text-align: center;
+            margin: 2rem 0;
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        pre {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            border-left: 4px solid #3498db;
+        }
+        
+        code {
+            background: #ecf0f1;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+        }
+        
+        pre code {
+            background: none;
+            padding: 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        th, td {
+            padding: 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        
+        th {
+            background: #34495e;
+            color: white;
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .status.aceptada {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .toc {
+            background: #e8f4f8;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            border-left: 4px solid #3498db;
+        }
+        
+        .toc h3 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+        
+        .toc ul {
+            list-style: none;
+            margin-left: 0;
+        }
+        
+        .toc li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .toc a {
+            color: #2980b9;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .toc a:hover {
+            color: #3498db;
+            text-decoration: underline;
+        }
+        
+        .footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+        }
+        
+        .back-to-top:hover {
+            background: #45a049;
+            transform: scale(1.1);
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .content {
+                padding: 1rem;
+            }
+            
+            .document-section {
+                padding: 1.5rem;
+            }
+        }
+        
+        .highlight {
+            background: linear-gradient(120deg, #a8e6cf 0%, #dcedc8 100%);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .warning {
+            background: linear-gradient(120deg, #ffecb3 0%, #fff3c4 100%);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border-left: 4px solid #ff9800;
+        }
+        
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .metric-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+            border-top: 4px solid #4CAF50;
+        }
+        
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .metric-label {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🎮 EduPlayKids</h1>
+            <p class="subtitle">Arquitectura del Sistema - Documentación Técnica Completa</p>
+        </header>
+        
+        <nav class="nav">
+            <ul>
+                <li><a href="#sad">📋 Documento de Arquitectura</a></li>
+                <li><a href="#c4">🏗️ Diagramas C4</a></li>
+                <li><a href="#specs">⚙️ Especificaciones Técnicas</a></li>
+                <li><a href="#adr">📊 Decisiones Arquitectónicas</a></li>
+            </ul>
+        </nav>
+        
+        <main class="content">
+            <section id="sad" class="document-section">
+                <h2>📋 Documento de Arquitectura de Software (SAD)</h2>
+                
+                <div class="toc">
+                    <h3>Índice de Contenidos</h3>
+                    <ul>
+                        <li><a href="#sad-overview">1. Visión General del Sistema</a></li>
+                        <li><a href="#sad-architecture">2. Arquitectura Clean + MVVM</a></li>
+                        <li><a href="#sad-components">3. Componentes Principales</a></li>
+                        <li><a href="#sad-data">4. Capa de Datos</a></li>
+                        <li><a href="#sad-cicd">5. CI/CD Pipeline</a></li>
+                    </ul>
+                </div>
+                
+                <div id="sad-overview" class="highlight">
+                    <h3>🎯 Visión General del Sistema</h3>
+                    <p><strong>EduPlayKids</strong> es una aplicación móvil educativa multiplataforma desarrollada en <strong>.NET MAUI</strong> que ofrece contenido interactivo bilingüe (español/inglés) para niños de 3-8 años, siguiendo los estándares del currículum estadounidense.</p>
+                    
+                    <div class="metrics">
+                        <div class="metric-card">
+                            <div class="metric-value">85%</div>
+                            <div class="metric-label">Código Compartido</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">100%</div>
+                            <div class="metric-label">Funcionalidad Offline</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">2</div>
+                            <div class="metric-label">Idiomas Soportados</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">COPPA</div>
+                            <div class="metric-label">Privacy Compliant</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="sad-architecture">
+                    <h3>🏗️ Arquitectura Clean + MVVM</h3>
+                    <p>El sistema implementa <strong>Clean Architecture</strong> de Robert Martin combinada con el patrón <strong>MVVM</strong> para máxima separación de responsabilidades y testabilidad.</p>
+                    
+                    <div class="mermaid">
+                        graph TB
+                            subgraph "Presentation Layer"
+                                V[Views<br/>MAUI Pages]
+                                VM[ViewModels<br/>Business Logic]
+                                C[Converters<br/>Data Binding]
+                            end
+                            
+                            subgraph "Application Layer"
+                                S[Services<br/>Use Cases]
+                                DTO[DTOs<br/>Data Transfer]
+                                I[Interfaces<br/>Contracts]
+                            end
+                            
+                            subgraph "Domain Layer"
+                                E[Entities<br/>Business Models]
+                                VO[Value Objects<br/>Domain Logic]
+                                R[Repository<br/>Interfaces]
+                            end
+                            
+                            subgraph "Infrastructure Layer"
+                                D[Data Access<br/>EF Core + SQLite]
+                                A[Analytics<br/>Privacy Service]
+                                P[Platform<br/>Native APIs]
+                            end
+                            
+                            V --> VM
+                            VM --> S
+                            S --> E
+                            S --> I
+                            I --> D
+                            I --> A
+                            I --> P
+                            
+                            classDef presentation fill:#e1f5fe
+                            classDef application fill:#f3e5f5
+                            classDef domain fill:#e8f5e8
+                            classDef infrastructure fill:#fff3e0
+                            
+                            class V,VM,C presentation
+                            class S,DTO,I application
+                            class E,VO,R domain
+                            class D,A,P infrastructure
+                    </div>
+                </div>
+                
+                <div id="sad-components">
+                    <h3>⚙️ Componentes Principales</h3>
+                    
+                    <h4>Educational Engine</h4>
+                    <p>Motor central que gestiona la lógica educativa, progresión adaptativa y validación de respuestas.</p>
+                    
+                    <pre><code>public interface IEducationalEngineService
+{
+    Task&lt;LessonContent&gt; GetNextLessonAsync(int userId, string currentModule);
+    Task&lt;bool&gt; ValidateAnswerAsync(int lessonId, string userAnswer);
+    Task&lt;UserProgress&gt; CalculateProgressAsync(int userId);
+    Task&lt;List&lt;Achievement&gt;&gt; CheckAchievementsAsync(int userId);
+}</code></pre>
+                    
+                    <h4>Bilingual Content Manager</h4>
+                    <p>Gestiona el contenido bilingüe con sistema de fallbacks y cambio dinámico de idioma.</p>
+                    
+                    <pre><code>public class LocalizationService : ILocalizationService
+{
+    public async Task SetLanguageAsync(string languageCode)
+    {
+        await LoadStringResourcesAsync(languageCode);
+        _currentLanguage = languageCode;
+        LanguageChanged?.Invoke(this, new LanguageChangedEventArgs(languageCode));
+    }
+}</code></pre>
+                </div>
+                
+                <div id="sad-data">
+                    <h3>💾 Capa de Datos</h3>
+                    <p>Utiliza <strong>Entity Framework Core</strong> con <strong>SQLite</strong> para persistencia local robusta y funcionalidad offline-first.</p>
+                    
+                    <div class="mermaid">
+                        erDiagram
+                            USER {
+                                int Id PK
+                                string Name
+                                int Age
+                                string PreferredLanguage
+                                bool IsPremiumUser
+                                datetime PremiumExpiryDate
+                            }
+                            
+                            LESSON_CONTENT {
+                                int Id PK
+                                string LessonCode
+                                string ModuleId
+                                string Title
+                                timespan EstimatedDuration
+                                int DifficultyLevel
+                                string InteractiveContentJson
+                            }
+                            
+                            USER_PROGRESS {
+                                int Id PK
+                                int UserId FK
+                                int LessonId FK
+                                datetime CompletedAt
+                                int ErrorCount
+                                timespan CompletionTime
+                                int StarRating
+                            }
+                            
+                            ACHIEVEMENT {
+                                int Id PK
+                                int UserId FK
+                                string AchievementType
+                                datetime EarnedAt
+                                string Description
+                            }
+                            
+                            USER ||--o{ USER_PROGRESS : completes
+                            LESSON_CONTENT ||--o{ USER_PROGRESS : tracked
+                            USER ||--o{ ACHIEVEMENT : earns
+                    </div>
+                    
+                    <div class="highlight">
+                        <h4>Estrategia Offline-First</h4>
+                        <ul>
+                            <li><strong>Contenido Embebido:</strong> Todo el contenido educativo incluido en el bundle</li>
+                            <li><strong>Sincronización Opcional:</strong> Analytics y progreso se sincronizan cuando hay conectividad</li>
+                            <li><strong>Validación Local:</strong> Modelo freemium funciona completamente offline</li>
+                            <li><strong>Fallbacks:</strong> Sistema robusto de fallbacks para contenido y configuraciones</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div id="sad-cicd">
+                    <h3>🚀 CI/CD Pipeline</h3>
+                    <p>Pipeline automatizado con <strong>GitHub Actions</strong> para testing, building y deployment a stores.</p>
+                    
+                    <div class="mermaid">
+                        flowchart LR
+                            A[Push/PR] --> B[Quality Gate]
+                            B --> C[Unit Tests]
+                            C --> D[Build Android]
+                            C --> E[Build iOS]
+                            D --> F[Deploy Play Store]
+                            E --> G[Deploy App Store]
+                            F --> H[Production]
+                            G --> H
+                            
+                            subgraph "Quality Checks"
+                                C1[Code Coverage]
+                                C2[Static Analysis]
+                                C3[Security Scan]
+                            end
+                            
+                            B --> C1
+                            B --> C2
+                            B --> C3
+                            
+                            classDef process fill:#e3f2fd
+                            classDef quality fill:#f1f8e9
+                            classDef deploy fill:#fce4ec
+                            
+                            class A,B,C,D,E process
+                            class C1,C2,C3 quality
+                            class F,G,H deploy
+                    </div>
+                </div>
+            </section>
+            
+            <section id="c4" class="document-section">
+                <h2>🏗️ Diagramas de Arquitectura (C4 Model)</h2>
+                
+                <div class="toc">
+                    <h3>Niveles del Modelo C4</h3>
+                    <ul>
+                        <li><a href="#c4-level1">Level 1 - Context Diagram</a></li>
+                        <li><a href="#c4-level2">Level 2 - Container Diagram</a></li>
+                        <li><a href="#c4-level3">Level 3 - Component Diagram</a></li>
+                    </ul>
+                </div>
+                
+                <div id="c4-level1">
+                    <h3>📊 Level 1 - System Context</h3>
+                    <p>Vista de alto nivel mostrando cómo EduPlayKids interactúa con usuarios y sistemas externos.</p>
+                    
+                    <div class="mermaid">
+                        C4Context
+                            title Sistema EduPlayKids - Diagrama de Contexto
+                            
+                            Person(child, "Niño (3-8 años)", "Usuario principal que interactúa con las actividades educativas")
+                            Person(parent, "Padre/Madre", "Supervisa progreso, configura opciones parentales y gestiona suscripción")
+                            Person(educator, "Educador", "Monitorea el progreso educativo y alineación curricular")
+                            
+                            System(eduplaykids, "EduPlayKids", "Aplicación móvil educativa bilingüe con contenido interactivo offline-first")
+                            
+                            System_Ext(appstore, "App Store", "Distribución y actualizaciones de la aplicación iOS")
+                            System_Ext(playstore, "Google Play Store", "Distribución y actualizaciones de la aplicación Android")
+                            System_Ext(analytics, "Analytics Service", "Recolección anónima de métricas de uso (COPPA compliant)")
+                            System_Ext(curriculum, "US Curriculum Standards", "Estándares educativos para alineación de contenido")
+                            
+                            Rel(child, eduplaykids, "Juega y aprende", "Touch/Audio")
+                            Rel(parent, eduplaykids, "Configura y monitorea", "UI/PIN")
+                            Rel(educator, eduplaykids, "Revisa progreso educativo", "Reportes")
+                            
+                            Rel(eduplaykids, appstore, "Descargas y actualizaciones", "HTTPS")
+                            Rel(eduplaykids, playstore, "Descargas y actualizaciones", "HTTPS")
+                            Rel(eduplaykids, analytics, "Envía métricas anónimas", "HTTPS (Opcional)")
+                            Rel(curriculum, eduplaykids, "Informa diseño de contenido", "Estándares")
+                    </div>
+                </div>
+                
+                <div id="c4-level2">
+                    <h3>🏗️ Level 2 - Container Diagram</h3>
+                    <p>Descomposición del sistema en containers principales y sus interacciones.</p>
+                    
+                    <div class="mermaid">
+                        C4Container
+                            title EduPlayKids - Diagrama de Containers
+                            
+                            Person(child, "Niño", "Usuario principal")
+                            Person(parent, "Padre/Madre", "Control parental")
+                            
+                            Container(mauiapp, "MAUI Application", ".NET MAUI", "Interfaz de usuario multiplataforma con navegación y controles interactivos")
+                            Container(eduengine, "Educational Engine", "C# Service Layer", "Lógica educativa, progresión adaptativa y validación de respuestas")
+                            Container(datalayer, "Data Management Layer", "Entity Framework Core", "Gestión de persistencia, migraciones y consultas optimizadas")
+                            Container(sqlite, "SQLite Database", "SQLite", "Base de datos local con progreso de usuario y contenido educativo")
+                            Container(assetmgr, "Asset Manager", "C# + Native APIs", "Gestión optimizada de recursos multimedia bilingües")
+                            Container(analytics, "Analytics Engine", "C# Privacy Service", "Recolección y procesamiento anónimo de métricas de uso")
+                            
+                            Rel(child, mauiapp, "Interactúa con lecciones", "Touch/Gestures")
+                            Rel(parent, mauiapp, "Accede a panel parental", "PIN + UI")
+                            
+                            Rel(mauiapp, eduengine, "Solicita contenido y valida respuestas", "Method calls")
+                            Rel(mauiapp, assetmgr, "Carga audio e imágenes", "Stream/Byte[]")
+                            Rel(mauiapp, analytics, "Registra eventos de uso", "Event tracking")
+                            
+                            Rel(eduengine, datalayer, "CRUD operations", "LINQ/EF Core")
+                            Rel(datalayer, sqlite, "Consultas SQL", "SQLite ADO.NET")
+                            Rel(assetmgr, sqlite, "Metadata de assets", "Content queries")
+                            Rel(analytics, sqlite, "Almacena métricas temporales", "Batch inserts")
+                    </div>
+                </div>
+                
+                <div id="c4-level3">
+                    <h3>🔧 Level 3 - Component Diagrams</h3>
+                    
+                    <h4>Educational Engine Components</h4>
+                    <div class="mermaid">
+                        C4Component
+                            title Educational Engine - Componentes Internos
+                            
+                            Component(lessonservice, "Lesson Service", "C# Service", "Gestiona contenido de lecciones y secuenciación curricular")
+                            Component(progresstracker, "Progress Tracker", "C# Service", "Rastrea y persiste el progreso del usuario por módulos")
+                            Component(adaptivealgo, "Adaptive Algorithm", "C# Algorithm", "Ajusta dificultad basado en performance del usuario")
+                            Component(achievementsys, "Achievement System", "C# Service", "Gestiona logros, insignias y sistema de recompensas")
+                            Component(validationeng, "Validation Engine", "C# Logic", "Valida respuestas y calcula puntuaciones/estrellas")
+                            Component(bilingualcont, "Bilingual Content", "C# Manager", "Gestiona contenido en español e inglés con fallbacks")
+                            
+                            Rel(lessonservice, progresstracker, "Actualiza progreso", "Method calls")
+                            Rel(lessonservice, adaptivealgo, "Consulta siguiente lección", "Algorithm calls")
+                            Rel(progresstracker, achievementsys, "Verifica logros", "Achievement check")
+                            Rel(validationeng, progresstracker, "Registra resultados", "Progress update")
+                            Rel(lessonservice, bilingualcont, "Obtiene contenido localizado", "Language-specific content")
+                            Rel(adaptivealgo, validationeng, "Recibe métricas de performance", "Performance data")
+                    </div>
+                    
+                    <h4>Analytics Engine Components</h4>
+                    <div class="mermaid">
+                        C4Component
+                            title Analytics Engine - Componentes Internos
+                            
+                            Component(eventcollector, "Event Collector", "C# Service", "Recolecta eventos de uso manteniendo anonimato")
+                            Component(privacyfilter, "Privacy Filter", "C# Filter", "Filtra y anonimiza datos según compliance COPPA/GDPR")
+                            Component(localaggregator, "Local Aggregator", "C# Processor", "Procesa y agrega datos localmente antes del envío")
+                            Component(batchsender, "Batch Sender", "C# Service", "Envía datos agregados en lotes cuando hay conectividad")
+                            Component(consentmgr, "Consent Manager", "C# Service", "Gestiona consentimiento parental para analytics")
+                            Component(datascrubber, "Data Scrubber", "C# Cleaner", "Limpia datos antiguos y mantiene límites de retención")
+                            
+                            Rel(eventcollector, privacyfilter, "Filtra eventos", "Privacy validation")
+                            Rel(privacyfilter, localaggregator, "Datos anonimizados", "Clean data")
+                            Rel(localaggregator, batchsender, "Lotes agregados", "Batch data")
+                            Rel(consentmgr, eventcollector, "Estado de consentimiento", "Permission check")
+                            Rel(datascrubber, localaggregator, "Limpia datos antiguos", "Data cleanup")
+                    </div>
+                </div>
+                
+                <div class="highlight">
+                    <h3>🔄 Flujos de Interacción Clave</h3>
+                    
+                    <h4>Flujo de Actividad Educativa</h4>
+                    <div class="mermaid">
+                        sequenceDiagram
+                            participant U as Usuario (Niño)
+                            participant V as MAUI View
+                            participant VM as ViewModel
+                            participant EE as Educational Engine
+                            participant DB as SQLite DB
+                            participant AM as Asset Manager
+                            
+                            U->>V: Selecciona lección
+                            V->>VM: NavigateToLesson()
+                            VM->>EE: GetNextLessonAsync(userId, moduleId)
+                            EE->>DB: Query lesson content
+                            DB-->>EE: Lesson data
+                            EE->>AM: LoadLessonAssets(lessonId)
+                            AM-->>EE: Audio/Image streams
+                            EE-->>VM: LessonContent + Assets
+                            VM-->>V: Bind lesson data
+                            V-->>U: Muestra lección interactiva
+                            
+                            loop Interacciones
+                                U->>V: Responde pregunta
+                                V->>VM: SubmitAnswer(answer)
+                                VM->>EE: ValidateAnswerAsync(lessonId, answer)
+                                EE->>DB: Save progress
+                                EE-->>VM: ValidationResult
+                                VM-->>V: Show feedback
+                            end
+                    </div>
+                </div>
+            </section>
+            
+            <section id="specs" class="document-section">
+                <h2>⚙️ Especificaciones Técnicas de Componentes</h2>
+                
+                <div class="toc">
+                    <h3>Componentes Técnicos</h3>
+                    <ul>
+                        <li><a href="#specs-presentation">Capa de Presentación</a></li>
+                        <li><a href="#specs-application">Capa de Aplicación</a></li>
+                        <li><a href="#specs-domain">Capa de Dominio</a></li>
+                        <li><a href="#specs-infrastructure">Capa de Infraestructura</a></li>
+                        <li><a href="#specs-performance">Métricas de Performance</a></li>
+                    </ul>
+                </div>
+                
+                <div id="specs-presentation">
+                    <h3>🎨 Capa de Presentación</h3>
+                    
+                    <h4>MainPage (Página Principal)</h4>
+                    <div class="highlight">
+                        <p><strong>Responsabilidad:</strong> Pantalla principal con navegación por módulos educativos</p>
+                        <ul>
+                            <li><strong>Framework:</strong> .NET MAUI ContentPage</li>
+                            <li><strong>ViewModel:</strong> MainPageViewModel con INotifyPropertyChanged</li>
+                            <li><strong>Performance:</strong> Inicialización < 2 segundos</li>
+                            <li><strong>Memoria:</strong> Máximo 10MB en RAM</li>
+                        </ul>
+                    </div>
+                    
+                    <pre><code>public class MainPageViewModel : BaseViewModel
+{
+    public ObservableCollection&lt;EducationalModule&gt; Modules { get; set; }
+    public ICommand NavigateToModuleCommand { get; }
+    public ICommand SwitchLanguageCommand { get; }
+    
+    public int CompletedLessons { get; set; }
+    public int TotalLessons { get; set; }
+    public double ProgressPercentage => (double)CompletedLessons / TotalLessons * 100;
+}</code></pre>
+                    
+                    <h4>LessonPage (Página de Lección)</h4>
+                    <div class="highlight">
+                        <p><strong>Responsabilidad:</strong> Renderización de contenido educativo interactivo</p>
+                        <ul>
+                            <li><strong>Renderizado:</strong> Canvas personalizado para actividades</li>
+                            <li><strong>Audio:</strong> MediaElement con soporte MP3/AAC</li>
+                            <li><strong>Animaciones:</strong> Lottie para elementos visuales</li>
+                            <li><strong>Performance:</strong> 60 FPS durante interacciones</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div id="specs-application">
+                    <h3>🔧 Capa de Aplicación</h3>
+                    
+                    <h4>EducationalEngineService</h4>
+                    <div class="highlight">
+                        <p><strong>Responsabilidad:</strong> Motor principal de la lógica educativa</p>
+                        <ul>
+                            <li><strong>Patrón:</strong> Service con inyección de dependencias</li>
+                            <li><strong>Algoritmo:</strong> Adaptativo basado en performance</li>
+                            <li><strong>Cache:</strong> In-memory LRU cache (100MB máximo)</li>
+                            <li><strong>Concurrencia:</strong> Thread-safe para múltiples usuarios</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="warning">
+                        <h4>🎯 Algoritmo Adaptativo</h4>
+                        <ul>
+                            <li><strong>Performance > 90%:</strong> Acelerar progresión en 20%</li>
+                            <li><strong>Performance 70-90%:</strong> Mantener ritmo normal</li>
+                            <li><strong>Performance < 70%:</strong> Ralentizar y reforzar conceptos</li>
+                        </ul>
+                    </div>
+                    
+                    <pre><code>public interface IEducationalEngineService
+{
+    Task&lt;LessonContent&gt; GetNextLessonAsync(int userId, string currentModule);
+    Task&lt;bool&gt; ValidateAnswerAsync(int lessonId, string userAnswer);
+    Task&lt;UserProgress&gt; CalculateProgressAsync(int userId);
+    Task&lt;List&lt;Achievement&gt;&gt; CheckAchievementsAsync(int userId);
+}</code></pre>
+                </div>
+                
+                <div id="specs-domain">
+                    <h3>💼 Capa de Dominio</h3>
+                    
+                    <h4>User (Entidad Principal)</h4>
+                    <div class="highlight">
+                        <p><strong>Especificaciones:</strong></p>
+                        <ul>
+                            <li><strong>Identificador:</strong> GUID único por dispositivo</li>
+                            <li><strong>Datos Mínimos:</strong> Nombre, edad, idioma preferido</li>
+                            <li><strong>Validaciones:</strong> Edad 3-8 años, nombre máx 50 chars</li>
+                        </ul>
+                    </div>
+                    
+                    <pre><code>public class User : BaseEntity
+{
+    [Required]
+    [MaxLength(50)]
+    public string Name { get; set; }
+    
+    [Range(3, 8)]
+    public int Age { get; set; }
+    
+    [Required]
+    [MaxLength(2)]
+    public string PreferredLanguage { get; set; } // "es" o "en"
+    
+    public DateTime CreatedAt { get; set; }
+    public bool IsPremiumUser { get; set; }
+    
+    // Navegación
+    public virtual ICollection&lt;UserProgress&gt; Progress { get; set; }
+    public virtual ICollection&lt;Achievement&gt; Achievements { get; set; }
+}</code></pre>
+                </div>
+                
+                <div id="specs-infrastructure">
+                    <h3>🏗️ Capa de Infraestructura</h3>
+                    
+                    <h4>SQLiteDbContext</h4>
+                    <div class="highlight">
+                        <p><strong>Especificaciones:</strong></p>
+                        <ul>
+                            <li><strong>Base de Datos:</strong> SQLite 3.40+</li>
+                            <li><strong>Ubicación:</strong> Carpeta local de aplicación</li>
+                            <li><strong>Tamaño Máximo:</strong> 100MB con compresión automática</li>
+                            <li><strong>Encriptación:</strong> SQLCipher para datos sensibles</li>
+                        </ul>
+                    </div>
+                    
+                    <h4>PrivacyCompliantAnalyticsService</h4>
+                    <div class="warning">
+                        <p><strong>Compliance:</strong> Cumple COPPA/GDPR-K</p>
+                        <ul>
+                            <li><strong>Datos Anónimos:</strong> No PII, solo métricas agregadas</li>
+                            <li><strong>Frecuencia:</strong> Batch cada 24 horas o 100 eventos</li>
+                            <li><strong>Consentimiento:</strong> Opt-out por defecto</li>
+                            <li><strong>Retención:</strong> Máximo 30 días de datos locales</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div id="specs-performance">
+                    <h3>📊 Métricas de Performance y SLA</h3>
+                    
+                    <h4>Tiempos de Respuesta Objetivo</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Componente</th>
+                                <th>Tiempo Objetivo</th>
+                                <th>Tiempo Crítico</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Inicio de aplicación</td>
+                                <td>< 2s</td>
+                                <td>< 5s</td>
+                            </tr>
+                            <tr>
+                                <td>Carga de lección</td>
+                                <td>< 3s</td>
+                                <td>< 7s</td>
+                            </tr>
+                            <tr>
+                                <td>Respuesta a interacción</td>
+                                <td>< 100ms</td>
+                                <td>< 300ms</td>
+                            </tr>
+                            <tr>
+                                <td>Cambio de idioma</td>
+                                <td>< 1s</td>
+                                <td>< 3s</td>
+                            </tr>
+                            <tr>
+                                <td>Guardado de progreso</td>
+                                <td>< 500ms</td>
+                                <td>< 2s</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h4>Uso de Recursos</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Recurso</th>
+                                <th>Límite Normal</th>
+                                <th>Límite Crítico</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>RAM Total</td>
+                                <td>< 150MB</td>
+                                <td>< 300MB</td>
+                            </tr>
+                            <tr>
+                                <td>RAM por lección</td>
+                                <td>< 50MB</td>
+                                <td>< 100MB</td>
+                            </tr>
+                            <tr>
+                                <td>Almacenamiento DB</td>
+                                <td>< 100MB</td>
+                                <td>< 200MB</td>
+                            </tr>
+                            <tr>
+                                <td>Cache de assets</td>
+                                <td>< 200MB</td>
+                                <td>< 400MB</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="metrics">
+                        <div class="metric-card">
+                            <div class="metric-value">99.9%</div>
+                            <div class="metric-label">Uptime Target</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">&lt; 0.1%</div>
+                            <div class="metric-label">Error Rate</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">100h</div>
+                            <div class="metric-label">MTBF</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">&lt; 1s</div>
+                            <div class="metric-label">MTTR</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="adr" class="document-section">
+                <h2>📊 Decisiones Arquitectónicas (ADR)</h2>
+                
+                <div class="toc">
+                    <h3>Índice de Decisiones</h3>
+                    <ul>
+                        <li><a href="#adr-001">ADR-001: .NET MAUI Framework</a></li>
+                        <li><a href="#adr-002">ADR-002: Clean Architecture + MVVM</a></li>
+                        <li><a href="#adr-003">ADR-003: SQLite + Entity Framework</a></li>
+                        <li><a href="#adr-004">ADR-004: Estrategia Offline-First</a></li>
+                        <li><a href="#adr-005">ADR-005: Modelo Bilingüe</a></li>
+                        <li><a href="#adr-006">ADR-006: Privacy-Compliant Analytics</a></li>
+                        <li><a href="#adr-007">ADR-007: Modelo Freemium Local</a></li>
+                        <li><a href="#adr-008">ADR-008: GitHub Actions CI/CD</a></li>
+                    </ul>
+                </div>
+                
+                <div id="adr-001" class="highlight">
+                    <h3>ADR-001: Adopción de .NET MAUI como Framework Principal</h3>
+                    <p><span class="status aceptada">✅ Aceptada</span> - 15 Septiembre 2024</p>
+                    
+                    <h4>Contexto</h4>
+                    <p>EduPlayKids requiere una aplicación móvil multiplataforma (iOS/Android) con alto rendimiento para contenido educativo interactivo.</p>
+                    
+                    <h4>Decisión</h4>
+                    <p>Adoptar <strong>.NET MAUI (Multi-platform App UI)</strong> como framework principal de desarrollo.</p>
+                    
+                    <h4>Justificación</h4>
+                    <ul>
+                        <li><strong>Un solo codebase</strong> para iOS y Android (90% código compartido)</li>
+                        <li><strong>Performance nativa</strong> comparable a desarrollo nativo</li>
+                        <li><strong>Ecosistema maduro</strong> con NuGet packages</li>
+                        <li><strong>Hot Reload</strong> para desarrollo rápido</li>
+                        <li><strong>Integración natural</strong> con Entity Framework Core</li>
+                    </ul>
+                    
+                    <div class="metrics">
+                        <div class="metric-card">
+                            <div class="metric-value">40%</div>
+                            <div class="metric-label">Desarrollo más rápido</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">85%</div>
+                            <div class="metric-label">Código compartido</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">60 FPS</div>
+                            <div class="metric-label">Performance target</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">&lt; 6 meses</div>
+                            <div class="metric-label">Time to market</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="adr-002" class="highlight">
+                    <h3>ADR-002: Clean Architecture + MVVM como Patrón Arquitectónico</h3>
+                    <p><span class="status aceptada">✅ Aceptada</span> - 15 Septiembre 2024</p>
+                    
+                    <h4>Decisión</h4>
+                    <p>Implementar <strong>Clean Architecture de Robert Martin combinada con patrón MVVM</strong>.</p>
+                    
+                    <h4>Estructura del Proyecto</h4>
+                    <pre><code>EduPlayKids/
+├── EduPlayKids.Presentation/     # MAUI App (Views + ViewModels)
+├── EduPlayKids.Application/      # Use Cases y Services
+├── EduPlayKids.Domain/          # Entities y Business Logic
+└── EduPlayKids.Infrastructure/  # Data Access y External Services</code></pre>
+                    
+                    <h4>Beneficios</h4>
+                    <ul>
+                        <li><strong>Testabilidad:</strong> Cada capa testeable independientemente</li>
+                        <li><strong>Separation of Concerns:</strong> Responsabilidades claramente definidas</li>
+                        <li><strong>Dependency Inversion:</strong> Business logic independiente de frameworks</li>
+                        <li><strong>Mantenibilidad:</strong> Cambios aislados por capa</li>
+                    </ul>
+                </div>
+                
+                <div id="adr-003" class="highlight">
+                    <h3>ADR-003: SQLite con Entity Framework Core para Persistencia</h3>
+                    <p><span class="status aceptada">✅ Aceptada</span> - 15 Septiembre 2024</p>
+                    
+                    <h4>Decisión</h4>
+                    <p>Utilizar <strong>SQLite como base de datos</strong> con <strong>Entity Framework Core</strong> como ORM.</p>
+                    
+                    <h4>Ventajas SQLite</h4>
+                    <ul>
+                        <li><strong>Cross-platform:</strong> Funciona idénticamente en iOS y Android</li>
+                        <li><strong>File-based:</strong> No requiere servidor, ideal para móviles</li>
+                        <li><strong>ACID compliance:</strong> Transacciones confiables</li>
+                        <li><strong>Performance:</strong> Excelente para read-heavy workloads</li>
+                        <li><strong>Small footprint:</strong> ~600KB adicionales</li>
+                    </ul>
+                    
+                    <h4>Ventajas Entity Framework Core</h4>
+                    <ul>
+                        <li><strong>Code-First:</strong> Migrations automáticas</li>
+                        <li><strong>LINQ:</strong> Queries type-safe</li>
+                        <li><strong>Change Tracking:</strong> Optimización automática</li>
+                        <li><strong>Integration:</strong> Seamless con .NET ecosystem</li>
+                    </ul>
+                </div>
+                
+                <div id="adr-004" class="warning">
+                    <h3>ADR-004: Estrategia Offline-First</h3>
+                    <p><span class="status aceptada">✅ Aceptada</span> - 15 Septiembre 2024</p>
+                    
+                    <h4>Contexto</h4>
+                    <p>Los usuarios objetivo (familias hispanohablantes) pueden tener conectividad inconsistente.</p>
+                    
+                    <h4>Decisión</h4>
+                    <p>Implementar estrategia <strong>Offline-First</strong> donde toda la funcionalidad core está disponible sin conexión.</p>
+                    
+                    <h4>Componentes Offline</h4>
+                    <ul>
+                        <li><strong>Contenido Educativo:</strong> Pre-bundled en app installation</li>
+                        <li><strong>Progreso Usuario:</strong> SQLite local como source of truth</li>
+                        <li><strong>Audio/Imágenes:</strong> Embedded resources con fallbacks</li>
+                        <li><strong>Configuraciones:</strong> Local preferences storage</li>
+                    </ul>
+                    
+                    <h4>Funcionalidades Online (Opcionales)</h4>
+                    <ul>
+                        <li><strong>Analytics:</strong> Batch upload cuando disponible</li>
+                        <li><strong>Premium Validation:</strong> Local con server sync futuro</li>
+                        <li><strong>Content Updates:</strong> Feature futura</li>
+                    </ul>
+                    
+                    <div class="mermaid">
+                        flowchart LR
+                            A[User Action] --> B{Internet?}
+                            B -->|Yes| C[Try Remote]
+                            B -->|No| D[Use Local]
+                            C -->|Success| E[Cache Locally]
+                            C -->|Fail| D
+                            D --> F[Continue Offline]
+                            E --> F
+                            
+                            classDef offline fill:#ffecb3
+                            classDef online fill:#c8e6c9
+                            
+                            class D,F offline
+                            class C,E online
+                    </div>
+                </div>
+                
+                <div id="adr-005" class="highlight">
+                    <h3>ADR-005: Modelo de Datos Bilingüe</h3>
+                    <p><span class="status aceptada">✅ Aceptada</span> - 15 Septiembre 2024</p>
+                    
+                    <h4>Decisión</h4>
+                    <p>Implementar <strong>modelo de datos bilingüe con asset management separado</strong> por idioma y sistema de fallbacks.</p>
+                    
+                    <h4>Estructura de Assets</h4>
+                    <pre><code>Assets/
+├── Strings/
+│   ├── es/ (ui_strings.json, lesson_content.json)
+│   └── en/ (ui_strings.json, lesson_content.json)
+├── Audio/
+│   ├── es/MAT001/ (intro.mp3, instruction.mp3)
+│   └── en/MAT001/ (intro.mp3, instruction.mp3)
+└── Images/
+    ├── universal/  # Language-agnostic
+    ├── es/         # Text-containing images
+    └── en/</code></pre>
+                    
+                    <h4>Características</h4>
+                    <ul>
+                        <li><strong>Instant language switching</strong> sin restart</li>
+                        <li><strong>Complete localization</strong> incluyendo multimedia</li>
+                        <li><strong>Graceful fallbacks</strong> cuando contenido no disponible</li>
+                        <li><strong>Family-friendly</strong> para households bilingües</li>
+                    </ul>
+                    
+                    <div class="metrics">
+                        <div class="metric-card">
+                            <div class="metric-value">~18MB</div>
+                            <div class="metric-label">Por idioma</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">~36MB</div>
+                            <div class="metric-label">Total bilingüe</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">&lt; 1s</div>
+                            <div class="metric-label">Language switch</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">100%</div>
+                            <div class="metric-label">Feature parity</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="adr-006" class="warning">
+                    <h3>ADR-006: Sistema de Analytics Privacy-Compliant</h3>
+                    <p><span class="status aceptada">✅ Aceptada</span> - 15 Septiembre 2024</p>
+                    
+                    <h4>Contexto</h4>
+                    <p>La aplicación necesita analytics pero debe cumplir <strong>COPPA</strong> (niños < 13 años) y <strong>GDPR-K</strong>.</p>
+                    
+                    <h4>Decisión</h4>
+                    <p>Implementar <strong>sistema de analytics completamente anónimo</strong> con opt-out por defecto.</p>
+                    
+                    <h4>Principios de Diseño</h4>
+                    <ul>
+                        <li><strong>Anonymous-Only:</strong> Cero identificadores persistentes</li>
+                        <li><strong>Local-First:</strong> Procesamiento local, agregación antes de envío</li>
+                        <li><strong>Opt-Out Default:</strong> Analytics deshabilitado por defecto</li>
+                        <li><strong>Parental Control:</strong> Solo padres pueden habilitar</li>
+                        <li><strong>Transparent:</strong> Usuario puede ver exactamente qué se envía</li>
+                    </ul>
+                    
+                    <h4>Datos Permitidos (Anónimos)</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Categoría</th>
+                                <th>Parámetros Permitidos</th>
+                                <th>Propósito</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Educativo</td>
+                                <td>lesson_module, lesson_difficulty, error_count, star_rating</td>
+                                <td>Efectividad educativa</td>
+                            </tr>
+                            <tr>
+                                <td>Uso</td>
+                                <td>session_duration_sec, lessons_per_session, language_used</td>
+                                <td>Patrones de engagement</td>
+                            </tr>
+                            <tr>
+                                <td>Técnico</td>
+                                <td>app_version, os_version, device_type</td>
+                                <td>Compatibilidad y debugging</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div id="adr-007" class="highlight">
+                    <h3>ADR-007: Modelo Freemium con Limitaciones Locales</h3>
+                    <p><span class="status aceptada">✅ Aceptada</span> - 15 Septiembre 2024</p>
+                    
+                    <h4>Decisión</h4>
+                    <p>Implementar <strong>modelo freemium con trial de 3 días</strong> seguido de <strong>limitación a 10 lecciones por día</strong>.</p>
+                    
+                    <h4>Justificación Business Model</h4>
+                    <ul>
+                        <li><strong>Market Research:</strong> Familias hispanas priorizan educación pero son price-sensitive</li>
+                        <li><strong>Trial Period:</strong> 3 días permite evaluar valor antes de pagar</li>
+                        <li><strong>Daily Limits:</strong> 10 lecciones ≈ 30-45 minutos de uso apropiado</li>
+                        <li><strong>Price Point:</strong> $4.99 USD accesible vs competidores ($9.99-15.99)</li>
+                    </ul>
+                    
+                    <div class="mermaid">
+                        flowchart TD
+                            A[Install] --> B{Trial Period}
+                            B -->|Days 1-3| C[Unlimited Access]
+                            B -->|Day 4+| D{Premium?}
+                            D -->|No| E[10 Lessons/Day]
+                            D -->|Yes| F[Unlimited Access]
+                            E --> G{Upgrade?}
+                            G -->|Yes| H[Purchase $4.99]
+                            G -->|No| I[Continue Limited]
+                            H --> F
+                            
+                            classDef trial fill:#e1f5fe
+                            classDef premium fill:#c8e6c9
+                            classDef limited fill:#ffecb3
+                            
+                            class C trial
+                            class F premium
+                            class E,I limited
+                    </div>
+                    
+                    <h4>Proyecciones de Conversión</h4>
+                    <div class="metrics">
+                        <div class="metric-card">
+                            <div class="metric-value">60%</div>
+                            <div class="metric-label">Trial completion</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">10-15%</div>
+                            <div class="metric-label">Trial-to-paid</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">6-9%</div>
+                            <div class="metric-label">Overall conversion</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">$300-450</div>
+                            <div class="metric-label">Monthly revenue</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="adr-008" class="highlight">
+                    <h3>ADR-008: GitHub Actions para CI/CD</h3>
+                    <p><span class="status aceptada">✅ Aceptada</span> - 15 Septiembre 2024</p>
+                    
+                    <h4>Decisión</h4>
+                    <p>Implementar <strong>GitHub Actions</strong> como plataforma principal de CI/CD.</p>
+                    
+                    <h4>Ventajas</h4>
+                    <ul>
+                        <li><strong>Native Integration:</strong> Integración perfecta con GitHub</li>
+                        <li><strong>Cost Effective:</strong> 2000 minutos gratis + pricing razonable</li>
+                        <li><strong>Pre-built Actions:</strong> Ecosystem rico para .NET MAUI</li>
+                        <li><strong>Parallel Execution:</strong> Multiple jobs simultáneos</li>
+                        <li><strong>Secrets Management:</strong> Storage seguro para certificates</li>
+                    </ul>
+                    
+                    <h4>Pipeline Overview</h4>
+                    <div class="mermaid">
+                        flowchart LR
+                            A[Push/PR] --> B[Quality Gate]
+                            B --> C[Unit Tests]
+                            C --> D[Build Android]
+                            C --> E[Build iOS]
+                            D --> F[Deploy Play Store]
+                            E --> G[Deploy App Store]
+                            F --> H[Production]
+                            G --> H
+                            
+                            subgraph "Quality Checks"
+                                C1[Code Coverage]
+                                C2[Static Analysis]
+                                C3[Security Scan]
+                            end
+                            
+                            B --> C1
+                            B --> C2
+                            B --> C3
+                            
+                            classDef process fill:#e3f2fd
+                            classDef quality fill:#f1f8e9
+                            classDef deploy fill:#fce4ec
+                            
+                            class A,B,C,D,E process
+                            class C1,C2,C3 quality
+                            class F,G,H deploy
+                    </div>
+                    
+                    <h4>Tiempos de Ejecución</h4>
+                    <div class="metrics">
+                        <div class="metric-card">
+                            <div class="metric-value">3-5 min</div>
+                            <div class="metric-label">Unit Tests</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">8-12 min</div>
+                            <div class="metric-label">Android Build</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">15-20 min</div>
+                            <div class="metric-label">iOS Build</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">30-45 min</div>
+                            <div class="metric-label">Total Pipeline</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="highlight">
+                    <h3>📋 Resumen Ejecutivo de Decisiones</h3>
+                    
+                    <h4>Decisiones Críticas de Alto Impacto</h4>
+                    <ul>
+                        <li><strong>ADR-001 (.NET MAUI):</strong> Permite desarrollo cross-platform eficiente</li>
+                        <li><strong>ADR-002 (Clean Architecture + MVVM):</strong> Asegura mantenibilidad y testabilidad</li>
+                        <li><strong>ADR-003 (SQLite + EF Core):</strong> Garantiza persistencia robusta offline-first</li>
+                        <li><strong>ADR-004 (Offline-First):</strong> Critical para target market con conectividad variable</li>
+                    </ul>
+                    
+                    <h4>Decisiones de Compliance y Business</h4>
+                    <ul>
+                        <li><strong>ADR-005 (Bilingüe):</strong> Diferenciador clave para mercado hispanohablante</li>
+                        <li><strong>ADR-006 (Privacy Analytics):</strong> Compliance legal y trust parental</li>
+                        <li><strong>ADR-007 (Freemium Local):</strong> Modelo de monetización accesible y offline</li>
+                        <li><strong>ADR-008 (GitHub Actions):</strong> Automatización y quality assurance</li>
+                    </ul>
+                    
+                    <div class="warning">
+                        <h4>⚠️ Risk Mitigation</h4>
+                        <ul>
+                            <li><strong>Technical Risks:</strong> Plan de migración si .NET MAUI presenta limitaciones</li>
+                            <li><strong>Business Risks:</strong> Privacy-first design desde inicio</li>
+                            <li><strong>Legal Compliance:</strong> Built-in desde el diseño</li>
+                            <li><strong>Market Penetration:</strong> Freemium accesible + diferenciadores offline/bilingües</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <footer class="footer">
+            <p><strong>EduPlayKids - Arquitectura del Sistema v1.0</strong></p>
+            <p>Documentación Técnica Completa | Fecha: 16 de Septiembre, 2024</p>
+            <p>Estado: Aprobado para Implementation Phase | Próxima Revisión: Post-MVP Launch (Q1 2025)</p>
+        </footer>
+        
+        <button class="back-to-top" id="backToTop" title="Volver arriba">↑</button>
+    </div>
+    
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            themeVariables: {
+                primaryColor: '#4CAF50',
+                primaryTextColor: '#2c3e50',
+                primaryBorderColor: '#45a049',
+                lineColor: '#34495e',
+                sectionBkgColor: '#f8f9fa',
+                altSectionBkgColor: '#ffffff',
+                gridColor: '#ecf0f1',
+                secondaryColor: '#3498db',
+                tertiaryColor: '#e74c3c'
+            },
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true
+            },
+            sequence: {
+                useMaxWidth: true,
+                actorMargin: 50,
+                width: 150,
+                height: 65,
+                boxMargin: 10,
+                boxTextMargin: 5,
+                noteMargin: 10,
+                messageMargin: 35
+            }
+        });
+        
+        // Back to top button
+        const backToTop = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTop.style.display = 'flex';
+            } else {
+                backToTop.style.display = 'none';
+            }
+        });
+        
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Add some interactivity to metric cards
+        document.querySelectorAll('.metric-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+                this.style.transition = 'all 0.3s ease';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+        
+        // Console log for debugging
+        console.log('EduPlayKids Architecture Documentation loaded successfully');
+        console.log('Mermaid version:', mermaid.version || 'Unknown');
+    </script>
+</body>
+</html>

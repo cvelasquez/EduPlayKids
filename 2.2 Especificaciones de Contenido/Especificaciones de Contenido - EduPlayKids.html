@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Especificaciones de Contenido - EduPlayKids</title>
+    <style>
+        /* Reset y Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Nunito', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #202124;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e8eaed 100%);
+            min-height: 100vh;
+        }
+
+        /* Design Tokens */
+        :root {
+            /* Colors */
+            --primary-blue: #4285F4;
+            --primary-green: #34A853;
+            --primary-yellow: #FBBC04;
+            --primary-red: #EA4335;
+            
+            --secondary-purple: #9C27B0;
+            --secondary-orange: #FF9800;
+            --secondary-pink: #E91E63;
+            --secondary-cyan: #00BCD4;
+            
+            --neutral-white: #FFFFFF;
+            --neutral-light: #F8F9FA;
+            --neutral-medium: #E8EAED;
+            --neutral-dark: #5F6368;
+            --neutral-black: #202124;
+            
+            /* Spacing */
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 12px;
+            --space-4: 16px;
+            --space-5: 20px;
+            --space-6: 24px;
+            --space-8: 32px;
+            --space-10: 40px;
+            --space-12: 48px;
+            
+            /* Typography */
+            --font-xs: 10px;
+            --font-sm: 12px;
+            --font-base: 14px;
+            --font-md: 16px;
+            --font-lg: 18px;
+            --font-xl: 20px;
+            --font-2xl: 24px;
+            --font-3xl: 28px;
+            --font-4xl: 32px;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px rgba(60, 64, 67, 0.3);
+            --shadow-md: 0 1px 3px rgba(60, 64, 67, 0.3), 0 4px 8px rgba(60, 64, 67, 0.15);
+            --shadow-lg: 0 1px 2px rgba(60, 64, 67, 0.3), 0 2px 6px rgba(60, 64, 67, 0.15);
+            --shadow-xl: 0 1px 3px rgba(60, 64, 67, 0.3), 0 4px 8px rgba(60, 64, 67, 0.15), 0 8px 16px rgba(60, 64, 67, 0.15);
+            
+            /* Border Radius */
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+        }
+
+        /* Layout */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-6);
+        }
+
+        .section {
+            margin-bottom: var(--space-12);
+            padding: var(--space-8);
+            background: var(--neutral-white);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+        }
+
+        .grid {
+            display: grid;
+            gap: var(--space-6);
+        }
+
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-4 { grid-template-columns: repeat(4, 1fr); }
+        .grid-auto { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+
+        /* Typography */
+        h1 {
+            font-size: var(--font-4xl);
+            font-weight: 800;
+            color: var(--neutral-white);
+            margin-bottom: var(--space-6);
+        }
+
+        h2 {
+            font-size: var(--font-3xl);
+            font-weight: 700;
+            color: var(--neutral-black);
+            margin-bottom: var(--space-5);
+            border-bottom: 3px solid var(--primary-blue);
+            padding-bottom: var(--space-3);
+        }
+
+        h3 {
+            font-size: var(--font-2xl);
+            font-weight: 600;
+            color: var(--primary-blue);
+            margin-bottom: var(--space-4);
+        }
+
+        h4 {
+            font-size: var(--font-xl);
+            font-weight: 600;
+            color: var(--neutral-dark);
+            margin-bottom: var(--space-3);
+        }
+
+        p {
+            font-size: var(--font-md);
+            color: var(--neutral-dark);
+            margin-bottom: var(--space-4);
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-green) 100%);
+            color: white;
+            padding: var(--space-12) 0;
+            text-align: center;
+            margin-bottom: var(--space-8);
+        }
+
+        .header h1 {
+            color: white;
+            font-size: var(--font-4xl);
+            margin-bottom: var(--space-4);
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: var(--font-lg);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Navigation */
+        .nav {
+            background: var(--neutral-white);
+            padding: var(--space-4) 0;
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-list {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-6);
+            list-style: none;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--neutral-dark);
+            font-weight: 500;
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-md);
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background: var(--neutral-light);
+            color: var(--primary-blue);
+        }
+
+        /* Document Cards */
+        .doc-card {
+            background: linear-gradient(135deg, var(--neutral-white) 0%, var(--neutral-light) 100%);
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--primary-blue);
+        }
+
+        .doc-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .doc-card h3 {
+            color: var(--primary-blue);
+            margin-bottom: var(--space-3);
+        }
+
+        .doc-card .meta {
+            display: flex;
+            gap: var(--space-4);
+            margin-bottom: var(--space-4);
+            font-size: var(--font-sm);
+            color: var(--neutral-dark);
+        }
+
+        .doc-card .meta span {
+            background: var(--neutral-medium);
+            padding: var(--space-1) var(--space-3);
+            border-radius: var(--radius-sm);
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-4);
+            margin: var(--space-6) 0;
+        }
+
+        .stat-card {
+            background: var(--neutral-white);
+            padding: var(--space-5);
+            border-radius: var(--radius-lg);
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            border-top: 3px solid var(--primary-green);
+        }
+
+        .stat-number {
+            font-size: var(--font-3xl);
+            font-weight: 800;
+            color: var(--primary-green);
+            margin-bottom: var(--space-2);
+        }
+
+        .stat-label {
+            font-size: var(--font-sm);
+            color: var(--neutral-dark);
+            font-weight: 600;
+        }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+            margin: var(--space-4) 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        th {
+            background: var(--primary-blue);
+            color: white;
+            padding: var(--space-4);
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: var(--space-3) var(--space-4);
+            border-bottom: 1px solid var(--neutral-medium);
+        }
+
+        tr:hover {
+            background: var(--neutral-light);
+        }
+
+        /* Code and Examples */
+        .code-example {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: var(--space-4);
+            border-radius: var(--radius-md);
+            font-family: 'Courier New', monospace;
+            font-size: var(--font-sm);
+            overflow-x: auto;
+            margin: var(--space-4) 0;
+        }
+
+        .code-example .keyword {
+            color: #63b3ed;
+        }
+
+        .code-example .string {
+            color: #68d391;
+        }
+
+        .code-example .comment {
+            color: #a0aec0;
+            font-style: italic;
+        }
+
+        /* Highlights */
+        .highlight {
+            background: linear-gradient(135deg, var(--primary-yellow) 0%, rgba(251, 188, 4, 0.1) 100%);
+            padding: var(--space-4);
+            border-radius: var(--radius-md);
+            border-left: 4px solid var(--primary-yellow);
+            margin: var(--space-4) 0;
+        }
+
+        .highlight.success {
+            background: linear-gradient(135deg, var(--primary-green) 0%, rgba(52, 168, 83, 0.1) 100%);
+            border-left-color: var(--primary-green);
+        }
+
+        .highlight.info {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, rgba(66, 133, 244, 0.1) 100%);
+            border-left-color: var(--primary-blue);
+        }
+
+        /* Lists */
+        ul, ol {
+            margin-left: var(--space-6);
+            margin-bottom: var(--space-4);
+        }
+
+        li {
+            margin-bottom: var(--space-2);
+            color: var(--neutral-dark);
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: var(--space-8);
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: var(--space-4);
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--primary-blue);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: var(--space-6);
+            padding: var(--space-4);
+            background: var(--neutral-white);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -22px;
+            top: var(--space-4);
+            width: 12px;
+            height: 12px;
+            background: var(--primary-blue);
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px var(--neutral-white);
+        }
+
+        /* Progress bars */
+        .progress-bar {
+            background: var(--neutral-medium);
+            border-radius: var(--radius-sm);
+            height: 8px;
+            overflow: hidden;
+            margin: var(--space-2) 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-blue) 0%, var(--primary-green) 100%);
+            border-radius: var(--radius-sm);
+            transition: width 1s ease;
+        }
+
+        /* Icons */
+        .icon {
+            display: inline-block;
+            font-size: 1.2em;
+            margin-right: var(--space-2);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 var(--space-4);
+            }
+            
+            .grid-2, .grid-3, .grid-4 {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-list {
+                gap: var(--space-3);
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            h1 {
+                font-size: var(--font-3xl);
+            }
+            
+            h2 {
+                font-size: var(--font-2xl);
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <h1>📚 Especificaciones de Contenido - EduPlayKids</h1>
+            <p>Documentación completa del contenido educativo, progresión curricular, actividades y assets multimedia para la aplicación educativa móvil dirigida a niños de 3-8 años.</p>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container">
+            <ul class="nav-list">
+                <li><a href="#overview" class="nav-link">📋 Resumen</a></li>
+                <li><a href="#taxonomy" class="nav-link">🗂️ Taxonomía</a></li>
+                <li><a href="#progression" class="nav-link">📈 Progresión</a></li>
+                <li><a href="#activities" class="nav-link">🎮 Actividades</a></li>
+                <li><a href="#multimedia" class="nav-link">🎨 Multimedia</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <!-- Overview Section -->
+        <section id="overview" class="section fade-in">
+            <h2>📋 Resumen Ejecutivo</h2>
+            
+            <div class="highlight info">
+                <p><strong>Objetivo:</strong> Definir el marco completo de contenido educativo para EduPlayKids, asegurando una experiencia de aprendizaje coherente, progresiva y culturalmente relevante para niños hispanos de 3-8 años en Estados Unidos y América Latina.</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">450+</div>
+                    <div class="stat-label">Actividades Planificadas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">6</div>
+                    <div class="stat-label">Áreas de Conocimiento</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">2,500+</div>
+                    <div class="stat-label">Assets Multimedia</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">3</div>
+                    <div class="stat-label">Grupos de Edad</div>
+                </div>
+            </div>
+
+            <div class="grid-4">
+                <div class="doc-card">
+                    <h3>🗂️ Taxonomía de Contenido</h3>
+                    <div class="meta">
+                        <span>Estructura</span>
+                        <span>6 Áreas</span>
+                        <span>450+ Competencias</span>
+                    </div>
+                    <p>Organización jerárquica completa del contenido educativo con alineación a estándares estadounidenses (Common Core, NGSS, SEL).</p>
+                </div>
+                
+                <div class="doc-card">
+                    <h3>📈 Matriz de Progresión</h3>
+                    <div class="meta">
+                        <span>Secuencial</span>
+                        <span>Por Edad</span>
+                        <span>Adaptativa</span>
+                    </div>
+                    <p>Sistema de progresión curricular que respeta el desarrollo cognitivo natural con criterios de dominio claros.</p>
+                </div>
+                
+                <div class="doc-card">
+                    <h3>🎮 Especificaciones de Actividades</h3>
+                    <div class="meta">
+                        <span>4 Tipos</span>
+                        <span>Gamificadas</span>
+                        <span>Inclusivas</span>
+                    </div>
+                    <p>Diseño detallado de actividades interactivas con feedback adaptativo y sistema de evaluación por competencias.</p>
+                </div>
+                
+                <div class="doc-card">
+                    <h3>🎨 Assets Multimedia</h3>
+                    <div class="meta">
+                        <span>Optimizados</span>
+                        <span>Bilingües</span>
+                        <span>Culturales</span>
+                    </div>
+                    <p>Especificaciones técnicas para imágenes, audio, animaciones y video adaptadas para dispositivos móviles.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Taxonomy Section -->
+        <section id="taxonomy" class="section fade-in">
+            <h2>🗂️ Taxonomía de Contenido Educativo</h2>
+            
+            <h3>Estructura Jerárquica Principal</h3>
+            
+            <div class="grid-2">
+                <div>
+                    <h4>📚 Áreas de Conocimiento Core</h4>
+                    <ul>
+                        <li><span class="icon">🔢</span><strong>Matemáticas:</strong> Números, operaciones, geometría, medición, patrones</li>
+                        <li><span class="icon">📖</span><strong>Lectura y Fonética:</strong> Conciencia fonológica, letras, decodificación, comprensión</li>
+                        <li><span class="icon">🌱</span><strong>Ciencias:</strong> Seres vivos, cuerpo humano, clima, materia, tierra</li>
+                        <li><span class="icon">🎨</span><strong>Arte y Creatividad:</strong> Colores, formas, expresión, música</li>
+                        <li><span class="icon">🧩</span><strong>Lógica y Pensamiento:</strong> Resolución de problemas, memoria, clasificación, espacial</li>
+                        <li><span class="icon">💝</span><strong>Habilidades Socioemocionales:</strong> Emociones, autorregulación, cooperación, autonomía</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4>🎯 Sistema de Codificación</h4>
+                    <div class="code-example">
+<span class="comment">// Formato: [Área].[Dominio].[Subdodminio].[Competencia]</span>
+<span class="keyword">MAT</span>.<span class="string">1.1.001</span> <span class="comment">// Matemáticas → Números → Reconocimiento → Comp. 001</span>
+<span class="keyword">LEC</span>.<span class="string">2.1.001</span> <span class="comment">// Lectura → Conciencia Fonológica → Rimas → Comp. 001</span>
+<span class="keyword">CIE</span>.<span class="string">3.1.001</span> <span class="comment">// Ciencias → Seres Vivos → Animales → Comp. 001</span>
+                    </div>
+                    
+                    <h4>🌐 Alineación Curricular</h4>
+                    <ul>
+                        <li><strong>Common Core:</strong> Matemáticas y ELA</li>
+                        <li><strong>NGSS:</strong> Ciencias naturales</li>
+                        <li><strong>SEL Framework:</strong> Habilidades socioemocionales</li>
+                        <li><strong>Bilingüe:</strong> Español-Inglés nativo</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Progresión por Edad</h3>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h4>Pre-K (3-4 años) - Exploración y Descubrimiento</h4>
+                    <p><strong>Enfoque:</strong> Exploración sensorial, juego libre, conceptos básicos</p>
+                    <p><strong>Duración:</strong> 3-5 minutos por actividad</p>
+                    <p><strong>Interacción:</strong> Touch directo, arrastrar simple</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 25%"></div>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <h4>Kindergarten (5 años) - Reconocimiento y Patrones</h4>
+                    <p><strong>Enfoque:</strong> Reconocimiento, patrones simples, seguimiento de instrucciones</p>
+                    <p><strong>Duración:</strong> 5-8 minutos por actividad</p>
+                    <p><strong>Interacción:</strong> Secuencias cortas, selección múltiple</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 60%"></div>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <h4>Grados 1-2 (6-8 años) - Aplicación y Síntesis</h4>
+                    <p><strong>Enfoque:</strong> Aplicación, resolución de problemas, pensamiento crítico</p>
+                    <p><strong>Duración:</strong> 8-12 minutos por actividad</p>
+                    <p><strong>Interacción:</strong> Múltiples interacciones, construcción</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 100%"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Progression Section -->
+        <section id="progression" class="section fade-in">
+            <h2>📈 Matriz de Progresión Curricular</h2>
+            
+            <div class="highlight success">
+                <p><strong>Objetivo:</strong> Definir la secuencia de aprendizaje estructurada que respeta el desarrollo cognitivo natural, con prerequisitos claros y criterios de dominio específicos.</p>
+            </div>
+
+            <h3>Sistema de Niveles por Área</h3>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Área</th>
+                            <th>Pre-K (3-4)</th>
+                            <th>Kindergarten (5)</th>
+                            <th>Grados 1-2 (6-8)</th>
+                            <th>Total Actividades</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>🔢 Matemáticas</td>
+                            <td>3 niveles (22 actividades)</td>
+                            <td>4 niveles (34 actividades)</td>
+                            <td>5 niveles (48 actividades)</td>
+                            <td>104 actividades</td>
+                        </tr>
+                        <tr>
+                            <td>📚 Lectura y Fonética</td>
+                            <td>3 niveles (24 actividades)</td>
+                            <td>4 niveles (38 actividades)</td>
+                            <td>5 niveles (52 actividades)</td>
+                            <td>114 actividades</td>
+                        </tr>
+                        <tr>
+                            <td>🌱 Ciencias</td>
+                            <td>3 niveles (18 actividades)</td>
+                            <td>4 niveles (28 actividades)</td>
+                            <td>5 niveles (36 actividades)</td>
+                            <td>82 actividades</td>
+                        </tr>
+                        <tr>
+                            <td>🎨 Arte y Creatividad</td>
+                            <td>3 niveles (12 actividades)</td>
+                            <td>4 niveles (18 actividades)</td>
+                            <td>5 niveles (24 actividades)</td>
+                            <td>54 actividades</td>
+                        </tr>
+                        <tr>
+                            <td>🧩 Lógica y Pensamiento</td>
+                            <td>3 niveles (16 actividades)</td>
+                            <td>4 niveles (24 actividades)</td>
+                            <td>5 niveles (30 actividades)</td>
+                            <td>70 actividades</td>
+                        </tr>
+                        <tr>
+                            <td>💝 Socioemocional</td>
+                            <td>3 niveles (8 actividades)</td>
+                            <td>4 niveles (12 actividades)</td>
+                            <td>5 niveles (16 actividades)</td>
+                            <td>36 actividades</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Criterios de Evaluación y Progresión</h3>
+            
+            <div class="grid-3">
+                <div class="doc-card">
+                    <h4>🎯 Niveles de Dominio</h4>
+                    <ul>
+                        <li><strong>Iniciante (0-59%):</strong> Necesita apoyo significativo</li>
+                        <li><strong>En Desarrollo (60-79%):</strong> Dominio parcial</li>
+                        <li><strong>Competente (80-89%):</strong> Dominio independiente</li>
+                        <li><strong>Avanzado (90-100%):</strong> Dominio excepcional</li>
+                    </ul>
+                </div>
+                
+                <div class="doc-card">
+                    <h4>⚡ Velocidad de Aprendizaje</h4>
+                    <ul>
+                        <li><strong>Pre-K:</strong> 2-3 competencias/semana</li>
+                        <li><strong>Kindergarten:</strong> 3-4 competencias/semana</li>
+                        <li><strong>Grados 1-2:</strong> 4-5 competencias/semana</li>
+                    </ul>
+                    <p><small>Benchmarks para progresión estándar</small></p>
+                </div>
+                
+                <div class="doc-card">
+                    <h4>🔄 Retención y Transferencia</h4>
+                    <ul>
+                        <li><strong>Meta Retención:</strong> >85% después de 2 semanas</li>
+                        <li><strong>Meta Transferencia:</strong> >70% aplicación en contexto nuevo</li>
+                        <li><strong>Evaluación:</strong> Competencias mantenidas vs aprendidas</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Personalización por Perfil de Aprendiz</h3>
+            
+            <div class="grid-3">
+                <div class="doc-card" style="border-left-color: var(--primary-green);">
+                    <h4>🚀 Aprendiz Acelerado</h4>
+                    <p><strong>Criterio:</strong> >90% dominio en <80% tiempo</p>
+                    <ul>
+                        <li>Acceso anticipado a nivel siguiente</li>
+                        <li>Desafíos Crown Challenge</li>
+                        <li>Enfoque en amplitud de conocimiento</li>
+                    </ul>
+                </div>
+                
+                <div class="doc-card" style="border-left-color: var(--primary-blue);">
+                    <h4>📚 Aprendiz Estándar</h4>
+                    <p><strong>Criterio:</strong> Progreso dentro de rangos esperados</p>
+                    <ul>
+                        <li>Secuencia curricular estándar</li>
+                        <li>Pistas y retroalimentación regular</li>
+                        <li>Progresión equilibrada</li>
+                    </ul>
+                </div>
+                
+                <div class="doc-card" style="border-left-color: var(--primary-yellow);">
+                    <h4>🤝 Aprendiz con Apoyo</h4>
+                    <p><strong>Criterio:</strong> >120% tiempo promedio para dominio</p>
+                    <ul>
+                        <li>Actividades de refuerzo adicionales</li>
+                        <li>Más pistas visuales y pasos pequeños</li>
+                        <li>Consolidación antes de avanzar</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Activities Section -->
+        <section id="activities" class="section fade-in">
+            <h2>🎮 Especificaciones de Actividades</h2>
+            
+            <div class="highlight">
+                <p><strong>Enfoque:</strong> Cada actividad está diseñada siguiendo principios de gamificación educativa, accesibilidad infantil y aprendizaje adaptativo, con especial atención al desarrollo cognitivo por edad.</p>
+            </div>
+
+            <h3>Tipos de Actividades por Metodología</h3>
+            
+            <div class="grid-4">
+                <div class="doc-card" style="border-left-color: var(--primary-blue);">
+                    <h4>👁️ Reconocimiento</h4>
+                    <ul>
+                        <li>Selección múltiple</li>
+                        <li>Emparejar elementos</li>
+                        <li>Identificar diferencias</li>
+                        <li>Clasificar por categorías</li>
+                    </ul>
+                    <p><small>Enfoque en identificación y comprensión visual</small></p>
+                </div>
+                
+                <div class="doc-card" style="border-left-color: var(--primary-green);">
+                    <h4>✏️ Producción</h4>
+                    <ul>
+                        <li>Trazado de letras/números</li>
+                        <li>Construcción de patrones</li>
+                        <li>Dibujo guiado</li>
+                        <li>Completar secuencias</li>
+                    </ul>
+                    <p><small>Enfoque en creación y expresión</small></p>
+                </div>
+                
+                <div class="doc-card" style="border-left-color: var(--primary-yellow);">
+                    <h4>🎮 Interactivo</h4>
+                    <ul>
+                        <li>Arrastrar y soltar</li>
+                        <li>Secuenciación temporal</li>
+                        <li>Exploración libre</li>
+                        <li>Simulaciones simples</li>
+                    </ul>
+                    <p><small>Enfoque en manipulación y exploración</small></p>
+                </div>
+                
+                <div class="doc-card" style="border-left-color: var(--primary-red);">
+                    <h4>📊 Evaluación</h4>
+                    <ul>
+                        <li>Quiz adaptativo</li>
+                        <li>Verdadero/Falso</li>
+                        <li>Demostración práctica</li>
+                        <li>Autoevaluación guiada</li>
+                    </ul>
+                    <p><small>Enfoque en medición de dominio</small></p>
+                </div>
+            </div>
+
+            <h3>Sistema de Feedback y Retroalimentación</h3>
+            
+            <div class="grid-2">
+                <div>
+                    <h4>✅ Feedback Positivo (Respuesta Correcta)</h4>
+                    <ul>
+                        <li><strong>Visual:</strong> Sparkles, checkmark con bounce, progreso visible</li>
+                        <li><strong>Audio:</strong> Chime agradable, elogios vocales, celebración de mascota</li>
+                        <li><strong>Háptico:</strong> Vibración suave de éxito (150ms)</li>
+                    </ul>
+                    
+                    <h4>🔄 Feedback Correctivo (Respuesta Incorrecta)</h4>
+                    <ul>
+                        <li><strong>Visual:</strong> Shake suave, highlight rojo suave, pista revelada</li>
+                        <li><strong>Audio:</strong> Buzz suave no punitivo, aliento motivador</li>
+                        <li><strong>Educativo:</strong> Explicación después de 3 intentos</li>
+                    </ul>
+                </div>
+                
+                <div class="code-example">
+<span class="comment">// Ejemplo: Configuración de feedback</span>
+<span class="keyword">feedback_correct</span>: {
+  <span class="string">visual</span>: "sparkles_burst",
+  <span class="string">audio</span>: "success_chime.mp3",
+  <span class="string">voice</span>: ["¡Excelente!", "¡Muy bien!"],
+  <span class="string">haptic</span>: "success_pattern_150ms"
+}
+
+<span class="keyword">feedback_incorrect</span>: {
+  <span class="string">visual</span>: "gentle_shake",
+  <span class="string">audio</span>: "soft_buzz.mp3", 
+  <span class="string">voice</span>: ["Intenta otra vez", "Casi lo tienes"],
+  <span class="string">hint_after</span>: 3
+}
+                </div>
+            </div>
+
+            <h3>Adaptaciones por Edad y Habilidad</h3>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Aspecto</th>
+                            <th>Pre-K (3-4 años)</th>
+                            <th>Kindergarten (5 años)</th>
+                            <th>Grados 1-2 (6-8 años)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Duración Atención</strong></td>
+                            <td>3-5 minutos</td>
+                            <td>5-8 minutos</td>
+                            <td>8-12 minutos</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Elementos Simultáneos</strong></td>
+                            <td>2-3 máximo</td>
+                            <td>3-4 elementos</td>
+                            <td>4-5 elementos</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pasos Instrucciones</strong></td>
+                            <td>1-2 pasos simples</td>
+                            <td>2-3 pasos secuenciales</td>
+                            <td>3-5 pasos complejos</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tamaño Botones</strong></td>
+                            <td>Mínimo 60dp</td>
+                            <td>Mínimo 54dp</td>
+                            <td>Mínimo 48dp</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Contenido Visual</strong></td>
+                            <td>90% visual, 10% texto</td>
+                            <td>80% visual, 20% texto</td>
+                            <td>70% visual, 30% texto</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Multimedia Section -->
+        <section id="multimedia" class="section fade-in">
+            <h2>🎨 Assets Multimedia (Especificaciones)</h2>
+            
+            <div class="highlight info">
+                <p><strong>Objetivo:</strong> Definir estándares técnicos y de calidad para todos los assets multimedia, optimizados para dispositivos móviles Android mientras mantienen alta calidad visual y auditiva apropiada para niños.</p>
+            </div>
+
+            <h3>Estructura General de Assets</h3>
+            
+            <div class="code-example">
+<span class="comment">// Organización de directorios</span>
+assets/
+├── images/
+│   ├── ui/                    <span class="comment"># Elementos de interfaz</span>
+│   ├── educational/           <span class="comment"># Contenido educativo</span>
+│   ├── characters/           <span class="comment"># Personajes y mascotas</span>
+│   ├── backgrounds/          <span class="comment"># Fondos y escenas</span>
+│   └── icons/               <span class="comment"># Iconografía</span>
+├── audio/
+│   ├── voices/              <span class="comment"># Voces e instrucciones</span>
+│   ├── effects/             <span class="comment"># Efectos sonoros</span>
+│   ├── music/               <span class="comment"># Música de fondo</span>
+│   └── pronunciations/      <span class="comment"># Pronunciaciones específicas</span>
+├── animations/
+│   ├── lottie/              <span class="comment"># Animaciones Lottie</span>
+│   └── gifs/                <span class="comment"># GIFs optimizados</span>
+└── fonts/
+    ├── nunito/              <span class="comment"># Familia Nunito</span>
+    └── icons/               <span class="comment"># Fuentes de iconos</span>
+            </div>
+
+            <h3>Especificaciones por Tipo de Asset</h3>
+            
+            <div class="grid-auto">
+                <div class="doc-card" style="border-left-color: var(--primary-blue);">
+                    <h4>🖼️ Imágenes</h4>
+                    <ul>
+                        <li><strong>Formato primario:</strong> PNG para transparencia</li>
+                        <li><strong>Formato secundario:</strong> WEBP para fotografías</li>
+                        <li><strong>Resolución base:</strong> xxxhdpi (4x) → downscale</li>
+                        <li><strong>Compresión:</strong> 60-70% reducción tamaño</li>
+                        <li><strong>Tamaño máximo:</strong> 500KB por imagen</li>
+                    </ul>
+                </div>
+                
+                <div class="doc-card" style="border-left-color: var(--primary-green);">
+                    <h4>🎵 Audio</h4>
+                    <ul>
+                        <li><strong>Formato:</strong> MP3, 128 kbps, 44.1 kHz</li>
+                        <li><strong>Voces:</strong> Mono, normalizadas LUFS -23</li>
+                        <li><strong>Música:</strong> Estéreo, normalizadas LUFS -16</li>
+                        <li><strong>Efectos:</strong> 96 kbps, mono</li>
+                        <li><strong>Locutores:</strong> Nativos español/inglés</li>
+                    </ul>
+                </div>
+                
+                <div class="doc-card" style="border-left-color: var(--primary-yellow);">
+                    <h4>🎬 Animaciones</h4>
+                    <ul>
+                        <li><strong>Formato principal:</strong> Lottie (JSON)</li>
+                        <li><strong>Frame rate:</strong> 30 fps</li>
+                        <li><strong>Duración:</strong> 2-10 segundos típico</li>
+                        <li><strong>Tamaño:</strong> <500KB animaciones complejas</li>
+                        <li><strong>Optimización:</strong> Vectorial escalable</li>
+                    </ul>
+                </div>
+                
+                <div class="doc-card" style="border-left-color: var(--primary-red);">
+                    <h4>🎞️ Video</h4>
+                    <ul>
+                        <li><strong>Uso limitado:</strong> Solo casos justificados</li>
+                        <li><strong>Formato:</strong> MP4 (H.264)</li>
+                        <li><strong>Resolución:</strong> 720p máximo</li>
+                        <li><strong>Duración:</strong> 30-60 segundos máximo</li>
+                        <li><strong>Bitrate:</strong> 1-2 Mbps máximo</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Leo el León - Mascota Principal</h3>
+            
+            <div class="grid-2">
+                <div>
+                    <h4>🦁 Personalidad y Características</h4>
+                    <ul>
+                        <li><strong>Personalidad:</strong> Amigable, sabio, motivador</li>
+                        <li><strong>Color principal:</strong> #FF9800 (Naranja cálido)</li>
+                        <li><strong>Edad aparente:</strong> 6-8 años</li>
+                        <li><strong>Rol:</strong> Guía y compañero de aprendizaje</li>
+                    </ul>
+                    
+                    <h4>🎭 Expresiones Básicas</h4>
+                    <ul>
+                        <li><strong>Happy:</strong> Sonrisa amplia, ojos brillantes</li>
+                        <li><strong>Excited:</strong> Sonrisa grande, brazos arriba</li>
+                        <li><strong>Thinking:</strong> Mano en barbilla, pensativo</li>
+                        <li><strong>Celebrating:</strong> Brazos arriba, confetti</li>
+                        <li><strong>Encouraging:</strong> Pulgar arriba, motivador</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4>🎯 Poses Corporales</h4>
+                    <ul>
+                        <li><strong>Standing neutral:</strong> Posición base</li>
+                        <li><strong>Pointing up:</strong> Señalando hacia arriba</li>
+                        <li><strong>Presenting:</strong> Brazos extendidos</li>
+                        <li><strong>Sitting reading:</strong> Sentado con libro</li>
+                        <li><strong>Jumping joy:</strong> Saltando de alegría</li>
+                    </ul>
+                    
+                    <h4>👕 Vestuario por Contexto</h4>
+                    <ul>
+                        <li><strong>Casual:</strong> Camiseta y pantalones</li>
+                        <li><strong>Teacher:</strong> Chaleco y corbata</li>
+                        <li><strong>Explorer:</strong> Sombrero aventurero</li>
+                        <li><strong>Scientist:</strong> Bata de laboratorio</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Localización y Multiculturalidad</h3>
+            
+            <div class="grid-3">
+                <div class="doc-card">
+                    <h4>🌎 Adaptación Cultural</h4>
+                    <ul>
+                        <li><strong>Comidas:</strong> Tacos, empanadas, arroz con pollo</li>
+                        <li><strong>Celebraciones:</strong> Día de los Muertos, Navidad</li>
+                        <li><strong>Música:</strong> Mariachi, salsa, cumbia adaptados</li>
+                        <li><strong>Contextos:</strong> Familiares para hispanohablantes</li>
+                    </ul>
+                </div>
+                
+                <div class="doc-card">
+                    <h4>🗣️ Bilingüismo</h4>
+                    <ul>
+                        <li><strong>Audio nativo:</strong> Hablantes nativos profesionales</li>
+                        <li><strong>Pronunciación:</strong> Español mexicano neutral</li>
+                        <li><strong>Switching:</strong> Cambio dinámico de idioma</li>
+                        <li><strong>Progresivo:</strong> Introducción gradual L2</li>
+                    </ul>
+                </div>
+                
+                <div class="doc-card">
+                    <h4>🤝 Representación Diversa</h4>
+                    <ul>
+                        <li><strong>Etnias:</strong> Múltiples representadas</li>
+                        <li><strong>Familias:</strong> Estructuras variadas</li>
+                        <li><strong>Habilidades:</strong> Niños con diferentes capacidades</li>
+                        <li><strong>Valores:</strong> Universales (respeto, bondad)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Control de Calidad y Optimización</h3>
+            
+            <div class="grid-2">
+                <div>
+                    <h4>📋 Criterios de Aceptación</h4>
+                    <ul>
+                        <li><strong>Completion Rate:</strong> >80% niños completan</li>
+                        <li><strong>Accuracy Rate:</strong> >60% correcto primer intento</li>
+                        <li><strong>Engagement:</strong> <10% abandono antes 50%</li>
+                        <li><strong>Technical:</strong> 0 bugs críticos</li>
+                        <li><strong>Performance:</strong> Carga <3s, 60fps</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4>🔧 Pipeline de Optimización</h4>
+                    <ul>
+                        <li><strong>Automated:</strong> Compresión y validación</li>
+                        <li><strong>A/B Testing:</strong> Variaciones de assets</li>
+                        <li><strong>Analytics:</strong> Métricas de rendimiento</li>
+                        <li><strong>Feedback Loop:</strong> Mejora continua</li>
+                        <li><strong>CI/CD:</strong> Integración automática</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Summary Section -->
+        <section class="section fade-in">
+            <h2>🎯 Resumen de Implementación</h2>
+            
+            <div class="highlight success">
+                <h3>✅ Entregables Completados</h3>
+                <p>Se han definido completamente las especificaciones de contenido para EduPlayKids, incluyendo taxonomía educativa, progresión curricular, especificaciones de actividades y assets multimedia.</p>
+            </div>
+
+            <div class="grid-2">
+                <div>
+                    <h3>📊 Métricas Clave del Proyecto</h3>
+                    <ul>
+                        <li><strong>Total Actividades:</strong> 450+ planificadas</li>
+                        <li><strong>Assets Multimedia:</strong> 2,500+ archivos estimados</li>
+                        <li><strong>Competencias Educativas:</strong> 300+ competencias específicas</li>
+                        <li><strong>Idiomas:</strong> Español e Inglés nativos</li>
+                        <li><strong>Grupos de Edad:</strong> 3 grupos bien diferenciados</li>
+                        <li><strong>Alineación Curricular:</strong> 100% Common Core, NGSS, SEL</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3>🚀 Próximos Pasos</h3>
+                    <ul>
+                        <li><strong>Fase 4:</strong> Implementación técnica en .NET MAUI</li>
+                        <li><strong>Desarrollo de Assets:</strong> Creación de contenido multimedia</li>
+                        <li><strong>Testing:</strong> Validación con usuarios reales</li>
+                        <li><strong>Localización:</strong> Adaptación cultural específica</li>
+                        <li><strong>Optimización:</strong> Performance en dispositivos móviles</li>
+                        <li><strong>Lanzamiento:</strong> Distribución en Google Play Store</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="highlight">
+                <p><strong>Estado del Proyecto:</strong> Las especificaciones de contenido están completas y listas para la fase de implementación. El equipo de desarrollo puede proceder con la construcción de la aplicación usando estos documentos como guía técnica y pedagógica.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer style="background: var(--neutral-dark); color: var(--neutral-white); text-align: center; padding: var(--space-8); margin-top: var(--space-12);">
+        <div class="container">
+            <p><strong>EduPlayKids - Especificaciones de Contenido v1.0</strong></p>
+            <p>Documentación completa generada en Septiembre 2025</p>
+            <p style="margin-top: var(--space-4); font-size: var(--font-sm); opacity: 0.8;">
+                📚 Taxonomía • 📈 Progresión • 🎮 Actividades • 🎨 Multimedia
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll for navigation
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add active state to navigation
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (scrollY >= (sectionTop - 200)) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Animate elements on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        });
+
+        document.querySelectorAll('.section, .doc-card, .stat-card').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Add CSS for navigation active state
+        const style = document.createElement('style');
+        style.textContent = `
+            .nav-link.active {
+                background: var(--primary-blue);
+                color: white;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduPlayKids - Sistema de Diseño Interactivo</title>
+    <style>
+        /* Reset y Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Nunito', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #202124;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e8eaed 100%);
+            min-height: 100vh;
+        }
+
+        /* Design Tokens */
+        :root {
+            /* Colors */
+            --primary-blue: #4285F4;
+            --primary-green: #34A853;
+            --primary-yellow: #FBBC04;
+            --primary-red: #EA4335;
+            
+            --secondary-purple: #9C27B0;
+            --secondary-orange: #FF9800;
+            --secondary-pink: #E91E63;
+            --secondary-cyan: #00BCD4;
+            
+            --neutral-white: #FFFFFF;
+            --neutral-light: #F8F9FA;
+            --neutral-medium: #E8EAED;
+            --neutral-dark: #5F6368;
+            --neutral-black: #202124;
+            
+            /* Spacing */
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 12px;
+            --space-4: 16px;
+            --space-5: 20px;
+            --space-6: 24px;
+            --space-8: 32px;
+            --space-10: 40px;
+            --space-12: 48px;
+            
+            /* Typography */
+            --font-xs: 10px;
+            --font-sm: 12px;
+            --font-base: 14px;
+            --font-md: 16px;
+            --font-lg: 18px;
+            --font-xl: 20px;
+            --font-2xl: 24px;
+            --font-3xl: 28px;
+            --font-4xl: 32px;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px rgba(60, 64, 67, 0.3);
+            --shadow-md: 0 1px 3px rgba(60, 64, 67, 0.3), 0 4px 8px rgba(60, 64, 67, 0.15);
+            --shadow-lg: 0 1px 2px rgba(60, 64, 67, 0.3), 0 2px 6px rgba(60, 64, 67, 0.15);
+            --shadow-xl: 0 1px 3px rgba(60, 64, 67, 0.3), 0 4px 8px rgba(60, 64, 67, 0.15), 0 8px 16px rgba(60, 64, 67, 0.15);
+            
+            /* Border Radius */
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+        }
+
+        /* Layout */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-6);
+        }
+
+        .section {
+            margin-bottom: var(--space-12);
+            padding: var(--space-8);
+            background: var(--neutral-white);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+        }
+
+        .grid {
+            display: grid;
+            gap: var(--space-6);
+        }
+
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-4 { grid-template-columns: repeat(4, 1fr); }
+        .grid-auto { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+
+        /* Typography */
+        h1 {
+            font-size: var(--font-4xl);
+            font-weight: 800;
+            color: var(--neutral-black);
+            margin-bottom: var(--space-6);
+        }
+
+        h2 {
+            font-size: var(--font-3xl);
+            font-weight: 700;
+            color: var(--neutral-black);
+            margin-bottom: var(--space-5);
+        }
+
+        h3 {
+            font-size: var(--font-2xl);
+            font-weight: 600;
+            color: var(--neutral-black);
+            margin-bottom: var(--space-4);
+        }
+
+        h4 {
+            font-size: var(--font-xl);
+            font-weight: 600;
+            color: var(--neutral-dark);
+            margin-bottom: var(--space-3);
+        }
+
+        p {
+            font-size: var(--font-md);
+            color: var(--neutral-dark);
+            margin-bottom: var(--space-4);
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-green) 100%);
+            color: white;
+            padding: var(--space-12) 0;
+            text-align: center;
+            margin-bottom: var(--space-8);
+        }
+
+        .header h1 {
+            color: white;
+            font-size: var(--font-4xl);
+            margin-bottom: var(--space-4);
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: var(--font-lg);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Navigation */
+        .nav {
+            background: var(--neutral-white);
+            padding: var(--space-4) 0;
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-list {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-6);
+            list-style: none;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--neutral-dark);
+            font-weight: 500;
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-md);
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background: var(--neutral-light);
+            color: var(--primary-blue);
+        }
+
+        /* Color Palette */
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: var(--space-4);
+        }
+
+        .color-card {
+            text-align: center;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: transform 0.2s ease;
+        }
+
+        .color-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .color-swatch {
+            height: 80px;
+            width: 100%;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .color-swatch::after {
+            content: '📋';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            font-size: 24px;
+        }
+
+        .color-swatch:hover::after {
+            opacity: 1;
+        }
+
+        .color-info {
+            padding: var(--space-3);
+            background: white;
+        }
+
+        .color-name {
+            font-weight: 600;
+            font-size: var(--font-sm);
+            color: var(--neutral-black);
+        }
+
+        .color-value {
+            font-family: 'Courier New', monospace;
+            font-size: var(--font-xs);
+            color: var(--neutral-dark);
+            margin-top: var(--space-1);
+        }
+
+        /* Typography Showcase */
+        .type-example {
+            margin-bottom: var(--space-6);
+            padding: var(--space-4);
+            border: 1px solid var(--neutral-medium);
+            border-radius: var(--radius-md);
+        }
+
+        .type-meta {
+            font-family: 'Courier New', monospace;
+            font-size: var(--font-xs);
+            color: var(--neutral-dark);
+            margin-bottom: var(--space-2);
+        }
+
+        /* Component Showcase */
+        .component-demo {
+            padding: var(--space-6);
+            background: var(--neutral-light);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-6);
+        }
+
+        .component-title {
+            font-size: var(--font-lg);
+            font-weight: 600;
+            margin-bottom: var(--space-4);
+            color: var(--neutral-black);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-3) var(--space-6);
+            font-family: inherit;
+            font-size: var(--font-md);
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin: var(--space-2);
+            min-height: 48px;
+            min-width: 120px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-yellow) 100%);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary-blue);
+            border: 2px solid var(--primary-blue);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .btn-subject {
+            width: 140px;
+            height: 130px;
+            padding: var(--space-4);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-subject.math {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-cyan) 100%);
+        }
+
+        .btn-subject.reading {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-purple) 100%);
+        }
+
+        .btn-subject.art {
+            background: linear-gradient(135deg, var(--secondary-orange) 0%, var(--secondary-pink) 100%);
+        }
+
+        .btn-subject .icon {
+            font-size: 32px;
+            margin-bottom: var(--space-2);
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .card-progress {
+            background: linear-gradient(135deg, white 0%, var(--neutral-light) 100%);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--neutral-medium);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: var(--space-3) 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-blue) 0%, var(--primary-green) 100%);
+            border-radius: 4px;
+            transition: width 1s ease-out;
+        }
+
+        /* Inputs */
+        .input {
+            width: 100%;
+            padding: var(--space-3) var(--space-4);
+            font-family: inherit;
+            font-size: var(--font-md);
+            border: 2px solid var(--neutral-medium);
+            border-radius: var(--radius-md);
+            background: white;
+            transition: border-color 0.2s ease;
+            margin-bottom: var(--space-4);
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.2);
+        }
+
+        /* Icons */
+        .icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .icon-xs { font-size: 16px; }
+        .icon-sm { font-size: 20px; }
+        .icon-md { font-size: 24px; }
+        .icon-lg { font-size: 32px; }
+        .icon-xl { font-size: 48px; }
+
+        /* Animations */
+        @keyframes bounce {
+            0%, 20%, 53%, 80%, 100% { transform: translate3d(0,0,0); }
+            40%, 43% { transform: translate3d(0,-15px,0); }
+            70% { transform: translate3d(0,-7px,0); }
+            90% { transform: translate3d(0,-2px,0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .animate-bounce {
+            animation: bounce 1s ease infinite;
+        }
+
+        .animate-pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        /* Interactive States */
+        .demo-interactive {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .demo-interactive:hover {
+            transform: scale(1.02);
+        }
+
+        .demo-interactive:active {
+            transform: scale(0.98);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 var(--space-4);
+            }
+            
+            .grid-2, .grid-3, .grid-4 {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-list {
+                flex-wrap: wrap;
+                gap: var(--space-3);
+            }
+            
+            .btn-subject {
+                width: 120px;
+                height: 100px;
+            }
+            
+            .color-grid {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            }
+        }
+
+        /* Copy feedback */
+        .copy-feedback {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary-green);
+            color: white;
+            padding: var(--space-3) var(--space-4);
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .copy-feedback.show {
+            transform: translateX(0);
+        }
+
+        /* Status indicators */
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-1) var(--space-3);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-sm);
+            font-weight: 500;
+        }
+
+        .status-success {
+            background: rgba(52, 168, 83, 0.1);
+            color: var(--primary-green);
+        }
+
+        .status-warning {
+            background: rgba(251, 188, 4, 0.1);
+            color: var(--primary-yellow);
+        }
+
+        .status-error {
+            background: rgba(234, 67, 53, 0.1);
+            color: var(--primary-red);
+        }
+
+        .status-info {
+            background: rgba(66, 133, 244, 0.1);
+            color: var(--primary-blue);
+        }
+
+        /* Interactive playground */
+        .playground {
+            background: var(--neutral-light);
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            margin-top: var(--space-6);
+        }
+
+        .playground-controls {
+            margin-bottom: var(--space-6);
+            padding: var(--space-4);
+            background: white;
+            border-radius: var(--radius-md);
+        }
+
+        .control-group {
+            margin-bottom: var(--space-4);
+        }
+
+        .control-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: var(--space-2);
+            color: var(--neutral-black);
+        }
+
+        .slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--neutral-medium);
+            outline: none;
+            appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary-blue);
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary-blue);
+            cursor: pointer;
+            border: none;
+        }
+
+        /* Code snippets */
+        .code-snippet {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: var(--space-4);
+            border-radius: var(--radius-md);
+            font-family: 'Courier New', monospace;
+            font-size: var(--font-sm);
+            overflow-x: auto;
+            margin: var(--space-4) 0;
+        }
+
+        .code-snippet .keyword {
+            color: #63b3ed;
+        }
+
+        .code-snippet .string {
+            color: #68d391;
+        }
+
+        .code-snippet .comment {
+            color: #a0aec0;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <h1>🎓 EduPlayKids Design System</h1>
+            <p>Sistema de diseño interactivo para la aplicación educativa móvil. Explora componentes, colores, tipografía y patrones de diseño adaptados específicamente para niños de 3-8 años.</p>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container">
+            <ul class="nav-list">
+                <li><a href="#colors" class="nav-link">Colores</a></li>
+                <li><a href="#typography" class="nav-link">Tipografía</a></li>
+                <li><a href="#buttons" class="nav-link">Botones</a></li>
+                <li><a href="#cards" class="nav-link">Cards</a></li>
+                <li><a href="#inputs" class="nav-link">Inputs</a></li>
+                <li><a href="#icons" class="nav-link">Iconos</a></li>
+                <li><a href="#playground" class="nav-link">Playground</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <!-- Colors Section -->
+        <section id="colors" class="section">
+            <h2>🎨 Paleta de Colores</h2>
+            <p>Colores cuidadosamente seleccionados para estimular el aprendizaje y garantizar la accesibilidad.</p>
+            
+            <h3>Colores Primarios</h3>
+            <div class="color-grid">
+                <div class="color-card">
+                    <div class="color-swatch" style="background: var(--primary-blue);" onclick="copyColor('#4285F4')"></div>
+                    <div class="color-info">
+                        <div class="color-name">Azul Principal</div>
+                        <div class="color-value">#4285F4</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background: var(--primary-green);" onclick="copyColor('#34A853')"></div>
+                    <div class="color-info">
+                        <div class="color-name">Verde Éxito</div>
+                        <div class="color-value">#34A853</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background: var(--primary-yellow);" onclick="copyColor('#FBBC04')"></div>
+                    <div class="color-info">
+                        <div class="color-name">Amarillo Alegría</div>
+                        <div class="color-value">#FBBC04</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background: var(--primary-red);" onclick="copyColor('#EA4335')"></div>
+                    <div class="color-info">
+                        <div class="color-name">Rojo Suave</div>
+                        <div class="color-value">#EA4335</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Colores Secundarios</h3>
+            <div class="color-grid">
+                <div class="color-card">
+                    <div class="color-swatch" style="background: var(--secondary-purple);" onclick="copyColor('#9C27B0')"></div>
+                    <div class="color-info">
+                        <div class="color-name">Morado Creativo</div>
+                        <div class="color-value">#9C27B0</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background: var(--secondary-orange);" onclick="copyColor('#FF9800')"></div>
+                    <div class="color-info">
+                        <div class="color-name">Naranja Energía</div>
+                        <div class="color-value">#FF9800</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background: var(--secondary-pink);" onclick="copyColor('#E91E63')"></div>
+                    <div class="color-info">
+                        <div class="color-name">Rosa Diversión</div>
+                        <div class="color-value">#E91E63</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background: var(--secondary-cyan);" onclick="copyColor('#00BCD4')"></div>
+                    <div class="color-info">
+                        <div class="color-name">Cian Tranquilo</div>
+                        <div class="color-value">#00BCD4</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Colores Neutros</h3>
+            <div class="color-grid">
+                <div class="color-card">
+                    <div class="color-swatch" style="background: var(--neutral-white); border: 1px solid var(--neutral-medium);" onclick="copyColor('#FFFFFF')"></div>
+                    <div class="color-info">
+                        <div class="color-name">Blanco</div>
+                        <div class="color-value">#FFFFFF</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background: var(--neutral-light);" onclick="copyColor('#F8F9FA')"></div>
+                    <div class="color-info">
+                        <div class="color-name">Gris Claro</div>
+                        <div class="color-value">#F8F9FA</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background: var(--neutral-medium);" onclick="copyColor('#E8EAED')"></div>
+                    <div class="color-info">
+                        <div class="color-name">Gris Medio</div>
+                        <div class="color-value">#E8EAED</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background: var(--neutral-dark);" onclick="copyColor('#5F6368')"></div>
+                    <div class="color-info">
+                        <div class="color-name">Gris Oscuro</div>
+                        <div class="color-value">#5F6368</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Typography Section -->
+        <section id="typography" class="section">
+            <h2>📝 Tipografía</h2>
+            <p>Fuente Nunito optimizada para legibilidad infantil con formas redondeadas y amigables.</p>
+            
+            <div class="type-example">
+                <div class="type-meta">Hero Title • 32px • Extra Bold</div>
+                <h1 style="font-size: var(--font-4xl); font-weight: 800; margin: 0;">¡Aprende Jugando con EduPlayKids!</h1>
+            </div>
+            
+            <div class="type-example">
+                <div class="type-meta">Section Title • 28px • Bold</div>
+                <h2 style="font-size: var(--font-3xl); font-weight: 700; margin: 0;">Matemáticas Divertidas</h2>
+            </div>
+            
+            <div class="type-example">
+                <div class="type-meta">Activity Title • 24px • Semi Bold</div>
+                <h3 style="font-size: var(--font-2xl); font-weight: 600; margin: 0;">Cuenta los patitos 🦆</h3>
+            </div>
+            
+            <div class="type-example">
+                <div class="type-meta">Instruction Text • 18px • Medium</div>
+                <p style="font-size: var(--font-lg); font-weight: 500; margin: 0; color: var(--neutral-dark);">Toca cada patito para contarlos y encuentra la respuesta correcta.</p>
+            </div>
+            
+            <div class="type-example">
+                <div class="type-meta">Body Text • 16px • Regular</div>
+                <p style="font-size: var(--font-md); font-weight: 400; margin: 0;">Este es el texto principal utilizado en descripciones y contenido general de la aplicación.</p>
+            </div>
+            
+            <div class="type-example">
+                <div class="type-meta">Caption Text • 12px • Regular</div>
+                <p style="font-size: var(--font-sm); font-weight: 400; margin: 0; color: var(--neutral-dark);">Texto pequeño para metadatos, copyrights y información secundaria.</p>
+            </div>
+        </section>
+
+        <!-- Buttons Section -->
+        <section id="buttons" class="section">
+            <h2>🔘 Botones</h2>
+            <p>Botones diseñados para ser fácilmente tocables por dedos pequeños con feedback visual claro.</p>
+            
+            <div class="component-demo">
+                <div class="component-title">Botones Principales</div>
+                <button class="btn btn-primary demo-interactive">✨ Empezar</button>
+                <button class="btn btn-secondary demo-interactive">🔄 Repetir</button>
+                <button class="btn btn-primary demo-interactive" disabled style="opacity: 0.5;">🔒 Bloqueado</button>
+            </div>
+
+            <div class="component-demo">
+                <div class="component-title">Botones de Materias</div>
+                <div class="grid grid-3">
+                    <button class="btn btn-subject math demo-interactive">
+                        <div class="icon">🔢</div>
+                        <div>Matemáticas</div>
+                    </button>
+                    <button class="btn btn-subject reading demo-interactive">
+                        <div class="icon">📚</div>
+                        <div>Lectura</div>
+                    </button>
+                    <button class="btn btn-subject art demo-interactive">
+                        <div class="icon">🎨</div>
+                        <div>Arte</div>
+                    </button>
+                </div>
+            </div>
+
+            <div class="component-demo">
+                <div class="component-title">Estados de Botón</div>
+                <div class="grid grid-4">
+                    <button class="btn btn-primary demo-interactive">Normal</button>
+                    <button class="btn btn-primary demo-interactive animate-pulse">Pulsante</button>
+                    <button class="btn btn-primary demo-interactive" style="transform: scale(0.98);">Presionado</button>
+                    <button class="btn btn-primary" disabled style="background: #E8EAED; color: #5F6368;">Deshabilitado</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cards Section -->
+        <section id="cards" class="section">
+            <h2>🗃️ Cards</h2>
+            <p>Contenedores flexibles para organizar información de manera visual y accesible.</p>
+            
+            <div class="grid grid-2">
+                <div class="card demo-interactive">
+                    <h4>📊 Progreso de María</h4>
+                    <p>Tiempo hoy: 45 min 🔥 Racha: 7</p>
+                    <p>Actividades: 12/15 ⭐ Total: 47</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 80%;"></div>
+                    </div>
+                </div>
+                
+                <div class="card card-progress demo-interactive">
+                    <h4>🏆 Últimos Logros</h4>
+                    <div class="status status-success">✓ Contador Experto</div><br><br>
+                    <div class="status status-info">📖 Lector Principiante</div><br><br>
+                    <div class="status status-warning">🎨 Artista de Colores</div>
+                </div>
+            </div>
+
+            <div class="component-demo">
+                <div class="component-title">Estados de Cards</div>
+                <div class="grid grid-3">
+                    <div class="card demo-interactive">
+                        <h4>Card Normal</h4>
+                        <p>Estado por defecto con hover effect.</p>
+                    </div>
+                    <div class="card" style="border: 2px solid var(--primary-yellow); box-shadow: 0 0 12px rgba(251, 188, 4, 0.3);">
+                        <h4>Card Completada</h4>
+                        <p>Estado cuando una actividad está completa.</p>
+                    </div>
+                    <div class="card" style="background: #E8EAED; opacity: 0.6;">
+                        <h4>Card Bloqueada</h4>
+                        <p>Estado cuando el contenido no está disponible.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Inputs Section -->
+        <section id="inputs" class="section">
+            <h2>📝 Inputs</h2>
+            <p>Campos de entrada optimizados para interacción táctil con feedback visual claro.</p>
+            
+            <div class="component-demo">
+                <div class="component-title">Tipos de Input</div>
+                <div class="grid grid-2">
+                    <div>
+                        <label class="control-label">Nombre del niño</label>
+                        <input type="text" class="input" placeholder="Escribe aquí..." maxlength="50">
+                    </div>
+                    <div>
+                        <label class="control-label">Edad</label>
+                        <select class="input">
+                            <option>Selecciona edad</option>
+                            <option>3 años</option>
+                            <option>4 años</option>
+                            <option>5 años</option>
+                            <option>6 años</option>
+                            <option>7 años</option>
+                            <option>8 años</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="component-demo">
+                <div class="component-title">Estados de Input</div>
+                <div class="grid grid-3">
+                    <div>
+                        <label class="control-label">Normal</label>
+                        <input type="text" class="input" placeholder="Texto normal">
+                    </div>
+                    <div>
+                        <label class="control-label">Con Focus</label>
+                        <input type="text" class="input" placeholder="Input enfocado" style="border-color: var(--primary-blue); box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.2);">
+                    </div>
+                    <div>
+                        <label class="control-label">Error</label>
+                        <input type="text" class="input" placeholder="Campo requerido" style="border-color: var(--primary-red);">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Icons Section -->
+        <section id="icons" class="section">
+            <h2>🎯 Iconos</h2>
+            <p>Iconografía simple y reconocible diseñada para la comprensión infantil.</p>
+            
+            <div class="component-demo">
+                <div class="component-title">Iconos de Materias</div>
+                <div class="grid grid-auto">
+                    <div style="text-align: center; padding: var(--space-4);">
+                        <div class="icon icon-xl">🔢</div>
+                        <p>Matemáticas</p>
+                    </div>
+                    <div style="text-align: center; padding: var(--space-4);">
+                        <div class="icon icon-xl">📚</div>
+                        <p>Lectura</p>
+                    </div>
+                    <div style="text-align: center; padding: var(--space-4);">
+                        <div class="icon icon-xl">🎨</div>
+                        <p>Arte</p>
+                    </div>
+                    <div style="text-align: center; padding: var(--space-4);">
+                        <div class="icon icon-xl">🧩</div>
+                        <p>Lógica</p>
+                    </div>
+                    <div style="text-align: center; padding: var(--space-4);">
+                        <div class="icon icon-xl">🌱</div>
+                        <p>Ciencias</p>
+                    </div>
+                    <div style="text-align: center; padding: var(--space-4);">
+                        <div class="icon icon-xl">🎵</div>
+                        <p>Música</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="component-demo">
+                <div class="component-title">Iconos de Estado</div>
+                <div class="grid grid-auto">
+                    <div style="text-align: center; padding: var(--space-4);">
+                        <div class="icon icon-lg">⭐</div>
+                        <p>Estrella</p>
+                    </div>
+                    <div style="text-align: center; padding: var(--space-4);">
+                        <div class="icon icon-lg">❤️</div>
+                        <p>Vida</p>
+                    </div>
+                    <div style="text-align: center; padding: var(--space-4);">
+                        <div class="icon icon-lg">🔥</div>
+                        <p>Racha</p>
+                    </div>
+                    <div style="text-align: center; padding: var(--space-4);">
+                        <div class="icon icon-lg">🏆</div>
+                        <p>Logro</p>
+                    </div>
+                    <div style="text-align: center; padding: var(--space-4);">
+                        <div class="icon icon-lg">🔒</div>
+                        <p>Bloqueado</p>
+                    </div>
+                    <div style="text-align: center; padding: var(--space-4);">
+                        <div class="icon icon-lg">✅</div>
+                        <p>Completo</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="component-demo">
+                <div class="component-title">Tamaños de Iconos</div>
+                <div class="grid grid-auto" style="align-items: center; text-align: center;">
+                    <div>
+                        <div class="icon icon-xs">🎯</div>
+                        <p>XS (16px)</p>
+                    </div>
+                    <div>
+                        <div class="icon icon-sm">🎯</div>
+                        <p>SM (20px)</p>
+                    </div>
+                    <div>
+                        <div class="icon icon-md">🎯</div>
+                        <p>MD (24px)</p>
+                    </div>
+                    <div>
+                        <div class="icon icon-lg">🎯</div>
+                        <p>LG (32px)</p>
+                    </div>
+                    <div>
+                        <div class="icon icon-xl">🎯</div>
+                        <p>XL (48px)</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Playground -->
+        <section id="playground" class="section">
+            <h2>🎮 Playground Interactivo</h2>
+            <p>Experimenta con los componentes en tiempo real y ve cómo se adaptan a diferentes configuraciones.</p>
+            
+            <div class="playground">
+                <div class="playground-controls">
+                    <h4>Controles del Componente</h4>
+                    <div class="grid grid-3">
+                        <div class="control-group">
+                            <label class="control-label">Tamaño del Botón</label>
+                            <input type="range" class="slider" id="buttonSize" min="0.8" max="1.5" step="0.1" value="1" onchange="updateButtonSize(this.value)">
+                            <span id="buttonSizeValue">1.0x</span>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">Progreso</label>
+                            <input type="range" class="slider" id="progressValue" min="0" max="100" value="75" onchange="updateProgress(this.value)">
+                            <span id="progressValueDisplay">75%</span>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">Tema</label>
+                            <select class="input" id="themeSelector" onchange="changeTheme(this.value)">
+                                <option value="light">Claro</option>
+                                <option value="high-contrast">Alto Contraste</option>
+                                <option value="colorful">Colorido</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="component-demo">
+                    <div class="component-title">Componente en Vivo</div>
+                    <div class="grid grid-2">
+                        <div class="card demo-interactive" id="playgroundCard">
+                            <h4>🎯 Actividad de Prueba</h4>
+                            <p>Esta es una demostración interactiva del sistema de diseño.</p>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="playgroundProgress" style="width: 75%;"></div>
+                            </div>
+                            <button class="btn btn-primary demo-interactive" id="playgroundButton" style="margin-top: var(--space-4);">🚀 Continuar</button>
+                        </div>
+                        
+                        <div>
+                            <h4>Código CSS Generado</h4>
+                            <div class="code-snippet" id="generatedCode">
+<span class="comment">/* Código CSS actualizado automáticamente */</span>
+<span class="keyword">.demo-button</span> {
+  <span class="keyword">transform</span>: <span class="string">scale(1.0)</span>;
+}
+
+<span class="keyword">.demo-progress</span> {
+  <span class="keyword">width</span>: <span class="string">75%</span>;
+}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="component-demo">
+                    <div class="component-title">Prueba de Accesibilidad</div>
+                    <div class="grid grid-4">
+                        <div class="status status-success">✓ Contraste 7:1</div>
+                        <div class="status status-success">✓ Táctil 48px+</div>
+                        <div class="status status-success">✓ ARIA Labels</div>
+                        <div class="status status-warning">⚠ Movimiento</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Usage Guidelines -->
+        <section class="section">
+            <h2>📋 Guías de Uso</h2>
+            <p>Principios y mejores prácticas para implementar el sistema de diseño de EduPlayKids.</p>
+            
+            <div class="grid grid-2">
+                <div class="card">
+                    <h4>✅ Hacer</h4>
+                    <ul style="padding-left: var(--space-5); color: var(--neutral-dark);">
+                        <li>Usar botones mínimo 48px para niños</li>
+                        <li>Mantener contraste mínimo 7:1</li>
+                        <li>Incluir feedback auditivo</li>
+                        <li>Proporcionar ARIA labels</li>
+                        <li>Usar animaciones suaves</li>
+                        <li>Validar con niños reales</li>
+                    </ul>
+                </div>
+                
+                <div class="card">
+                    <h4>❌ No Hacer</h4>
+                    <ul style="padding-left: var(--space-5); color: var(--neutral-dark);">
+                        <li>Usar elementos menores a 44px</li>
+                        <li>Sobrecargar con información</li>
+                        <li>Animaciones muy rápidas</li>
+                        <li>Colores de bajo contraste</li>
+                        <li>Ignorar la accesibilidad</li>
+                        <li>Textos muy largos</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="component-demo">
+                <div class="component-title">Especificaciones Técnicas</div>
+                <div class="grid grid-3">
+                    <div>
+                        <h4>🎯 Targets Táctiles</h4>
+                        <p><strong>Mínimo:</strong> 48dp (Android)</p>
+                        <p><strong>Recomendado:</strong> 60dp (Niños)</p>
+                        <p><strong>Espaciado:</strong> 8dp entre elementos</p>
+                    </div>
+                    <div>
+                        <h4>🔤 Tipografía</h4>
+                        <p><strong>Fuente:</strong> Nunito</p>
+                        <p><strong>Mínimo:</strong> 14sp texto</p>
+                        <p><strong>Botones:</strong> 16sp mínimo</p>
+                    </div>
+                    <div>
+                        <h4>🌈 Contraste</h4>
+                        <p><strong>Texto normal:</strong> 4.5:1</p>
+                        <p><strong>Texto grande:</strong> 3:1</p>
+                        <p><strong>Elementos gráficos:</strong> 3:1</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Copy Feedback -->
+    <div id="copyFeedback" class="copy-feedback">
+        ¡Color copiado al portapapeles! 📋
+    </div>
+
+    <script>
+        // Copy color to clipboard
+        function copyColor(color) {
+            navigator.clipboard.writeText(color).then(() => {
+                showCopyFeedback();
+            });
+        }
+
+        function showCopyFeedback() {
+            const feedback = document.getElementById('copyFeedback');
+            feedback.classList.add('show');
+            setTimeout(() => {
+                feedback.classList.remove('show');
+            }, 2000);
+        }
+
+        // Playground controls
+        function updateButtonSize(value) {
+            const button = document.getElementById('playgroundButton');
+            const valueDisplay = document.getElementById('buttonSizeValue');
+            button.style.transform = `scale(${value})`;
+            valueDisplay.textContent = `${value}x`;
+            updateGeneratedCode();
+        }
+
+        function updateProgress(value) {
+            const progress = document.getElementById('playgroundProgress');
+            const valueDisplay = document.getElementById('progressValueDisplay');
+            progress.style.width = `${value}%`;
+            valueDisplay.textContent = `${value}%`;
+            updateGeneratedCode();
+        }
+
+        function changeTheme(theme) {
+            const card = document.getElementById('playgroundCard');
+            const button = document.getElementById('playgroundButton');
+            
+            // Reset classes
+            card.className = 'card demo-interactive';
+            button.className = 'btn demo-interactive';
+            
+            switch(theme) {
+                case 'high-contrast':
+                    card.style.border = '2px solid #000';
+                    button.style.background = '#000';
+                    button.style.border = '2px solid #fff';
+                    button.classList.add('btn-primary');
+                    break;
+                case 'colorful':
+                    card.style.background = 'linear-gradient(135deg, #FF9800 0%, #E91E63 100%)';
+                    card.style.color = 'white';
+                    button.style.background = 'linear-gradient(135deg, #9C27B0 0%, #E91E63 100%)';
+                    button.classList.add('btn-primary');
+                    break;
+                default:
+                    card.style.background = '';
+                    card.style.border = '';
+                    card.style.color = '';
+                    button.style.background = '';
+                    button.style.border = '';
+                    button.classList.add('btn-primary');
+                    break;
+            }
+            updateGeneratedCode();
+        }
+
+        function updateGeneratedCode() {
+            const buttonSize = document.getElementById('buttonSize').value;
+            const progressValue = document.getElementById('progressValue').value;
+            const themeValue = document.getElementById('themeSelector').value;
+            
+            const code = `<span class="comment">/* Código CSS actualizado automáticamente */</span>
+<span class="keyword">.demo-button</span> {
+  <span class="keyword">transform</span>: <span class="string">scale(${buttonSize})</span>;
+  <span class="keyword">theme</span>: <span class="string">${themeValue}</span>;
+}
+
+<span class="keyword">.demo-progress</span> {
+  <span class="keyword">width</span>: <span class="string">${progressValue}%</span>;
+}`;
+            
+            document.getElementById('generatedCode').innerHTML = code;
+        }
+
+        // Add hover effects to interactive elements
+        document.querySelectorAll('.demo-interactive').forEach(element => {
+            element.addEventListener('mouseenter', function() {
+                this.style.transform = this.style.transform.includes('scale') ? 
+                    this.style.transform.replace(/scale\([^)]*\)/, 'scale(1.02)') : 
+                    'scale(1.02)';
+            });
+            
+            element.addEventListener('mouseleave', function() {
+                if (!this.style.transform.includes('scale(1)')) {
+                    this.style.transform = this.style.transform.replace(/scale\([^)]*\)/, 'scale(1)');
+                }
+            });
+        });
+
+        // Smooth scroll for navigation
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add active state to navigation
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (scrollY >= (sectionTop - 200)) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Initialize playground
+        document.addEventListener('DOMContentLoaded', function() {
+            updateGeneratedCode();
+            
+            // Add subtle animations to cards
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animation = 'fadeInUp 0.6s ease forwards';
+                    }
+                });
+            });
+            
+            document.querySelectorAll('.card, .component-demo').forEach(card => {
+                observer.observe(card);
+            });
+        });
+
+        // Add CSS for fade in animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            
+            .nav-link.active {
+                background: var(--primary-blue);
+                color: white;
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Add click sound effect simulation
+        function playClickSound() {
+            // Create a simple click sound using Web Audio API
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
+            
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.1);
+        }
+
+        // Add click sound to buttons
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('click', playClickSound);
+        });
+    </script>
+</body>
+</html>

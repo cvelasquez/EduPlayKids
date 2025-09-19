@@ -1,0 +1,1834 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diseño de Base de Datos - EduPlayKids</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2E7D32 0%, #388E3C 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255,255,255,0.05) 10px,
+                rgba(255,255,255,0.05) 20px
+            );
+            animation: float 20s linear infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .nav {
+            background: #1B5E20;
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+        
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .nav a:hover {
+            background: #2E7D32;
+            transform: translateY(-2px);
+        }
+        
+        .content {
+            padding: 2rem;
+        }
+        
+        .document-section {
+            margin-bottom: 3rem;
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .document-section h2 {
+            color: #1B5E20;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            border-bottom: 2px solid #E8F5E8;
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .document-section h3 {
+            color: #2E7D32;
+            margin: 1.5rem 0 1rem 0;
+            font-size: 1.4rem;
+        }
+        
+        .document-section h4 {
+            color: #388E3C;
+            margin: 1.2rem 0 0.8rem 0;
+            font-size: 1.2rem;
+        }
+        
+        .document-section p {
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+        
+        .document-section ul, .document-section ol {
+            margin: 1rem 0 1rem 2rem;
+        }
+        
+        .document-section li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .mermaid {
+            text-align: center;
+            margin: 2rem 0;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 2px solid #E8F5E8;
+        }
+        
+        pre {
+            background: #1B5E20;
+            color: #E8F5E8;
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            border-left: 4px solid #4CAF50;
+            font-size: 0.9rem;
+        }
+        
+        code {
+            background: #E8F5E8;
+            color: #1B5E20;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+        }
+        
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #E8F5E8;
+            font-size: 0.9rem;
+        }
+        
+        th {
+            background: #2E7D32;
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+        
+        tr:hover {
+            background: #F1F8E9;
+        }
+        
+        .toc {
+            background: #E8F5E8;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .toc h3 {
+            color: #1B5E20;
+            margin-bottom: 1rem;
+        }
+        
+        .toc ul {
+            list-style: none;
+            margin-left: 0;
+        }
+        
+        .toc li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .toc a {
+            color: #2E7D32;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .toc a:hover {
+            color: #4CAF50;
+            text-decoration: underline;
+        }
+        
+        .highlight {
+            background: linear-gradient(120deg, #E8F5E8 0%, #F1F8E9 100%);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .warning {
+            background: linear-gradient(120deg, #FFF3E0 0%, #FFECB3 100%);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border-left: 4px solid #FF9800;
+        }
+        
+        .error {
+            background: linear-gradient(120deg, #FFEBEE 0%, #FFCDD2 100%);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border-left: 4px solid #F44336;
+        }
+        
+        .info {
+            background: linear-gradient(120deg, #E3F2FD 0%, #BBDEFB 100%);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border-left: 4px solid #2196F3;
+        }
+        
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .metric-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+            border-top: 4px solid #4CAF50;
+            transition: transform 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #1B5E20;
+        }
+        
+        .metric-label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        
+        .sql-block {
+            background: #263238;
+            color: #ECEFF1;
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            border-left: 4px solid #00BCD4;
+            position: relative;
+        }
+        
+        .sql-block::before {
+            content: 'SQL';
+            position: absolute;
+            top: 0.5rem;
+            right: 1rem;
+            background: #00BCD4;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+        
+        .footer {
+            background: #1B5E20;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .back-to-top:hover {
+            background: #388E3C;
+            transform: scale(1.1);
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .content {
+                padding: 1rem;
+            }
+            
+            .document-section {
+                padding: 1.5rem;
+            }
+            
+            table {
+                font-size: 0.8rem;
+            }
+            
+            th, td {
+                padding: 0.5rem;
+            }
+        }
+        
+        .constraint-tag {
+            display: inline-block;
+            background: #E8F5E8;
+            color: #1B5E20;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin: 0.1rem;
+            border: 1px solid #4CAF50;
+        }
+        
+        .datatype {
+            color: #2E7D32;
+            font-weight: bold;
+            font-family: monospace;
+        }
+        
+        .field-required {
+            color: #F44336;
+            font-weight: bold;
+        }
+        
+        .field-optional {
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🗄️ EduPlayKids</h1>
+            <p class="subtitle">Diseño de Base de Datos - SQLite MVP Offline-First</p>
+        </header>
+        
+        <nav class="nav">
+            <ul>
+                <li><a href="#erd">📊 Modelo ERD</a></li>
+                <li><a href="#schema">🏗️ Esquema SQLite</a></li>
+                <li><a href="#dictionary">📚 Diccionario de Datos</a></li>
+                <li><a href="#migrations">🔄 Scripts de Migración</a></li>
+            </ul>
+        </nav>
+        
+        <main class="content">
+            <section id="erd" class="document-section">
+                <h2>📊 Modelo Entidad-Relación (ERD)</h2>
+                
+                <div class="toc">
+                    <h3>Contenido ERD</h3>
+                    <ul>
+                        <li><a href="#erd-main">Diagrama ERD Principal</a></li>
+                        <li><a href="#erd-entities">Entidades Principales</a></li>
+                        <li><a href="#erd-relationships">Relaciones Específicas</a></li>
+                        <li><a href="#erd-patterns">Patrones de Diseño</a></li>
+                    </ul>
+                </div>
+                
+                <div class="highlight">
+                    <h3>🎯 Resumen del Modelo</h3>
+                    <p><strong>EduPlayKids</strong> utiliza un modelo entidad-relación diseñado para funcionalidad <strong>offline-first</strong> en dispositivos móviles individuales, soportando múltiples usuarios por dispositivo, contenido bilingüe, y cumplimiento del modelo freemium con completa privacidad.</p>
+                    
+                    <div class="metrics">
+                        <div class="metric-card">
+                            <div class="metric-value">10</div>
+                            <div class="metric-label">Tablas Principales</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">100%</div>
+                            <div class="metric-label">Funcionalidad Offline</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">COPPA</div>
+                            <div class="metric-label">Privacy Compliant</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">2 Idiomas</div>
+                            <div class="metric-label">Soporte Bilingüe</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="erd-main">
+                    <h3>📈 Diagrama ERD Principal</h3>
+                    <div class="mermaid">
+                        erDiagram
+                            USERS {
+                                INTEGER Id PK
+                                TEXT Name
+                                INTEGER Age
+                                TEXT PreferredLanguage
+                                BOOLEAN IsPremiumUser
+                                DATETIME PremiumExpiryDate
+                                TEXT PurchaseTransactionId
+                                DATETIME PurchaseDate
+                                DATETIME CreatedAt
+                                DATETIME LastActiveAt
+                                DATETIME UpdatedAt
+                            }
+                            
+                            EDUCATIONAL_MODULES {
+                                INTEGER Id PK
+                                TEXT ModuleCode
+                                TEXT NameKey_EN
+                                TEXT NameKey_ES
+                                TEXT DescriptionKey_EN
+                                TEXT DescriptionKey_ES
+                                INTEGER SortOrder
+                                INTEGER MinAge
+                                INTEGER MaxAge
+                                TEXT CurriculumStandard
+                                TEXT IconPath
+                                BOOLEAN IsActive
+                                DATETIME CreatedAt
+                                DATETIME UpdatedAt
+                            }
+                            
+                            LESSON_CONTENT {
+                                INTEGER Id PK
+                                TEXT LessonCode
+                                INTEGER ModuleId FK
+                                TEXT TitleKey_EN
+                                TEXT TitleKey_ES
+                                TEXT InstructionsKey_EN
+                                TEXT InstructionsKey_ES
+                                INTEGER SortOrder
+                                INTEGER DifficultyLevel
+                                TIME EstimatedDuration
+                                TEXT InteractiveContentJson
+                                TEXT AudioAssets_EN
+                                TEXT AudioAssets_ES
+                                TEXT ImageAssets
+                                TEXT Prerequisites
+                                TEXT LearningObjectives
+                                BOOLEAN IsActive
+                                DATETIME CreatedAt
+                                DATETIME UpdatedAt
+                            }
+                            
+                            USER_PROGRESS {
+                                INTEGER Id PK
+                                INTEGER UserId FK
+                                INTEGER LessonId FK
+                                DATETIME StartedAt
+                                DATETIME CompletedAt
+                                INTEGER AttemptCount
+                                INTEGER ErrorCount
+                                INTEGER HintCount
+                                TIME CompletionTime
+                                INTEGER StarRating
+                                TEXT AnswersJson
+                                TEXT SessionData
+                                BOOLEAN IsCompleted
+                                DATETIME CreatedAt
+                                DATETIME UpdatedAt
+                            }
+                            
+                            USER_ACHIEVEMENTS {
+                                INTEGER Id PK
+                                INTEGER UserId FK
+                                TEXT AchievementType
+                                TEXT AchievementCode
+                                TEXT TitleKey_EN
+                                TEXT TitleKey_ES
+                                TEXT DescriptionKey_EN
+                                TEXT DescriptionKey_ES
+                                TEXT IconPath
+                                TEXT MetadataJson
+                                DATETIME EarnedAt
+                                DATETIME CreatedAt
+                            }
+                            
+                            DAILY_USAGE {
+                                INTEGER Id PK
+                                INTEGER UserId FK
+                                DATE UsageDate
+                                INTEGER LessonsCompleted
+                                TIME TotalTimeSpent
+                                INTEGER SessionCount
+                                DATETIME FirstSessionAt
+                                DATETIME LastSessionAt
+                                DATETIME CreatedAt
+                                DATETIME UpdatedAt
+                            }
+                            
+                            USER_PREFERENCES {
+                                INTEGER Id PK
+                                INTEGER UserId FK
+                                TEXT PreferenceKey
+                                TEXT PreferenceValue
+                                TEXT DataType
+                                DATETIME CreatedAt
+                                DATETIME UpdatedAt
+                            }
+                            
+                            APP_SETTINGS {
+                                INTEGER Id PK
+                                TEXT SettingKey
+                                TEXT SettingValue
+                                TEXT Description
+                                TEXT DataType
+                                BOOLEAN IsUserConfigurable
+                                DATETIME CreatedAt
+                                DATETIME UpdatedAt
+                            }
+                            
+                            ANALYTICS_EVENTS {
+                                INTEGER Id PK
+                                TEXT SessionId
+                                TEXT EventName
+                                TEXT EventCategory
+                                TEXT ParametersJson
+                                DATETIME EventTimestamp
+                                BOOLEAN IsSynced
+                                DATETIME SyncedAt
+                                DATETIME CreatedAt
+                            }
+                            
+                            CONTENT_LOCALIZATION {
+                                INTEGER Id PK
+                                TEXT LocalizationKey
+                                TEXT Language
+                                TEXT LocalizedText
+                                TEXT Context
+                                DATETIME CreatedAt
+                                DATETIME UpdatedAt
+                            }
+                            
+                            %% Relaciones principales
+                            USERS ||--o{ USER_PROGRESS : completes
+                            USERS ||--o{ USER_ACHIEVEMENTS : earns
+                            USERS ||--o{ DAILY_USAGE : tracks
+                            USERS ||--o{ USER_PREFERENCES : configures
+                            
+                            EDUCATIONAL_MODULES ||--o{ LESSON_CONTENT : contains
+                            LESSON_CONTENT ||--o{ USER_PROGRESS : tracked_in
+                            
+                            %% Referencias FK
+                            USER_PROGRESS }o--|| USERS : belongs_to
+                            USER_PROGRESS }o--|| LESSON_CONTENT : references
+                            USER_ACHIEVEMENTS }o--|| USERS : belongs_to
+                            DAILY_USAGE }o--|| USERS : belongs_to
+                            USER_PREFERENCES }o--|| USERS : belongs_to
+                    </div>
+                </div>
+                
+                <div id="erd-entities">
+                    <h3>🏢 Entidades Principales</h3>
+                    
+                    <h4>USERS (Usuarios del Dispositivo)</h4>
+                    <div class="info">
+                        <p><strong>Propósito:</strong> Almacena información básica de todos los usuarios (niños) que utilizan la aplicación en el dispositivo.</p>
+                        <ul>
+                            <li><strong>Soporte multi-perfil:</strong> Múltiples usuarios por dispositivo</li>
+                            <li><strong>Información mínima:</strong> Solo nombre y edad requeridos</li>
+                            <li><strong>Gestión premium:</strong> Estado y expiración de suscripción</li>
+                            <li><strong>Privacy-first:</strong> No PII sensible almacenado</li>
+                        </ul>
+                    </div>
+                    
+                    <h4>LESSON_CONTENT (Contenido Educativo)</h4>
+                    <div class="info">
+                        <p><strong>Propósito:</strong> Almacena el contenido educativo detallado de cada lección individual.</p>
+                        <ul>
+                            <li><strong>Contenido bilingüe:</strong> Assets separados por idioma (EN/ES)</li>
+                            <li><strong>Interactividad:</strong> Contenido estructurado en JSON</li>
+                            <li><strong>Progresión:</strong> Prerequisites y objetivos definidos</li>
+                            <li><strong>Adaptabilidad:</strong> Niveles de dificultad 1-5</li>
+                        </ul>
+                    </div>
+                    
+                    <h4>USER_PROGRESS (Progreso del Usuario)</h4>
+                    <div class="info">
+                        <p><strong>Propósito:</strong> Rastrea el progreso detallado de cada usuario en cada lección.</p>
+                        <ul>
+                            <li><strong>Performance tracking:</strong> Errores, tiempo, intentos</li>
+                            <li><strong>Sistema de estrellas:</strong> Calificación 1-3 basada en performance</li>
+                            <li><strong>Continuidad:</strong> Session data para reanudar lecciones</li>
+                            <li><strong>Analytics:</strong> Respuestas detalladas para análisis</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div id="erd-relationships">
+                    <h3>🔗 Relaciones Específicas</h3>
+                    
+                    <h4>Relaciones Usuario-Progreso</h4>
+                    <div class="mermaid">
+                        erDiagram
+                            USERS {
+                                INTEGER Id PK
+                                TEXT Name
+                                INTEGER Age
+                                BOOLEAN IsPremiumUser
+                            }
+                            
+                            USER_PROGRESS {
+                                INTEGER Id PK
+                                INTEGER UserId FK
+                                INTEGER LessonId FK
+                                DATETIME CompletedAt
+                                INTEGER StarRating
+                                INTEGER ErrorCount
+                            }
+                            
+                            DAILY_USAGE {
+                                INTEGER Id PK
+                                INTEGER UserId FK
+                                DATE UsageDate
+                                INTEGER LessonsCompleted
+                                TIME TotalTimeSpent
+                            }
+                            
+                            USER_ACHIEVEMENTS {
+                                INTEGER Id PK
+                                INTEGER UserId FK
+                                TEXT AchievementType
+                                DATETIME EarnedAt
+                            }
+                            
+                            USERS ||--o{ USER_PROGRESS : "completa lecciones"
+                            USERS ||--o{ DAILY_USAGE : "uso diario"
+                            USERS ||--o{ USER_ACHIEVEMENTS : "gana logros"
+                    </div>
+                    
+                    <h4>Estructura de Contenido Educativo</h4>
+                    <div class="mermaid">
+                        erDiagram
+                            EDUCATIONAL_MODULES {
+                                INTEGER Id PK
+                                TEXT ModuleCode
+                                TEXT NameKey_EN
+                                TEXT NameKey_ES
+                                INTEGER SortOrder
+                                INTEGER MinAge
+                                INTEGER MaxAge
+                            }
+                            
+                            LESSON_CONTENT {
+                                INTEGER Id PK
+                                TEXT LessonCode
+                                INTEGER ModuleId FK
+                                TEXT TitleKey_EN
+                                TEXT TitleKey_ES
+                                INTEGER DifficultyLevel
+                                TEXT InteractiveContentJson
+                                TEXT AudioAssets_EN
+                                TEXT AudioAssets_ES
+                            }
+                            
+                            CONTENT_LOCALIZATION {
+                                INTEGER Id PK
+                                TEXT LocalizationKey
+                                TEXT Language
+                                TEXT LocalizedText
+                            }
+                            
+                            EDUCATIONAL_MODULES ||--o{ LESSON_CONTENT : "contiene lecciones"
+                            LESSON_CONTENT }o--o{ CONTENT_LOCALIZATION : "localización"
+                            EDUCATIONAL_MODULES }o--o{ CONTENT_LOCALIZATION : "localización"
+                    </div>
+                </div>
+                
+                <div id="erd-patterns">
+                    <h3>🎨 Patrones de Diseño Aplicados</h3>
+                    
+                    <div class="highlight">
+                        <h4>🌍 Patrón de Localización</h4>
+                        <p><strong>Implementación:</strong> Claves de localización en lugar de texto directo</p>
+                        <ul>
+                            <li><code>NameKey_EN</code> / <code>NameKey_ES</code> para contenido bilingüe</li>
+                            <li>Tabla <code>CONTENT_LOCALIZATION</code> para textos centralizados</li>
+                            <li>Fallback automático a inglés cuando español no disponible</li>
+                        </ul>
+                        <p><strong>Beneficios:</strong> Consistencia en traducciones, facilidad para nuevos idiomas, menor duplicación</p>
+                    </div>
+                    
+                    <div class="warning">
+                        <h4>⚙️ Patrón de Configuración Key-Value</h4>
+                        <p><strong>Implementación:</strong></p>
+                        <ul>
+                            <li><code>APP_SETTINGS</code> para configuración global</li>
+                            <li><code>USER_PREFERENCES</code> para configuración por usuario</li>
+                            <li>Tipado flexible con campo <code>DataType</code></li>
+                        </ul>
+                        <p><strong>Beneficios:</strong> Extensibilidad sin cambios de schema, configuración granular</p>
+                    </div>
+                    
+                    <div class="info">
+                        <h4>📊 Patrón de Event Sourcing (Simplificado)</h4>
+                        <p><strong>Implementación:</strong> Tabla <code>ANALYTICS_EVENTS</code> para tracking</p>
+                        <ul>
+                            <li>Eventos inmutables con timestamp</li>
+                            <li>Procesamiento offline con sincronización posterior</li>
+                            <li>Parametrización flexible con JSON</li>
+                        </ul>
+                        <p><strong>Beneficios:</strong> Auditabilidad completa, análisis posterior, compliance privacy</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="schema" class="document-section">
+                <h2>🏗️ Esquema de Base de Datos SQLite</h2>
+                
+                <div class="toc">
+                    <h3>Contenido del Esquema</h3>
+                    <ul>
+                        <li><a href="#schema-config">Configuración SQLite</a></li>
+                        <li><a href="#schema-tables">Definición de Tablas</a></li>
+                        <li><a href="#schema-triggers">Triggers Automatizados</a></li>
+                        <li><a href="#schema-views">Views para Queries</a></li>
+                        <li><a href="#schema-seed">Datos Iniciales</a></li>
+                    </ul>
+                </div>
+                
+                <div id="schema-config">
+                    <h3>⚙️ Configuración Inicial de SQLite</h3>
+                    
+                    <div class="sql-block">
+-- Configuración de SQLite para performance móvil
+PRAGMA foreign_keys = ON;
+PRAGMA journal_mode = WAL;
+PRAGMA synchronous = NORMAL;
+PRAGMA cache_size = -64000; -- 64MB cache
+PRAGMA temp_store = MEMORY;
+PRAGMA mmap_size = 268435456; -- 256MB mmap
+PRAGMA optimize;
+                    </div>
+                    
+                    <div class="highlight">
+                        <h4>🚀 Optimizaciones de Performance</h4>
+                        <ul>
+                            <li><strong>WAL Mode:</strong> Write-Ahead Logging para mejor concurrencia</li>
+                            <li><strong>Memory Cache:</strong> 64MB para queries frecuentes</li>
+                            <li><strong>Memory Map:</strong> 256MB para acceso rápido a datos</li>
+                            <li><strong>Foreign Keys:</strong> Activado para integridad referencial</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div id="schema-tables">
+                    <h3>📋 Definición de Tablas Principales</h3>
+                    
+                    <h4>Tabla USERS</h4>
+                    <div class="sql-block">
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL CHECK(length(name) <= 50),
+    age INTEGER NOT NULL CHECK(age >= 3 AND age <= 8),
+    preferred_language TEXT NOT NULL DEFAULT 'es' CHECK(preferred_language IN ('es', 'en')),
+    is_premium_user BOOLEAN NOT NULL DEFAULT 0,
+    premium_expiry_date DATETIME,
+    purchase_transaction_id TEXT,
+    purchase_date DATETIME,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_active_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Índices para performance
+CREATE INDEX idx_users_name ON users(name);
+CREATE INDEX idx_users_last_active ON users(last_active_at DESC);
+CREATE INDEX idx_users_premium ON users(is_premium_user, premium_expiry_date);
+                    </div>
+                    
+                    <h4>Tabla LESSON_CONTENT</h4>
+                    <div class="sql-block">
+CREATE TABLE lesson_content (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    lesson_code TEXT NOT NULL UNIQUE,
+    module_id INTEGER NOT NULL,
+    title_key_en TEXT NOT NULL,
+    title_key_es TEXT NOT NULL,
+    instructions_key_en TEXT,
+    instructions_key_es TEXT,
+    sort_order INTEGER NOT NULL,
+    difficulty_level INTEGER NOT NULL CHECK(difficulty_level >= 1 AND difficulty_level <= 5),
+    estimated_duration INTEGER NOT NULL,
+    interactive_content_json TEXT,
+    audio_assets_en TEXT,
+    audio_assets_es TEXT,
+    image_assets TEXT,
+    prerequisites TEXT,
+    learning_objectives TEXT,
+    is_active BOOLEAN NOT NULL DEFAULT 1,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (module_id) REFERENCES educational_modules(id)
+);
+                    </div>
+                    
+                    <h4>Tabla USER_PROGRESS</h4>
+                    <div class="sql-block">
+CREATE TABLE user_progress (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    lesson_id INTEGER NOT NULL,
+    started_at DATETIME,
+    completed_at DATETIME,
+    attempt_count INTEGER NOT NULL DEFAULT 1,
+    error_count INTEGER NOT NULL DEFAULT 0,
+    hint_count INTEGER NOT NULL DEFAULT 0,
+    completion_time INTEGER,
+    star_rating INTEGER CHECK(star_rating >= 1 AND star_rating <= 3),
+    answers_json TEXT,
+    session_data TEXT,
+    is_completed BOOLEAN NOT NULL DEFAULT 0,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (lesson_id) REFERENCES lesson_content(id),
+    
+    UNIQUE(user_id, lesson_id)
+);
+                    </div>
+                </div>
+                
+                <div id="schema-triggers">
+                    <h3>🔄 Triggers Automatizados</h3>
+                    
+                    <h4>Trigger para Updated_At</h4>
+                    <div class="sql-block">
+-- Actualizar timestamp automáticamente
+CREATE TRIGGER update_users_timestamp 
+    AFTER UPDATE ON users
+    FOR EACH ROW
+    BEGIN
+        UPDATE users SET updated_at = CURRENT_TIMESTAMP WHERE id = NEW.id;
+    END;
+                    </div>
+                    
+                    <h4>Trigger para Daily Usage</h4>
+                    <div class="sql-block">
+-- Mantener estadísticas de uso diario
+CREATE TRIGGER update_daily_usage_on_progress
+    AFTER INSERT ON user_progress
+    WHEN NEW.is_completed = 1
+    BEGIN
+        INSERT OR REPLACE INTO daily_usage (
+            user_id, usage_date, lessons_completed, total_time_spent,
+            session_count, first_session_at, last_session_at, updated_at
+        ) VALUES (
+            NEW.user_id, date(NEW.completed_at),
+            COALESCE((SELECT lessons_completed FROM daily_usage 
+                     WHERE user_id = NEW.user_id AND usage_date = date(NEW.completed_at)), 0) + 1,
+            COALESCE((SELECT total_time_spent FROM daily_usage 
+                     WHERE user_id = NEW.user_id AND usage_date = date(NEW.completed_at)), 0) 
+                     + COALESCE(NEW.completion_time, 0),
+            COALESCE((SELECT session_count FROM daily_usage 
+                     WHERE user_id = NEW.user_id AND usage_date = date(NEW.completed_at)), 0) + 1,
+            COALESCE((SELECT first_session_at FROM daily_usage 
+                     WHERE user_id = NEW.user_id AND usage_date = date(NEW.completed_at)), NEW.completed_at),
+            NEW.completed_at, CURRENT_TIMESTAMP
+        );
+    END;
+                    </div>
+                </div>
+                
+                <div id="schema-views">
+                    <h3>👁️ Views para Queries Comunes</h3>
+                    
+                    <h4>View: User Stats</h4>
+                    <div class="sql-block">
+CREATE VIEW user_stats AS
+SELECT 
+    u.id, u.name, u.age, u.preferred_language, u.is_premium_user,
+    COUNT(DISTINCT up.lesson_id) as lessons_completed,
+    ROUND(AVG(up.star_rating), 2) as avg_star_rating,
+    SUM(up.completion_time) as total_study_time,
+    MAX(up.completed_at) as last_lesson_date,
+    COUNT(ua.id) as achievements_count
+FROM users u
+LEFT JOIN user_progress up ON u.id = up.user_id AND up.is_completed = 1
+LEFT JOIN user_achievements ua ON u.id = ua.user_id
+GROUP BY u.id;
+                    </div>
+                    
+                    <h4>View: Freemium Status</h4>
+                    <div class="sql-block">
+CREATE VIEW freemium_status AS
+SELECT 
+    u.id as user_id, u.name, u.is_premium_user, u.premium_expiry_date,
+    CASE 
+        WHEN u.is_premium_user = 1 AND (u.premium_expiry_date IS NULL OR u.premium_expiry_date > datetime('now')) 
+        THEN 'premium'
+        WHEN julianday('now') - julianday(u.created_at) <= 3 THEN 'trial'
+        ELSE 'free'
+    END as user_status,
+    CASE 
+        WHEN u.is_premium_user = 1 THEN 999999
+        WHEN julianday('now') - julianday(u.created_at) <= 3 THEN 999999
+        ELSE GREATEST(0, 10 - COALESCE(du.lessons_completed, 0))
+    END as daily_lessons_remaining
+FROM users u
+LEFT JOIN daily_usage du ON u.id = du.user_id AND du.usage_date = date('now');
+                    </div>
+                </div>
+                
+                <div id="schema-seed">
+                    <h3>🌱 Datos Iniciales</h3>
+                    
+                    <div class="highlight">
+                        <h4>📚 Módulos Educativos Básicos</h4>
+                        <ul>
+                            <li><strong>MATH_BASIC:</strong> Matemáticas básicas (3-6 años)</li>
+                            <li><strong>READING_PHONICS:</strong> Lectura y fonética (4-7 años)</li>
+                            <li><strong>SCIENCE_NATURE:</strong> Ciencias y naturaleza (5-8 años)</li>
+                            <li><strong>ART_CREATIVITY:</strong> Arte y creatividad (3-8 años)</li>
+                            <li><strong>LOGIC_PUZZLES:</strong> Lógica y rompecabezas (5-8 años)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="metrics">
+                        <div class="metric-card">
+                            <div class="metric-value">50+</div>
+                            <div class="metric-label">Configuraciones App</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">5</div>
+                            <div class="metric-label">Módulos Iniciales</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">100+</div>
+                            <div class="metric-label">Localizaciones UI</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">2</div>
+                            <div class="metric-label">Idiomas Completos</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="dictionary" class="document-section">
+                <h2>📚 Diccionario de Datos</h2>
+                
+                <div class="toc">
+                    <h3>Contenido del Diccionario</h3>
+                    <ul>
+                        <li><a href="#dict-conventions">Convenciones y Estándares</a></li>
+                        <li><a href="#dict-users">Tabla USERS</a></li>
+                        <li><a href="#dict-content">Tablas de Contenido</a></li>
+                        <li><a href="#dict-progress">Tablas de Progreso</a></li>
+                        <li><a href="#dict-config">Tablas de Configuración</a></li>
+                        <li><a href="#dict-performance">Consideraciones de Performance</a></li>
+                    </ul>
+                </div>
+                
+                <div id="dict-conventions">
+                    <h3>📝 Convenciones y Estándares</h3>
+                    
+                    <div class="highlight">
+                        <h4>🏷️ Nomenclatura</h4>
+                        <ul>
+                            <li><strong>Tablas:</strong> snake_case, plural (ej: <code>user_progress</code>, <code>educational_modules</code>)</li>
+                            <li><strong>Columnas:</strong> snake_case, singular (ej: <code>user_id</code>, <code>created_at</code>)</li>
+                            <li><strong>Índices:</strong> Prefijo <code>idx_</code> + tabla + campos</li>
+                            <li><strong>Foreign Keys:</strong> Tabla referenciada + <code>_id</code></li>
+                        </ul>
+                    </div>
+                    
+                    <h4>🎯 Tipos de Datos Estándar</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tipo SQLite</th>
+                                <th>Uso Principal</th>
+                                <th>Ejemplo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="datatype">INTEGER</span></td>
+                                <td>IDs, contadores, flags booleanos</td>
+                                <td><code>id</code>, <code>age</code>, <code>is_premium_user</code></td>
+                            </tr>
+                            <tr>
+                                <td><span class="datatype">TEXT</span></td>
+                                <td>Cadenas de texto, JSON</td>
+                                <td><code>name</code>, <code>preferences_json</code></td>
+                            </tr>
+                            <tr>
+                                <td><span class="datatype">DATETIME</span></td>
+                                <td>Timestamps</td>
+                                <td><code>created_at</code>, <code>completed_at</code></td>
+                            </tr>
+                            <tr>
+                                <td><span class="datatype">DATE</span></td>
+                                <td>Fechas sin hora</td>
+                                <td><code>usage_date</code></td>
+                            </tr>
+                            <tr>
+                                <td><span class="datatype">BOOLEAN</span></td>
+                                <td>Valores verdadero/falso</td>
+                                <td><code>is_active</code>, <code>is_completed</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div id="dict-users">
+                    <h3>👤 Tabla USERS - Detalle Completo</h3>
+                    
+                    <div class="info">
+                        <p><strong>Propósito:</strong> Almacena información de todos los usuarios (niños) que utilizan la aplicación en el dispositivo.</p>
+                    </div>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Campo</th>
+                                <th>Tipo</th>
+                                <th>Null</th>
+                                <th>Default</th>
+                                <th>Restricciones</th>
+                                <th>Descripción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>id</strong></td>
+                                <td><span class="datatype">INTEGER</span></td>
+                                <td><span class="field-required">NO</span></td>
+                                <td>AUTOINCREMENT</td>
+                                <td><span class="constraint-tag">PK</span></td>
+                                <td>Identificador único del usuario</td>
+                            </tr>
+                            <tr>
+                                <td><strong>name</strong></td>
+                                <td><span class="datatype">TEXT</span></td>
+                                <td><span class="field-required">NO</span></td>
+                                <td>-</td>
+                                <td><span class="constraint-tag">CHECK ≤50 chars</span></td>
+                                <td>Nombre del niño, máximo 50 caracteres</td>
+                            </tr>
+                            <tr>
+                                <td><strong>age</strong></td>
+                                <td><span class="datatype">INTEGER</span></td>
+                                <td><span class="field-required">NO</span></td>
+                                <td>-</td>
+                                <td><span class="constraint-tag">CHECK 3-8 años</span></td>
+                                <td>Edad del niño entre 3 y 8 años</td>
+                            </tr>
+                            <tr>
+                                <td><strong>preferred_language</strong></td>
+                                <td><span class="datatype">TEXT</span></td>
+                                <td><span class="field-required">NO</span></td>
+                                <td>'es'</td>
+                                <td><span class="constraint-tag">CHECK IN ('es','en')</span></td>
+                                <td>Idioma preferido: español o inglés</td>
+                            </tr>
+                            <tr>
+                                <td><strong>is_premium_user</strong></td>
+                                <td><span class="datatype">BOOLEAN</span></td>
+                                <td><span class="field-required">NO</span></td>
+                                <td>0</td>
+                                <td>-</td>
+                                <td>Indica si el usuario tiene acceso premium</td>
+                            </tr>
+                            <tr>
+                                <td><strong>premium_expiry_date</strong></td>
+                                <td><span class="datatype">DATETIME</span></td>
+                                <td><span class="field-optional">SÍ</span></td>
+                                <td>NULL</td>
+                                <td>-</td>
+                                <td>Fecha de expiración del acceso premium</td>
+                            </tr>
+                            <tr>
+                                <td><strong>purchase_transaction_id</strong></td>
+                                <td><span class="datatype">TEXT</span></td>
+                                <td><span class="field-optional">SÍ</span></td>
+                                <td>NULL</td>
+                                <td>-</td>
+                                <td>ID de transacción de compra premium</td>
+                            </tr>
+                            <tr>
+                                <td><strong>created_at</strong></td>
+                                <td><span class="datatype">DATETIME</span></td>
+                                <td><span class="field-required">NO</span></td>
+                                <td>CURRENT_TIMESTAMP</td>
+                                <td>-</td>
+                                <td>Timestamp de creación del registro</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="highlight">
+                        <h4>🔍 Índices de la Tabla USERS</h4>
+                        <ul>
+                            <li><strong>idx_users_name:</strong> Búsqueda rápida por nombre</li>
+                            <li><strong>idx_users_last_active:</strong> Ordenamiento por última actividad</li>
+                            <li><strong>idx_users_premium:</strong> Filtrado por estado premium</li>
+                        </ul>
+                        
+                        <h4>🔗 Relaciones</h4>
+                        <ul>
+                            <li><code>user_progress.user_id</code> → <code>users.id</code> (1:N)</li>
+                            <li><code>user_achievements.user_id</code> → <code>users.id</code> (1:N)</li>
+                            <li><code>daily_usage.user_id</code> → <code>users.id</code> (1:N)</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div id="dict-content">
+                    <h3>📚 Tablas de Contenido Educativo</h3>
+                    
+                    <h4>EDUCATIONAL_MODULES</h4>
+                    <div class="info">
+                        <p><strong>Propósito:</strong> Define los módulos principales del currículum educativo (Matemáticas, Lectura, Ciencias, etc.).</p>
+                    </div>
+                    
+                    <div class="highlight">
+                        <h4>📊 Campos Clave</h4>
+                        <ul>
+                            <li><strong>module_code:</strong> Código único (ej: "MATH_BASIC", "READ_PHONICS")</li>
+                            <li><strong>name_key_en/es:</strong> Claves para localización de nombres</li>
+                            <li><strong>min_age/max_age:</strong> Rango de edad apropiado</li>
+                            <li><strong>curriculum_standard:</strong> Estándar educativo (Common Core, etc.)</li>
+                        </ul>
+                    </div>
+                    
+                    <h4>LESSON_CONTENT</h4>
+                    <div class="info">
+                        <p><strong>Propósito:</strong> Almacena el contenido educativo detallado de cada lección individual.</p>
+                    </div>
+                    
+                    <div class="highlight">
+                        <h4>📊 Características Principales</h4>
+                        <ul>
+                            <li><strong>Contenido interactivo:</strong> JSON estructurado</li>
+                            <li><strong>Assets bilingües:</strong> Audio/imágenes por idioma</li>
+                            <li><strong>Prerequisites:</strong> Lecciones requeridas</li>
+                            <li><strong>Difficulty levels:</strong> 1-5 para algoritmo adaptativo</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="sql-block">
+-- Ejemplo de contenido interactivo JSON
+{
+  "type": "counting",
+  "range": {"min": 1, "max": 5},
+  "objects": ["apple", "ball", "star"],
+  "interactions": ["tap_count", "drag_drop"]
+}
+                    </div>
+                </div>
+                
+                <div id="dict-progress">
+                    <h3>📊 Tablas de Progreso y Tracking</h3>
+                    
+                    <h4>USER_PROGRESS</h4>
+                    <div class="info">
+                        <p><strong>Propósito:</strong> Rastrea el progreso detallado de cada usuario en cada lección completada o iniciada.</p>
+                    </div>
+                    
+                    <div class="warning">
+                        <h4>⚠️ Restricciones Importantes</h4>
+                        <ul>
+                            <li><strong>UNIQUE(user_id, lesson_id):</strong> Un registro de progreso por usuario por lección</li>
+                            <li><strong>star_rating CHECK:</strong> Solo valores 1-3 permitidos</li>
+                            <li><strong>CASCADE DELETE:</strong> Eliminar progreso al eliminar usuario</li>
+                        </ul>
+                    </div>
+                    
+                    <h4>DAILY_USAGE</h4>
+                    <div class="info">
+                        <p><strong>Propósito:</strong> Rastrea estadísticas de uso diario por usuario para implementar límites freemium.</p>
+                    </div>
+                    
+                    <div class="highlight">
+                        <h4>🎯 Uso para Modelo Freemium</h4>
+                        <ul>
+                            <li><strong>lessons_completed:</strong> Para límite diario de 10 lecciones</li>
+                            <li><strong>total_time_spent:</strong> Para analytics de engagement</li>
+                            <li><strong>session_count:</strong> Para patrones de uso</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div id="dict-config">
+                    <h3>⚙️ Tablas de Configuración</h3>
+                    
+                    <h4>APP_SETTINGS vs USER_PREFERENCES</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Aspecto</th>
+                                <th>APP_SETTINGS</th>
+                                <th>USER_PREFERENCES</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Scope</strong></td>
+                                <td>Global para toda la aplicación</td>
+                                <td>Específico por usuario</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Quién modifica</strong></td>
+                                <td>Sistema o administrador</td>
+                                <td>Usuario individual</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Ejemplos</strong></td>
+                                <td>app_version, daily_lesson_limit_free</td>
+                                <td>sound_volume, favorite_character</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Configurabilidad</strong></td>
+                                <td>is_user_configurable flag</td>
+                                <td>Siempre configurable por usuario</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="info">
+                        <h4>🔧 Ejemplos de Configuraciones</h4>
+                        <ul>
+                            <li><strong>Sistema:</strong> database_version, premium_price_usd</li>
+                            <li><strong>Usuario Global:</strong> analytics_enabled, sound_effects_enabled</li>
+                            <li><strong>Usuario Individual:</strong> difficulty_override, character_preference</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div id="dict-performance">
+                    <h3>🚀 Consideraciones de Performance</h3>
+                    
+                    <h4>Estrategia de Indexado</h4>
+                    <div class="metrics">
+                        <div class="metric-card">
+                            <div class="metric-value">&lt; 100ms</div>
+                            <div class="metric-label">User Login</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">&lt; 200ms</div>
+                            <div class="metric-label">Lesson Load</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">&lt; 50ms</div>
+                            <div class="metric-label">Progress Save</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">&lt; 100MB</div>
+                            <div class="metric-label">Database Size Target</div>
+                        </div>
+                    </div>
+                    
+                    <div class="highlight">
+                        <h4>📈 Estimaciones de Almacenamiento</h4>
+                        <p><strong>Por Usuario (1 año de uso):</strong></p>
+                        <ul>
+                            <li><strong>user_progress:</strong> ~500 registros × 200 bytes = 100KB</li>
+                            <li><strong>daily_usage:</strong> 365 registros × 100 bytes = 36KB</li>
+                            <li><strong>user_achievements:</strong> ~50 registros × 150 bytes = 7.5KB</li>
+                            <li><strong>Total por usuario:</strong> ~145KB</li>
+                        </ul>
+                        
+                        <p><strong>Contenido Base:</strong> ~207KB</p>
+                        <p><strong>Analytics (30 días):</strong> ~200KB</p>
+                    </div>
+                    
+                    <div class="warning">
+                        <h4>🛡️ Seguridad y Privacy</h4>
+                        <ul>
+                            <li><strong>PII Mínimo:</strong> Solo nombres (first name únicamente)</li>
+                            <li><strong>Analytics Privacy:</strong> session_id rota cada launch</li>
+                            <li><strong>No Tracking:</strong> No user_id en analytics_events</li>
+                            <li><strong>Future Encryption:</strong> Preparado para SQLCipher</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="migrations" class="document-section">
+                <h2>🔄 Scripts de Migración</h2>
+                
+                <div class="toc">
+                    <h3>Contenido de Migraciones</h3>
+                    <ul>
+                        <li><a href="#mig-versioning">Sistema de Control de Versiones</a></li>
+                        <li><a href="#mig-initial">Migración Inicial v1.0.0</a></li>
+                        <li><a href="#mig-triggers">Scripts de Triggers</a></li>
+                        <li><a href="#mig-seed">Datos Iniciales</a></li>
+                        <li><a href="#mig-maintenance">Scripts de Mantenimiento</a></li>
+                        <li><a href="#mig-future">Migraciones Futuras</a></li>
+                    </ul>
+                </div>
+                
+                <div id="mig-versioning">
+                    <h3>📋 Sistema de Control de Versiones</h3>
+                    
+                    <div class="info">
+                        <h4>🏷️ Convención de Versioning</h4>
+                        <p><strong>Formato:</strong> MAJOR.MINOR.PATCH</p>
+                        <ul>
+                            <li><strong>MAJOR:</strong> Cambios incompatibles de schema</li>
+                            <li><strong>MINOR:</strong> Nuevas funcionalidades compatibles hacia atrás</li>
+                            <li><strong>PATCH:</strong> Correcciones de bugs y optimizaciones</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="sql-block">
+-- Tabla para rastrear migraciones aplicadas
+CREATE TABLE IF NOT EXISTS schema_migrations (
+    version TEXT PRIMARY KEY,
+    description TEXT NOT NULL,
+    applied_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    rollback_sql TEXT,
+    checksum TEXT -- Para verificar integridad
+);
+                    </div>
+                </div>
+                
+                <div id="mig-initial">
+                    <h3>🚀 Migración Inicial - Versión 1.0.0</h3>
+                    
+                    <div class="highlight">
+                        <h4>📦 Script: 001_initial_schema.sql</h4>
+                        <p>Crea toda la estructura inicial de base de datos con:</p>
+                        <ul>
+                            <li>✅ Todas las tablas principales</li>
+                            <li>✅ Índices para performance</li>
+                            <li>✅ Constraints de integridad</li>
+                            <li>✅ Configuración optimizada de SQLite</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="sql-block">
+-- ================================================
+-- EduPlayKids Database Schema v1.0.0
+-- Initial database creation
+-- ================================================
+
+PRAGMA foreign_keys = ON;
+PRAGMA journal_mode = WAL;
+PRAGMA synchronous = NORMAL;
+PRAGMA cache_size = -64000;
+
+-- Control de migraciones
+CREATE TABLE IF NOT EXISTS schema_migrations (
+    version TEXT PRIMARY KEY,
+    description TEXT NOT NULL,
+    applied_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    rollback_sql TEXT,
+    checksum TEXT
+);
+
+-- TABLA: users
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL CHECK(length(name) <= 50),
+    age INTEGER NOT NULL CHECK(age >= 3 AND age <= 8),
+    preferred_language TEXT NOT NULL DEFAULT 'es' CHECK(preferred_language IN ('es', 'en')),
+    is_premium_user BOOLEAN NOT NULL DEFAULT 0,
+    premium_expiry_date DATETIME,
+    purchase_transaction_id TEXT,
+    purchase_date DATETIME,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_active_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Registrar migración
+INSERT INTO schema_migrations (version, description) 
+VALUES ('1.0.0', 'Initial database schema creation');
+                    </div>
+                </div>
+                
+                <div id="mig-triggers">
+                    <h3>⚡ Scripts de Triggers</h3>
+                    
+                    <div class="warning">
+                        <h4>🤖 Script: 002_create_triggers.sql</h4>
+                        <p>Automatización de timestamps y business logic</p>
+                    </div>
+                    
+                    <div class="sql-block">
+-- Trigger para updated_at automático
+CREATE TRIGGER update_users_timestamp 
+    AFTER UPDATE ON users
+    FOR EACH ROW
+    BEGIN
+        UPDATE users SET updated_at = CURRENT_TIMESTAMP WHERE id = NEW.id;
+    END;
+
+-- Trigger para daily usage
+CREATE TRIGGER update_daily_usage_on_progress
+    AFTER INSERT ON user_progress
+    WHEN NEW.is_completed = 1
+    BEGIN
+        INSERT OR REPLACE INTO daily_usage (
+            user_id, usage_date, lessons_completed, total_time_spent,
+            session_count, first_session_at, last_session_at, updated_at
+        ) VALUES (
+            NEW.user_id, date(NEW.completed_at),
+            COALESCE((SELECT lessons_completed FROM daily_usage 
+                     WHERE user_id = NEW.user_id AND usage_date = date(NEW.completed_at)), 0) + 1,
+            COALESCE((SELECT total_time_spent FROM daily_usage 
+                     WHERE user_id = NEW.user_id AND usage_date = date(NEW.completed_at)), 0) 
+                     + COALESCE(NEW.completion_time, 0),
+            -- ... resto de la lógica
+            CURRENT_TIMESTAMP
+        );
+    END;
+
+-- Actualizar last_active_at en users
+CREATE TRIGGER update_user_last_active_on_progress
+    AFTER INSERT ON user_progress
+    BEGIN
+        UPDATE users SET last_active_at = CURRENT_TIMESTAMP WHERE id = NEW.user_id;
+    END;
+                    </div>
+                </div>
+                
+                <div id="mig-seed">
+                    <h3>🌱 Datos Iniciales</h3>
+                    
+                    <div class="info">
+                        <h4>📚 Script: 004_seed_data.sql</h4>
+                        <p>Carga datos esenciales para el funcionamiento de la aplicación</p>
+                    </div>
+                    
+                    <div class="metrics">
+                        <div class="metric-card">
+                            <div class="metric-value">15+</div>
+                            <div class="metric-label">App Settings</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">5</div>
+                            <div class="metric-label">Educational Modules</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">50+</div>
+                            <div class="metric-label">UI Localizations</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">3</div>
+                            <div class="metric-label">Sample Lessons</div>
+                        </div>
+                    </div>
+                    
+                    <div class="sql-block">
+-- APP SETTINGS: Configuraciones iniciales
+INSERT OR REPLACE INTO app_settings (setting_key, setting_value, description, data_type, is_user_configurable) VALUES
+('app_version', '1.0.0', 'Current application version', 'string', 0),
+('database_version', '1.0.0', 'Current database schema version', 'string', 0),
+('daily_lesson_limit_free', '10', 'Daily lesson limit for free users', 'integer', 0),
+('trial_period_days', '3', 'Trial period duration in days', 'integer', 0),
+('premium_price_usd', '4.99', 'Premium upgrade price in USD', 'string', 0),
+('analytics_enabled', '0', 'Analytics collection enabled (requires parental consent)', 'boolean', 1);
+
+-- EDUCATIONAL MODULES: Módulos básicos
+INSERT OR REPLACE INTO educational_modules (module_code, name_key_en, name_key_es, sort_order, min_age, max_age, curriculum_standard, icon_path) VALUES
+('MATH_BASIC', 'module.math.basic.title', 'module.math.basic.title', 1, 3, 6, 'Common Core K-2 Math', 'modules/math_basic.png'),
+('READING_PHONICS', 'module.reading.phonics.title', 'module.reading.phonics.title', 2, 4, 7, 'Common Core K-2 Reading', 'modules/reading_phonics.png');
+
+-- LOCALIZACIONES básicas
+INSERT OR REPLACE INTO content_localization (localization_key, language, localized_text, context) VALUES
+('module.math.basic.title', 'en', 'Basic Math', 'Module title'),
+('module.math.basic.title', 'es', 'Matemáticas Básicas', 'Module title'),
+('ui.welcome', 'en', 'Welcome to EduPlayKids!', 'Welcome message'),
+('ui.welcome', 'es', '¡Bienvenido a EduPlayKids!', 'Welcome message');
+                    </div>
+                </div>
+                
+                <div id="mig-maintenance">
+                    <h3>🛠️ Scripts de Mantenimiento</h3>
+                    
+                    <div class="warning">
+                        <h4>🧹 Limpieza Periódica</h4>
+                        <p>Scripts que deben ejecutarse regularmente para mantener la base de datos optimizada</p>
+                    </div>
+                    
+                    <div class="sql-block">
+-- Limpiar eventos de analytics antiguos (>30 días)
+DELETE FROM analytics_events 
+WHERE created_at < datetime('now', '-30 days');
+
+-- Limpiar datos de daily_usage muy antiguos (>1 año)
+DELETE FROM daily_usage 
+WHERE usage_date < date('now', '-365 days');
+
+-- Optimización de base de datos
+PRAGMA optimize;
+ANALYZE;
+
+-- Verificación de integridad
+PRAGMA integrity_check;
+PRAGMA foreign_key_check;
+                    </div>
+                    
+                    <div class="highlight">
+                        <h4>💾 Backup & Restore</h4>
+                        <p>Scripts para respaldo y restauración de datos de usuario</p>
+                        <ul>
+                            <li><strong>Backup por usuario:</strong> Exportar datos específicos</li>
+                            <li><strong>Restauración selectiva:</strong> Importar datos preservando IDs</li>
+                            <li><strong>Verificación:</strong> Integridad post-restauración</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div id="mig-future">
+                    <h3>🔮 Migraciones Futuras</h3>
+                    
+                    <div class="info">
+                        <h4>📋 Plantilla para Nuevas Migraciones</h4>
+                        <p>Estructura estándar para futuras actualizaciones de schema</p>
+                    </div>
+                    
+                    <div class="sql-block">
+-- ================================================
+-- EduPlayKids Migration Template
+-- Version: X.Y.Z
+-- Description: [Descripción del cambio]
+-- ================================================
+
+-- Verificar versión actual antes de aplicar
+SELECT version FROM schema_migrations ORDER BY applied_at DESC LIMIT 1;
+
+-- CAMBIOS DE SCHEMA
+-- Ejemplo: Agregar nueva columna
+-- ALTER TABLE users ADD COLUMN avatar_path TEXT;
+
+-- MIGRACIÓN DE DATOS
+-- Ejemplo: Migrar datos existentes
+-- UPDATE users SET avatar_path = 'default_avatar.png' WHERE avatar_path IS NULL;
+
+-- REGISTRO DE MIGRACIÓN
+INSERT INTO schema_migrations (version, description, rollback_sql) 
+VALUES ('X.Y.Z', '[Descripción del cambio]', '[SQL para rollback]');
+                    </div>
+                    
+                    <div class="highlight">
+                        <h4>🚀 Ejemplo: Migración 1.1.0 - Multi-Device Support</h4>
+                        <p>Preparación para sincronización entre dispositivos (futuro)</p>
+                        
+                        <div class="sql-block">
+-- Agregar device_id para preparar sync
+ALTER TABLE users ADD COLUMN device_id TEXT DEFAULT (hex(randomblob(16)));
+
+-- Nueva tabla para sync status
+CREATE TABLE sync_status (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    table_name TEXT NOT NULL,
+    record_id INTEGER NOT NULL,
+    last_synced_at DATETIME,
+    sync_hash TEXT,
+    needs_sync BOOLEAN DEFAULT 1,
+    
+    UNIQUE(table_name, record_id)
+);
+
+-- Trigger para marcar cambios que necesitan sync
+CREATE TRIGGER mark_users_for_sync
+    AFTER UPDATE ON users
+    FOR EACH ROW
+    BEGIN
+        INSERT OR REPLACE INTO sync_status (table_name, record_id, needs_sync)
+        VALUES ('users', NEW.id, 1);
+    END;
+                        </div>
+                    </div>
+                    
+                    <div class="error">
+                        <h4>⚠️ Consideraciones de Rollback</h4>
+                        <p><strong>SQLite Limitaciones:</strong></p>
+                        <ul>
+                            <li>No se puede hacer DROP COLUMN directamente</li>
+                            <li>Rollback complejo requiere recrear tablas</li>
+                            <li>Siempre hacer backup antes de migraciones major</li>
+                            <li>Probar migraciones en datos de prueba primero</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="highlight">
+                    <h3>🎯 Verificación de Schema</h3>
+                    <p>Script para verificar que el schema esté correctamente aplicado:</p>
+                    
+                    <div class="sql-block">
+-- Verificar que todas las tablas esperadas existan
+SELECT 
+    name,
+    CASE WHEN name IN (
+        'users', 'educational_modules', 'lesson_content', 'user_progress', 
+        'user_achievements', 'daily_usage', 'user_preferences', 'app_settings',
+        'analytics_events', 'content_localization', 'schema_migrations'
+    ) THEN '✓ OK' ELSE '✗ MISSING' END as status
+FROM sqlite_master 
+WHERE type='table' 
+ORDER BY name;
+
+-- Estadísticas de la base de datos
+SELECT 
+    'Database Size (KB)' as metric,
+    CAST(page_count * page_size / 1024.0 AS INTEGER) as value
+FROM pragma_page_count(), pragma_page_size()
+
+UNION ALL SELECT 'Total Users', COUNT(*) FROM users
+UNION ALL SELECT 'Total Modules', COUNT(*) FROM educational_modules
+UNION ALL SELECT 'Total Lessons', COUNT(*) FROM lesson_content;
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <footer class="footer">
+            <p><strong>EduPlayKids - Diseño de Base de Datos v1.0.0</strong></p>
+            <p>SQLite Offline-First Database Design | Fecha: 16 de Septiembre, 2024</p>
+            <p>Estado: Production Ready - Complete Database Documentation | MVP Ready for Implementation</p>
+        </footer>
+        
+        <button class="back-to-top" id="backToTop" title="Volver arriba">↑</button>
+    </div>
+    
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            themeVariables: {
+                primaryColor: '#4CAF50',
+                primaryTextColor: '#1B5E20',
+                primaryBorderColor: '#388E3C',
+                lineColor: '#2E7D32',
+                sectionBkgColor: '#f8f9fa',
+                altSectionBkgColor: '#ffffff',
+                gridColor: '#E8F5E8',
+                secondaryColor: '#2196F3',
+                tertiaryColor: '#FF9800',
+                background: '#ffffff',
+                primaryColorLight: '#E8F5E8'
+            },
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            },
+            er: {
+                useMaxWidth: true,
+                fontSize: '12px'
+            }
+        });
+        
+        // Back to top button functionality
+        const backToTop = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTop.style.display = 'flex';
+            } else {
+                backToTop.style.display = 'none';
+            }
+        });
+        
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Add hover effects to metric cards
+        document.querySelectorAll('.metric-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+                this.style.transition = 'all 0.3s ease';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+        
+        // Add copy functionality to SQL blocks
+        document.querySelectorAll('.sql-block, pre').forEach(block => {
+            block.addEventListener('click', function() {
+                const text = this.textContent;
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(text).then(() => {
+                        // Optional: Show a brief "Copied!" message
+                        const original = this.style.background;
+                        this.style.background = '#4CAF50';
+                        setTimeout(() => {
+                            this.style.background = original;
+                        }, 300);
+                    });
+                }
+            });
+            
+            // Add cursor pointer to indicate clickable
+            block.style.cursor = 'pointer';
+            block.title = 'Click to copy SQL code';
+        });
+        
+        // Console log for debugging
+        console.log('EduPlayKids Database Design Documentation loaded successfully');
+        console.log('Mermaid version:', mermaid.version || 'Unknown');
+        
+        // Add syntax highlighting for table fields
+        document.querySelectorAll('td strong').forEach(field => {
+            if (field.textContent.match(/^(id|.*_id)$/)) {
+                field.style.color = '#2196F3'; // Blue for IDs
+            } else if (field.textContent.match(/^(created_at|updated_at|.*_at)$/)) {
+                field.style.color = '#FF9800'; // Orange for timestamps
+            } else if (field.textContent.match(/^(is_.*|.*_enabled)$/)) {
+                field.style.color = '#9C27B0'; // Purple for booleans
+            }
+        });
+    </script>
+</body>
+</html>

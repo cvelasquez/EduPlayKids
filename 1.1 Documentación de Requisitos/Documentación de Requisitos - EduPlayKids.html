@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentación de Requisitos - EduPlayKids</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .nav-tabs {
+            background: white;
+            border-bottom: 2px solid #e9ecef;
+            padding: 0;
+            margin: 2rem 0 0 0;
+            display: flex;
+            overflow-x: auto;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .nav-tab {
+            padding: 1rem 2rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #6c757d;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .nav-tab:hover {
+            background-color: #f8f9fa;
+            color: #495057;
+        }
+        
+        .nav-tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            background-color: #f8f9fa;
+        }
+        
+        .content {
+            background: white;
+            margin: 0 0 2rem 0;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        h1, h2, h3, h4 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            color: #667eea;
+            margin-top: 2rem;
+        }
+        
+        h3 {
+            font-size: 1.4rem;
+            color: #764ba2;
+            margin-top: 1.5rem;
+        }
+        
+        h4 {
+            font-size: 1.2rem;
+            color: #495057;
+            margin-top: 1rem;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+        
+        ul, ol {
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        th {
+            background-color: #667eea;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .info-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-left: 4px solid #2196f3;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 4px;
+        }
+        
+        .warning-box {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            border-left: 4px solid #ff9800;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 4px;
+        }
+        
+        .success-box {
+            background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+            border-left: 4px solid #4caf50;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 4px;
+        }
+        
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            white-space: pre;
+        }
+        
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+            border-top: 4px solid #667eea;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #667eea;
+            display: block;
+        }
+        
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        
+        .highlight {
+            background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        .emoji {
+            font-size: 1.2rem;
+            margin-right: 0.5rem;
+        }
+        
+        .section-divider {
+            height: 2px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            margin: 2rem 0;
+            border-radius: 1px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 10px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .nav-tab {
+                text-align: center;
+            }
+            
+            .content {
+                padding: 1rem;
+            }
+            
+            table {
+                font-size: 0.8rem;
+            }
+            
+            th, td {
+                padding: 8px 10px;
+            }
+        }
+        
+        .toc {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .toc h3 {
+            margin-top: 0;
+            color: #667eea;
+        }
+        
+        .toc ul {
+            margin-left: 1rem;
+        }
+        
+        .toc a {
+            color: #495057;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .toc a:hover {
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>📚 Documentación de Requisitos</h1>
+            <p>EduPlayKids - Aplicación Educativa Móvil</p>
+            <p style="font-size: 1rem; margin-top: 1rem; opacity: 0.8;">
+                Versión 1.0 | Septiembre 2024 | Fecha de Lanzamiento: 30 de Octubre 2024
+            </p>
+        </div>
+    </div>
+
+    <div class="container">
+        <nav class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('prd')">📋 PRD</button>
+            <button class="nav-tab" onclick="showTab('specs')">⚙️ Especificaciones</button>
+            <button class="nav-tab" onclick="showTab('matrix')">🔗 Matriz</button>
+            <button class="nav-tab" onclick="showTab('stakeholders')">👥 Stakeholders</button>
+            <button class="nav-tab" onclick="showTab('summary')">📊 Resumen</button>
+        </nav>
+
+        <div class="content">
+            <!-- PRD TAB -->
+            <div id="prd" class="tab-content active">
+                <h1>📋 PRD (Product Requirements Document)</h1>
+                
+                <div class="info-box">
+                    <strong>📅 Información del Documento:</strong><br>
+                    <strong>Producto:</strong> EduPlayKids | 
+                    <strong>Versión:</strong> 1.0 | 
+                    <strong>Fecha:</strong> Septiembre 2024 | 
+                    <strong>Lanzamiento:</strong> 30 de Octubre 2024
+                </div>
+
+                <h2>🎯 Resumen Ejecutivo</h2>
+                <h3>Visión del Producto</h3>
+                <p>EduPlayKids es una aplicación educativa móvil diseñada para niños de 3 a 8 años que combina aprendizaje y diversión a través de actividades interactivas alineadas con estándares curriculares estadounidenses.</p>
+
+                <h3>Objetivos del Producto</h3>
+                <ul>
+                    <li>Proporcionar educación de calidad para niños en edad preescolar y primaria</li>
+                    <li>Crear una experiencia de aprendizaje gamificada y atractiva</li>
+                    <li>Ofrecer contenido educativo offline y seguro</li>
+                    <li>Implementar un modelo freemium sostenible</li>
+                </ul>
+
+                <h2>👥 Audiencia y Mercado</h2>
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <span class="stat-number">3-8</span>
+                        <div class="stat-label">Rango de Edad (años)</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">2</span>
+                        <div class="stat-label">Idiomas Soportados</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">$4.99</span>
+                        <div class="stat-label">Precio Premium</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">3</span>
+                        <div class="stat-label">Días Gratuitos</div>
+                    </div>
+                </div>
+
+                <h3>Soporte de Idiomas</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Característica</th>
+                            <th>Descripción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Idiomas Soportados</strong></td>
+                            <td>Español e Inglés</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Detección Automática</strong></td>
+                            <td>La app seleccionará automáticamente el idioma predeterminado del sistema</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Configuración Manual</strong></td>
+                            <td>Los padres pueden cambiar el idioma en la sección de configuración</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>🎮 Características del Producto</h2>
+                <h3>Áreas Educativas</h3>
+                <ul>
+                    <li><span class="emoji">📊</span><strong>Matemáticas:</strong> Números, conteo, operaciones básicas, formas geométricas</li>
+                    <li><span class="emoji">📚</span><strong>Lectura y Lenguaje:</strong> Alfabeto, fonética, palabras de uso frecuente</li>
+                    <li><span class="emoji">🎨</span><strong>Conceptos Básicos:</strong> Colores, formas, patrones</li>
+                    <li><span class="emoji">🧠</span><strong>Lógica y Pensamiento:</strong> Puzzles, juegos de memoria, resolución de problemas</li>
+                    <li><span class="emoji">🔬</span><strong>Ciencias:</strong> Animales, plantas, clima, naturaleza</li>
+                </ul>
+
+                <h3>Sistema de Gamificación</h3>
+                <div class="success-box">
+                    <strong>🏆 Sistema de Recompensas:</strong>
+                    <ul>
+                        <li>Sistema de calificación por estrellas (1-3 estrellas por actividad)</li>
+                        <li>Insignias de logros y coronas por excelencia</li>
+                        <li>Seguimiento de progreso visual</li>
+                        <li>Personaje mascota que evoluciona con el progreso</li>
+                    </ul>
+                </div>
+
+                <h2>💎 Modelo de Monetización</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Período</th>
+                            <th>Acceso</th>
+                            <th>Limitaciones</th>
+                            <th>Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Días 1-3</strong></td>
+                            <td>Completamente gratuito</td>
+                            <td>Ninguna</td>
+                            <td>$0</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Día 4+</strong></td>
+                            <td>Limitado</td>
+                            <td>10 lecciones diarias</td>
+                            <td>$0</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Premium</strong></td>
+                            <td>Ilimitado</td>
+                            <td>Ninguna</td>
+                            <td>$4.99 USD</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>🏗️ Arquitectura Técnica</h2>
+                <div class="code-block">
+Framework: .NET MAUI (Cross-Platform)
+Plataforma: Android (API 21+)
+Arquitectura: MVVM Pattern
+Base de Datos: SQLite (Local)
+Enfoque: Offline-First
+                </div>
+
+                <h2>📊 Criterios de Éxito</h2>
+                <h3>KPIs de Lanzamiento</h3>
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <span class="stat-number">70%</span>
+                        <div class="stat-label">Retención 7 días</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">15%</span>
+                        <div class="stat-label">Conversión Premium</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">15+</span>
+                        <div class="stat-label">Minutos por Sesión</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">80%</span>
+                        <div class="stat-label">Completan 10+ Actividades</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SPECIFICATIONS TAB -->
+            <div id="specs" class="tab-content">
+                <h1>⚙️ Especificaciones Funcionales Detalladas</h1>
+
+                <div class="toc">
+                    <h3>📑 Índice de Funcionalidades</h3>
+                    <ul>
+                        <li><a href="#config">F001-F002: Configuración Inicial</a></li>
+                        <li><a href="#navigation">F003-F005: Navegación y Contenido</a></li>
+                        <li><a href="#evaluation">F006-F008: Evaluación y Gamificación</a></li>
+                        <li><a href="#freemium">F009-F010: Modelo Freemium</a></li>
+                        <li><a href="#multilang">F011-F012: Sistema Multiidioma</a></li>
+                        <li><a href="#parental">F013-F016: Panel Parental</a></li>
+                        <li><a href="#ux">F017-F020: Experiencia de Usuario</a></li>
+                    </ul>
+                </div>
+
+                <div id="config">
+                    <h2>🎯 Configuración Inicial Simplificada</h2>
+                    <h3>F001: Primer Uso de la Aplicación</h3>
+                    <div class="info-box">
+                        <strong>📝 Descripción:</strong> Flujo inicial extremadamente simple sin tutoriales complejos.
+                    </div>
+                    
+                    <h4>Flujo de Usuario:</h4>
+                    <ol>
+                        <li><strong>Pantalla de Bienvenida:</strong> Logo y botón "Comenzar"</li>
+                        <li><strong>Registro del Niño:</strong>
+                            <ul>
+                                <li>Campo: Nombre del niño (máximo 50 caracteres)</li>
+                                <li>Selector de edad: 3, 4, 5, 6, 7, 8 años</li>
+                                <li>Botón "Crear Perfil"</li>
+                            </ul>
+                        </li>
+                        <li><strong>Detección Automática de Idioma</strong></li>
+                        <li><strong>Acceso Directo al Menú Principal</strong></li>
+                    </ol>
+
+                    <h3>F002: Gestión Flexible de Edad</h3>
+                    <p>Los padres pueden cambiar la edad del niño sin restricciones desde el Panel Parental.</p>
+                </div>
+
+                <div id="navigation">
+                    <h2>🎮 Sistema de Navegación y Contenido</h2>
+                    <h3>F003: Menú Principal por Materias</h3>
+                    <div class="code-block">
+📚 MATEMÁTICAS
+├── 🔢 Números (presentado primero)
+├── ➕ Operaciones Básicas
+├── 🔺 Formas y Geometría
+└── 📊 Patrones
+
+📖 LECTURA Y LENGUAJE
+├── 🔤 Alfabeto (presentado primero)
+├── 🔊 Fonética
+├── 📝 Palabras
+└── 📚 Comprensión
+
+🧠 LÓGICA Y PENSAMIENTO
+├── 🧩 Puzzles (presentado primero)
+├── 🧠 Memoria
+├── 🔍 Clasificación
+└── 💡 Resolución Problemas
+                    </div>
+
+                    <h3>F004: Progresión Curricular Sugerida</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Indicador Visual</th>
+                                <th>Estado</th>
+                                <th>Descripción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>🌟 Borde dorado</td>
+                                <td>Próximo Recomendado</td>
+                                <td>Actividad sugerida a continuación</td>
+                            </tr>
+                            <tr>
+                                <td>✅ Marca verde</td>
+                                <td>Completado</td>
+                                <td>Con estrellas obtenidas</td>
+                            </tr>
+                            <tr>
+                                <td>🔄 Borde azul</td>
+                                <td>En Progreso</td>
+                                <td>Con porcentaje de avance</td>
+                            </tr>
+                            <tr>
+                                <td>📋 Diseño normal</td>
+                                <td>Disponible</td>
+                                <td>Listo para comenzar</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>F005: Estructura de Actividades por Edad</h3>
+                    <div class="stat-grid">
+                        <div class="stat-card">
+                            <span class="stat-number">Pre-K</span>
+                            <div class="stat-label">3-4 años<br>Reconocimiento básico</div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number">K</span>
+                            <div class="stat-label">5 años<br>Preparación escolar</div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number">1-2</span>
+                            <div class="stat-label">6-8 años<br>Fundamentos académicos</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="evaluation">
+                    <h2>⭐ Sistema de Evaluación y Progreso</h2>
+                    <h3>F006: Sistema de Calificación por Estrellas</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Errores</th>
+                                <th>Estrellas</th>
+                                <th>Descripción</th>
+                                <th>Color</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>0 errores</td>
+                                <td>⭐⭐⭐</td>
+                                <td>Perfecto</td>
+                                <td>Dorado</td>
+                            </tr>
+                            <tr>
+                                <td>1-2 errores</td>
+                                <td>⭐⭐</td>
+                                <td>Muy Bien</td>
+                                <td>Plateado</td>
+                            </tr>
+                            <tr>
+                                <td>3+ errores</td>
+                                <td>⭐</td>
+                                <td>Bien</td>
+                                <td>Bronce</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>F008: Sistema de Coronas por Excelencia</h3>
+                    <div class="success-box">
+                        <strong>👑 Criterios para Activar Corona:</strong>
+                        <ul>
+                            <li>Obtener 3 estrellas en actividad</li>
+                            <li>Tiempo de respuesta inferior al 75% del esperado</li>
+                            <li>Completar sin pistas adicionales</li>
+                        </ul>
+                        <strong>🏆 Recompensas:</strong>
+                        <ul>
+                            <li>Corona Dorada (logro máximo)</li>
+                            <li>Puntos extra para ranking interno</li>
+                            <li>Sonido especial de celebración</li>
+                            <li>Insignia visible en perfil</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="freemium">
+                    <h2>🔒 Modelo Freemium y Limitaciones</h2>
+                    <h3>F009: Gestión de Período Gratuito</h3>
+                    <div class="warning-box">
+                        <strong>📅 Implementación del Modelo:</strong><br>
+                        <strong>Día 1-3:</strong> Acceso ilimitado a todas las funciones<br>
+                        <strong>Día 4+:</strong> Límite de 10 lecciones diarias con reset automático<br>
+                        <strong>Repeticiones:</strong> NO consumen lecciones adicionales
+                    </div>
+
+                    <h3>F010: Pantalla de Upgrade Premium</h3>
+                    <p>Cuando se agota el límite diario, se presenta una pantalla amigable con:</p>
+                    <ul>
+                        <li>🎓 Título motivador: "¡Continúa Aprendiendo!"</li>
+                        <li>⏰ Contador regresivo para nuevas lecciones</li>
+                        <li>💎 Opción premium clara: "Aprender sin Límites - $4.99"</li>
+                        <li>🔙 Opción de esperar: "Volver Mañana"</li>
+                    </ul>
+                </div>
+
+                <div id="multilang">
+                    <h2>🌐 Sistema Multiidioma</h2>
+                    <h3>F011: Cambio de Idioma Sin Restricciones</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Funcionalidad</th>
+                                <th>Descripción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Detección Automática</strong></td>
+                                <td>Idioma del sistema al instalar</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Cambio Manual</strong></td>
+                                <td>Disponible en Configuración y Panel Parental</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Persistencia</strong></td>
+                                <td>Progreso independiente del idioma</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Sincronización</strong></td>
+                                <td>Mismas actividades en ambos idiomas</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>F012: Especificaciones de Audio Pregrabado</h3>
+                    <div class="code-block">
+📁 Audio/
+├── 📁 Spanish/
+│   ├── 📁 Common/ (welcome_es.mp3, excellent_es.mp3, etc.)
+│   ├── 📁 Numbers/ (number_1_es.mp3, count_objects_es.mp3, etc.)
+│   ├── 📁 Letters/ (letter_a_es.mp3, sound_a_es.mp3, etc.)
+│   └── 📁 Instructions/ (drag_drop_es.mp3, tap_correct_es.mp3, etc.)
+├── 📁 English/
+│   ├── 📁 Common/ (welcome_en.mp3, excellent_en.mp3, etc.)
+│   ├── 📁 Numbers/ (number_1_en.mp3, count_objects_en.mp3, etc.)
+│   ├── 📁 Letters/ (letter_a_en.mp3, sound_a_en.mp3, etc.)
+│   └── 📁 Instructions/ (drag_drop_en.mp3, tap_correct_en.mp3, etc.)
+└── 📁 SoundEffects/ (success_sound.mp3, celebration.mp3, etc.)
+                    </div>
+                </div>
+
+                <div id="parental">
+                    <h2>👨‍👩‍👧‍👦 Panel Parental</h2>
+                    <h3>F013: Sistema de PIN Parental</h3>
+                    <div class="info-box">
+                        <strong>🔐 Seguridad:</strong> Panel protegido con PIN de 4 dígitos<br>
+                        <strong>🔓 Acceso:</strong> 3 intentos fallidos = bloqueo temporal de 15 minutos<br>
+                        <strong>🆘 Recuperación:</strong> Pregunta de seguridad para reset de PIN
+                    </div>
+
+                    <h3>F014: Estadísticas de Progreso Detalladas</h3>
+                    <div class="stat-grid">
+                        <div class="stat-card">
+                            <span class="stat-number">👶</span>
+                            <div class="stat-label">Perfil del Niño<br>Editable</div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number">📊</span>
+                            <div class="stat-label">Resumen Progreso<br>Tiempo Real</div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number">📈</span>
+                            <div class="stat-label">Por Materia<br>Detallado</div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number">📅</span>
+                            <div class="stat-label">Actividad Reciente<br>7 días</div>
+                        </div>
+                    </div>
+
+                    <h3>F015: Gestión de Perfiles Múltiples (Premium)</h3>
+                    <ul>
+                        <li>Hasta 5 perfiles de niños diferentes</li>
+                        <li>Progreso independiente por perfil</li>
+                        <li>Estadísticas comparativas entre hermanos</li>
+                        <li>Cambio rápido de perfil activo</li>
+                    </ul>
+                </div>
+
+                <div id="ux">
+                    <h2>🎵 Experiencia de Usuario y Multimedia</h2>
+                    <h3>F017: Sistema de Retroalimentación Inmediata</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tipo de Respuesta</th>
+                                <th>Feedback Visual</th>
+                                <th>Feedback Audio</th>
+                                <th>Efecto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Correcta</strong></td>
+                                <td>✅ Checkmark verde</td>
+                                <td>"¡Muy bien!", "¡Excelente!"</td>
+                                <td>⭐ Actualización estrellas</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Incorrecta</strong></td>
+                                <td>❌ Animación suave</td>
+                                <td>"Inténtalo otra vez"</td>
+                                <td>💡 Pista visual sutil</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Completar</strong></td>
+                                <td>🎉 Celebración animada</td>
+                                <td>🎵 Música celebración</td>
+                                <td>📊 Resumen logros</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>F018: Personaje Mascota Motivadora</h3>
+                    <div class="success-box">
+                        <strong>🐱 Características:</strong>
+                        <ul>
+                            <li>Diseño amigable y colorido (neutro de género)</li>
+                            <li>Expresiones que cambian según progreso</li>
+                            <li>Animaciones que celebran éxitos y animan en errores</li>
+                            <li>Evolución visual con el progreso del niño</li>
+                        </ul>
+                    </div>
+
+                    <h3>F019-F020: Especificaciones de Interface</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Elemento</th>
+                                <th>Especificación</th>
+                                <th>Propósito</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Botones</strong></td>
+                                <td>Mínimo 60dp, espaciado 16dp</td>
+                                <td>Fácil toque para niños</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Texto</strong></td>
+                                <td>Mínimo 18sp, contraste 4.5:1</td>
+                                <td>Legibilidad óptima</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Colores</strong></td>
+                                <td>Vibrantes pero no estridentes</td>
+                                <td>Atractivo sin fatiga visual</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Navegación</strong></td>
+                                <td>Iconográfica, transiciones suaves</td>
+                                <td>Intuitiva para pre-lectores</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- MATRIX TAB -->
+            <div id="matrix" class="tab-content">
+                <h1>🔗 Matriz de Trazabilidad de Requisitos</h1>
+
+                <div class="info-box">
+                    <strong>📋 Alcance:</strong> Requisitos Funcionales (Negocio y Técnicos)<br>
+                    <strong>📊 Cobertura:</strong> 100% de requisitos mapeados a funcionalidades y casos de prueba
+                </div>
+
+                <h2>📊 Resumen Estadístico</h2>
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <span class="stat-number">26</span>
+                        <div class="stat-label">Requisitos de Negocio</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">19</span>
+                        <div class="stat-label">Requisitos Técnicos</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">22</span>
+                        <div class="stat-label">Funcionalidades</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">90</span>
+                        <div class="stat-label">Casos de Prueba</div>
+                    </div>
+                </div>
+
+                <h2>🎯 Distribución por Módulos</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Módulo</th>
+                            <th>Req. Negocio</th>
+                            <th>Req. Técnicos</th>
+                            <th>Funcionalidades</th>
+                            <th>Casos Prueba</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Configuración y Onboarding</strong></td>
+                            <td>3</td>
+                            <td>2</td>
+                            <td>3</td>
+                            <td>10</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Navegación y Contenido</strong></td>
+                            <td>4</td>
+                            <td>2</td>
+                            <td>4</td>
+                            <td>12</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Evaluación y Gamificación</strong></td>
+                            <td>4</td>
+                            <td>3</td>
+                            <td>4</td>
+                            <td>14</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Modelo Freemium</strong></td>
+                            <td>5</td>
+                            <td>3</td>
+                            <td>2</td>
+                            <td>16</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Multiidioma y Audio</strong></td>
+                            <td>3</td>
+                            <td>3</td>
+                            <td>2</td>
+                            <td>12</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Panel Parental</strong></td>
+                            <td>4</td>
+                            <td>3</td>
+                            <td>4</td>
+                            <td>14</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Experiencia de Usuario</strong></td>
+                            <td>3</td>
+                            <td>3</td>
+                            <td>3</td>
+                            <td>12</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>📋 Casos de Prueba Críticos</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Descripción</th>
+                            <th>Módulo</th>
+                            <th>Criticidad</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>CP-001</strong></td>
+                            <td>Validar registro exitoso nuevo usuario</td>
+                            <td>Configuración</td>
+                            <td><span class="highlight">Crítica</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>CP-023</strong></td>
+                            <td>Validar cálculo correcto de estrellas</td>
+                            <td>Evaluación</td>
+                            <td><span class="highlight">Crítica</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>CP-037</strong></td>
+                            <td>Validar funcionamiento 3 días gratuitos</td>
+                            <td>Freemium</td>
+                            <td><span class="highlight">Crítica</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>CP-053</strong></td>
+                            <td>Validar traducción completa ambos idiomas</td>
+                            <td>Multiidioma</td>
+                            <td><span class="highlight">Crítica</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>CP-065</strong></td>
+                            <td>Validar seguridad sistema PIN</td>
+                            <td>Panel Parental</td>
+                            <td><span class="highlight">Crítica</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>CP-079</strong></td>
+                            <td>Validar usabilidad para niños 3-8 años</td>
+                            <td>UX</td>
+                            <td><span class="highlight">Crítica</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>🔍 Matriz de Cobertura</h2>
+                <div class="success-box">
+                    <strong>✅ Cobertura Completa:</strong>
+                    <ul>
+                        <li><strong>Requisitos → Funcionalidades:</strong> 100% mapeados</li>
+                        <li><strong>Funcionalidades → Casos de Prueba:</strong> 100% cubiertos</li>
+                        <li><strong>Trazabilidad Bidireccional:</strong> Completa</li>
+                    </ul>
+                </div>
+
+                <h2>📝 Criterios de Aceptación</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Categoría</th>
+                            <th>Criterio</th>
+                            <th>Objetivo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Funcionalidad</strong></td>
+                            <td>100% de casos de prueba pasan</td>
+                            <td>Calidad asegurada</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Usabilidad</strong></td>
+                            <td>Niño de 5 años puede usar sin ayuda</td>
+                            <td>Autonomía infantil</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Performance</strong></td>
+                            <td>Respuesta < 200ms en gama baja</td>
+                            <td>Accesibilidad técnica</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Compatibilidad</strong></td>
+                            <td>Funciona en Android API 21+</td>
+                            <td>Amplia cobertura</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Localización</strong></td>
+                            <td>Textos y audio 100% traducidos</td>
+                            <td>Experiencia bilingüe</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Seguridad</strong></td>
+                            <td>Cumple COPPA y GDPR-K</td>
+                            <td>Protección infantil</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- STAKEHOLDERS TAB -->
+            <div id="stakeholders" class="tab-content">
+                <h1>👥 Análisis de Stakeholders y Usuarios Objetivo</h1>
+
+                <div class="info-box">
+                    <strong>🌍 Alcance Geográfico:</strong> Mercados USA (Familias Hispanas) y Latinoamérica<br>
+                    <strong>🎯 Segmentación:</strong> Por edad, ubicación geográfica y poder adquisitivo
+                </div>
+
+                <h2>🎯 Usuarios Objetivo Primarios</h2>
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <span class="stat-number">35%</span>
+                        <div class="stat-label">Pre-K (3-4 años)<br>Reconocimiento básico</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">40%</span>
+                        <div class="stat-label">Kindergarten (5 años)<br>Preparación escolar</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">25%</span>
+                        <div class="stat-label">Primaria (6-8 años)<br>Refuerzo académico</div>
+                    </div>
+                </div>
+
+                <h3>Características por Grupo de Edad</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Grupo</th>
+                            <th>Desarrollo Cognitivo</th>
+                            <th>Habilidades Técnicas</th>
+                            <th>Atención Sostenida</th>
+                            <th>Necesidades Educativas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Pre-K (3-4)</strong></td>
+                            <td>300-1000 palabras</td>
+                            <td>Toque simple, necesita ayuda</td>
+                            <td>5-10 minutos</td>
+                            <td>Números 1-10, colores básicos</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Kindergarten (5)</strong></td>
+                            <td>2000+ palabras</td>
+                            <td>Navegación básica independiente</td>
+                            <td>10-15 minutos</td>
+                            <td>Números 1-20, alfabeto completo</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Primaria (6-8)</strong></td>
+                            <td>3000+ palabras</td>
+                            <td>Completamente independiente</td>
+                            <td>15-25 minutos</td>
+                            <td>Números 1-100, lectura fluida</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>👨‍👩‍👧‍👦 Usuarios Secundarios (Padres/Cuidadores)</h2>
+                <h3>Padres Hispano-parlantes en USA</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Aspecto</th>
+                            <th>Descripción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Demografía</strong></td>
+                            <td>25-45 años, ingresos $35,000-$85,000 anuales</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Perfil Cultural</strong></td>
+                            <td>1ra-2da generación, bilingües, valoran educación</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tecnología</strong></td>
+                            <td>Usuarios activos smartphones, valoran apps bilingües</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Motivaciones</strong></td>
+                            <td>Éxito académico, preservar español, integración cultural</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Padres en Mercado Latinoamericano</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Aspecto</th>
+                            <th>Descripción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Demografía</strong></td>
+                            <td>25-40 años, clase media $15,000-$50,000 anuales</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Perfil Cultural</strong></td>
+                            <td>Nativos español, interés inglés, aspiran movilidad social</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tecnología</strong></td>
+                            <td>Alto uso smartphones, acceso WiFi limitado, prefieren offline</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Motivaciones</strong></td>
+                            <td>Mejor futuro hijos, educación internacional, aprender inglés</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>🌍 Análisis de Mercado Geográfico</h2>
+                <h3>Mercado Primario: Estados Unidos</h3>
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <span class="stat-number">62.1M</span>
+                        <div class="stat-label">Población Hispana Total</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">4.2M</span>
+                        <div class="stat-label">Niños Hispanos 3-8 años</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">85%</span>
+                        <div class="stat-label">Uso de Smartphones</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">$12</span>
+                        <div class="stat-label">Gasto mensual apps educativas</div>
+                    </div>
+                </div>
+
+                <h3>Estados Prioritarios</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Estado</th>
+                            <th>Niños Hispanos 3-8</th>
+                            <th>Penetración Smartphones</th>
+                            <th>Oportunidad</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>California</strong></td>
+                            <td>1,200,000</td>
+                            <td>88%</td>
+                            <td><span class="highlight">Alta</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Texas</strong></td>
+                            <td>950,000</td>
+                            <td>86%</td>
+                            <td><span class="highlight">Alta</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Florida</strong></td>
+                            <td>380,000</td>
+                            <td>87%</td>
+                            <td>Media-Alta</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Nueva York</strong></td>
+                            <td>340,000</td>
+                            <td>89%</td>
+                            <td>Media-Alta</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Arizona</strong></td>
+                            <td>220,000</td>
+                            <td>85%</td>
+                            <td>Media</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Mercado Secundario: Latinoamérica</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>País</th>
+                            <th>Población 3-8 años</th>
+                            <th>Penetración Smartphones</th>
+                            <th>Clase Media</th>
+                            <th>Poder Adquisitivo $4.99</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>México</strong></td>
+                            <td>8.5 millones</td>
+                            <td>78%</td>
+                            <td>35%</td>
+                            <td>~85 pesos (accesible)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Colombia</strong></td>
+                            <td>3.2 millones</td>
+                            <td>75%</td>
+                            <td>28%</td>
+                            <td>~20,000 pesos (moderado)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Argentina</strong></td>
+                            <td>2.8 millones</td>
+                            <td>81%</td>
+                            <td>42%</td>
+                            <td>Variable (inflación)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Chile</strong></td>
+                            <td>1.1 millones</td>
+                            <td>83%</td>
+                            <td>65%</td>
+                            <td>~4,200 pesos (accesible)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>📈 Oportunidades de Mercado</h2>
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <span class="stat-number">15.78M</span>
+                        <div class="stat-label">TAM<br>Total Addressable Market</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">6.85M</span>
+                        <div class="stat-label">SAM<br>Serviceable Addressable Market</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">308K</span>
+                        <div class="stat-label">SOM Proyectado 2029<br>Usuarios meta</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">$1.54M</span>
+                        <div class="stat-label">Ingresos Proyectados 2029<br>Anuales</div>
+                    </div>
+                </div>
+
+                <h2>🎯 Personas Detalladas</h2>
+                <h3>👩 María González - Madre Hispana USA</h3>
+                <div class="info-box">
+                    <strong>📍 Ubicación:</strong> Los Angeles, CA | <strong>👨‍👩‍👧‍👦 Familia:</strong> Casada, 2 hijos | <strong>💰 Ingresos:</strong> $72,000<br>
+                    <strong>🎓 Educación:</strong> Universitaria | <strong>🌍 Generación:</strong> Segunda generación mexicana<br>
+                    <strong>💡 Objetivo EduPlayKids:</strong> Reforzar educación escolar y mantener el español
+                </div>
+
+                <h3>👨 Carlos Rivera - Padre México</h3>
+                <div class="info-box">
+                    <strong>📍 Ubicación:</strong> CDMX, México | <strong>👨‍👩‍👧‍👦 Familia:</strong> Casado, 1 hijo | <strong>💰 Ingresos:</strong> $28,000<br>
+                    <strong>🎓 Educación:</strong> Técnica superior | <strong>💼 Profesión:</strong> TI<br>
+                    <strong>💡 Objetivo EduPlayKids:</strong> Preparar hijo bilingüe con estándares internacionales
+                </div>
+
+                <h3>👧 Sofia - Usuario Final (5 años)</h3>
+                <div class="info-box">
+                    <strong>🎂 Edad:</strong> 5 años (Kindergarten) | <strong>🗣️ Idioma:</strong> Bilingüe emergente<br>
+                    <strong>🎮 Habilidades:</strong> Reconoce letras/números, usa tablet con supervisión<br>
+                    <strong>💡 Motivaciones:</strong> Obtener estrellas, escuchar felicitaciones, mostrar logros a padres
+                </div>
+
+                <h2>🏢 Stakeholders del Proyecto</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Stakeholder</th>
+                            <th>Rol</th>
+                            <th>Interés</th>
+                            <th>Influencia</th>
+                            <th>Estrategia</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Desarrollador Principal</strong></td>
+                            <td>Product Owner</td>
+                            <td>Éxito técnico y comercial</td>
+                            <td>Alta</td>
+                            <td>Colaboración directa</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Claude Code AI</strong></td>
+                            <td>Asistente Desarrollo</td>
+                            <td>Eficiencia y calidad código</td>
+                            <td>Alta</td>
+                            <td>Optimización procesos</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Niños 3-8 años</strong></td>
+                            <td>Usuario Principal</td>
+                            <td>Diversión y aprendizaje</td>
+                            <td>Alta</td>
+                            <td>Diseño centrado en usuario</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Padres Hispanos USA</strong></td>
+                            <td>Usuario Secundario</td>
+                            <td>Progreso educativo hijos</td>
+                            <td>Alta</td>
+                            <td>Engagement y satisfacción</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Google Play Store</strong></td>
+                            <td>Distribuidor</td>
+                            <td>Cumplimiento políticas</td>
+                            <td>Alto</td>
+                            <td>Políticas apps infantiles</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- SUMMARY TAB -->
+            <div id="summary" class="tab-content">
+                <h1>📊 Resumen Ejecutivo de Requisitos</h1>
+
+                <div class="success-box">
+                    <strong>🎯 Estado del Proyecto:</strong> Fase 1 - Documentación de Requisitos <strong>COMPLETADA</strong><br>
+                    <strong>📅 Fecha de Lanzamiento:</strong> 30 de Octubre 2024<br>
+                    <strong>🔄 Próxima Fase:</strong> Arquitectura del Sistema
+                </div>
+
+                <h2>🏆 Métricas Clave del Proyecto</h2>
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <span class="stat-number">4</span>
+                        <div class="stat-label">Documentos Creados<br>PRD, Specs, Matriz, Stakeholders</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">100%</span>
+                        <div class="stat-label">Cobertura Requisitos<br>Trazabilidad completa</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">45</span>
+                        <div class="stat-label">Requisitos Totales<br>26 Negocio + 19 Técnicos</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">22</span>
+                        <div class="stat-label">Funcionalidades<br>Especificadas detalladamente</div>
+                    </div>
+                </div>
+
+                <h2>🎯 Características Principales Definidas</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Característica</th>
+                            <th>Descripción</th>
+                            <th>Impacto</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>🎮 Configuración Simple</strong></td>
+                            <td>Solo nombre + edad, sin tutoriales</td>
+                            <td>Facilita adopción</td>
+                            <td><span class="highlight">Especificado</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>⭐ Sistema Estrellas</strong></td>
+                            <td>0 errores=3⭐, 1-2=2⭐, 3+=1⭐</td>
+                            <td>Motivación clara</td>
+                            <td><span class="highlight">Especificado</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>👑 Coronas Adaptativas</strong></td>
+                            <td>Desafíos adicionales para destacados</td>
+                            <td>Retención alta</td>
+                            <td><span class="highlight">Especificado</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>💎 Freemium 3+10</strong></td>
+                            <td>3 días gratis → 10 lecciones/día</td>
+                            <td>Conversión optimizada</td>
+                            <td><span class="highlight">Especificado</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>🌐 Bilingüe Dinámico</strong></td>
+                            <td>Español/Inglés sin afectar progreso</td>
+                            <td>Diferenciador clave</td>
+                            <td><span class="highlight">Especificado</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>👨‍👩‍👧‍👦 Panel PIN</strong></td>
+                            <td>Estadísticas protegidas con PIN</td>
+                            <td>Seguridad parental</td>
+                            <td><span class="highlight">Especificado</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>🌍 Análisis de Mercado Consolidado</h2>
+                <h3>Oportunidad de Mercado</h3>
+                <div class="info-box">
+                    <strong>🎯 Mercado Objetivo Principal:</strong> 4.2M niños hispanos 3-8 años en USA<br>
+                    <strong>🌎 Mercado Secundario:</strong> 15.4M niños en Latinoamérica (México, Colombia, Argentina, Chile)<br>
+                    <strong>💰 Potencial de Ingresos 2029:</strong> $1.54M anuales con 308K usuarios
+                </div>
+
+                <h3>Ventajas Competitivas Identificadas</h3>
+                <ul>
+                    <li><strong>🌐 Bilingüe Real:</strong> Cambio dinámico español/inglés vs competidores monolingües</li>
+                    <li><strong>💵 Precio Accesible:</strong> $4.99 vs $12.99 de ABC Mouse</li>
+                    <li><strong>📱 Offline-First:</strong> Funciona sin internet vs aplicaciones que requieren conexión</li>
+                    <li><strong>🎯 Culturalmente Relevante:</strong> Diseñado para familias hispanas vs adaptaciones generales</li>
+                    <li><strong>👑 Innovación Educativa:</strong> Sistema de coronas adaptativas único en el mercado</li>
+                </ul>
+
+                <h2>📋 Matriz de Requisitos - Vista Consolidada</h2>
+                <h3>Distribución por Prioridad</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Prioridad</th>
+                            <th>Requisitos de Negocio</th>
+                            <th>Requisitos Técnicos</th>
+                            <th>Total</th>
+                            <th>Porcentaje</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Alta</strong></td>
+                            <td>18</td>
+                            <td>13</td>
+                            <td>31</td>
+                            <td><span class="highlight">69%</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Media</strong></td>
+                            <td>8</td>
+                            <td>6</td>
+                            <td>14</td>
+                            <td>31%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Baja</strong></td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0%</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Casos de Prueba por Criticidad</h3>
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <span class="stat-number">6</span>
+                        <div class="stat-label">Casos Críticos<br>Funcionalidades core</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">4</span>
+                        <div class="stat-label">Casos Integración<br>Entre módulos</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">80</span>
+                        <div class="stat-label">Casos Adicionales<br>Cobertura completa</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">90</span>
+                        <div class="stat-label">Total Casos<br>100% cobertura</div>
+                    </div>
+                </div>
+
+                <h2>🎨 Personas y Segmentación</h2>
+                <h3>Distribución de Usuarios por Segmento</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Segmento</th>
+                            <th>Porcentaje del Mercado</th>
+                            <th>Características Clave</th>
+                            <th>Estrategia EduPlayKids</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Pre-K (3-4 años)</strong></td>
+                            <td>35%</td>
+                            <td>Atención 5-10 min, necesita ayuda</td>
+                            <td>Botones grandes, audio constante</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Kindergarten (5 años)</strong></td>
+                            <td>40%</td>
+                            <td>Navegación básica, atención 10-15 min</td>
+                            <td>Autonomía progresiva, recompensas</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Primaria (6-8 años)</strong></td>
+                            <td>25%</td>
+                            <td>Independiente, atención 15-25 min</td>
+                            <td>Sistema coronas, logros avanzados</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>🚀 Próximos Pasos - Fase 2</h2>
+                <div class="warning-box">
+                    <strong>📋 Entregables Pendientes Fase 2:</strong>
+                    <ul>
+                        <li><strong>📐 Documento de Arquitectura de Software (SAD)</strong></li>
+                        <li><strong>🏗️ Diagramas de Arquitectura (C4 Model)</strong></li>
+                        <li><strong>⚙️ Especificaciones Técnicas de componentes</strong></li>
+                        <li><strong>📝 Decisiones Arquitectónicas (ADR)</strong></li>
+                        <li><strong>🗄️ Diseño de Base de Datos completo</strong></li>
+                    </ul>
+                </div>
+
+                <h2>✅ Criterios de Éxito - Fase 1</h2>
+                <div class="success-box">
+                    <strong>🎯 Objetivos Completados:</strong>
+                    <ul>
+                        <li>✅ <strong>PRD Completo:</strong> Modelo de negocio, características y arquitectura definidos</li>
+                        <li>✅ <strong>Especificaciones Detalladas:</strong> 22 funcionalidades con criterios de aceptación</li>
+                        <li>✅ <strong>Trazabilidad 100%:</strong> 45 requisitos mapeados a funcionalidades y casos de prueba</li>
+                        <li>✅ <strong>Análisis de Mercado:</strong> Segmentación completa USA y Latinoamérica</li>
+                        <li>✅ <strong>Personas Definidas:</strong> 3 personas principales con características detalladas</li>
+                        <li>✅ <strong>Roadmap Claro:</strong> Preparación para desarrollo con fecha de lanzamiento realista</li>
+                    </ul>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <div class="info-box" style="text-align: center;">
+                    <strong>📚 Documentación de Requisitos - EduPlayKids</strong><br>
+                    <em>Fase 1 completada exitosamente | Preparado para Fase 2: Arquitectura del Sistema</em><br>
+                    <small>Generado con Claude Code | Septiembre 2024</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.nav-tab');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
