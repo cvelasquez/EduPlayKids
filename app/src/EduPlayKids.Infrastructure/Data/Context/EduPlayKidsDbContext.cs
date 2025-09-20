@@ -1,4 +1,5 @@
 using EduPlayKids.Domain.Common;
+using EduPlayKids.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
@@ -21,31 +22,71 @@ public class EduPlayKidsDbContext : DbContext
     }
 
     #region Core User Management
-    // TODO: Add DbSet properties for the 12 core entities:
-    // 1. Users - User profiles and authentication
-    // 2. UserProfiles - Extended user information and preferences
-    // 3. UserSubscriptions - Premium subscription management
+    /// <summary>
+    /// Parent/guardian user accounts with authentication and profile management.
+    /// </summary>
+    public DbSet<User> Users { get; set; } = null!;
+
+    /// <summary>
+    /// Individual child profiles with age-specific configurations and learning preferences.
+    /// </summary>
+    public DbSet<Child> Children { get; set; } = null!;
+
+    /// <summary>
+    /// Premium subscription management for freemium model.
+    /// </summary>
+    public DbSet<Subscription> Subscriptions { get; set; } = null!;
+
+    /// <summary>
+    /// Application configuration and user preferences.
+    /// </summary>
+    public DbSet<Settings> Settings { get; set; } = null!;
     #endregion
 
     #region Educational Content
-    // TODO: Add DbSet properties for educational content:
-    // 4. Subjects - Math, Reading, Science, etc.
-    // 5. Activities - Individual learning activities
-    // 6. ActivityProgression - Difficulty levels and prerequisites
-    // 7. ActivityContent - Localized content (Spanish/English)
+    /// <summary>
+    /// Educational subjects: Math, Reading/Phonics, Basic Concepts, Logic, Science.
+    /// </summary>
+    public DbSet<Subject> Subjects { get; set; } = null!;
+
+    /// <summary>
+    /// Learning activities with difficulty levels and curriculum alignment.
+    /// </summary>
+    public DbSet<Activity> Activities { get; set; } = null!;
+
+    /// <summary>
+    /// Interactive questions and content for activities.
+    /// </summary>
+    public DbSet<ActivityQuestion> ActivityQuestions { get; set; } = null!;
     #endregion
 
-    #region Progress Tracking
-    // TODO: Add DbSet properties for progress tracking:
-    // 8. UserProgress - Individual activity completion tracking
-    // 9. UserAchievements - Badges, stars, and accomplishments
-    // 10. UserSessions - Learning session tracking
+    #region Progress Tracking & Gamification
+    /// <summary>
+    /// Individual child progress tracking per activity.
+    /// </summary>
+    public DbSet<UserProgress> UserProgress { get; set; } = null!;
+
+    /// <summary>
+    /// Achievement definitions for gamification system.
+    /// </summary>
+    public DbSet<Achievement> Achievements { get; set; } = null!;
+
+    /// <summary>
+    /// Earned achievements and rewards tracking.
+    /// </summary>
+    public DbSet<UserAchievement> UserAchievements { get; set; } = null!;
+
+    /// <summary>
+    /// Learning session tracking for analytics and screen time management.
+    /// </summary>
+    public DbSet<Session> Sessions { get; set; } = null!;
     #endregion
 
-    #region Analytics & Settings
-    // TODO: Add DbSet properties for analytics and settings:
-    // 11. UserAnalytics - COPPA-compliant local analytics
-    // 12. AppSettings - Application configuration and preferences
+    #region Compliance & Audit
+    /// <summary>
+    /// COPPA-compliant audit logging for child safety and data privacy.
+    /// </summary>
+    public DbSet<AuditLog> AuditLogs { get; set; } = null!;
     #endregion
 
     /// <summary>

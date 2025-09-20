@@ -6,7 +6,11 @@
       "Bash(tree:*)",
       "Bash(gh auth:*)",
       "Bash(git init:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git mv:*)",
+      "Bash(dotnet clean:*)",
+      "Bash(dotnet:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []
