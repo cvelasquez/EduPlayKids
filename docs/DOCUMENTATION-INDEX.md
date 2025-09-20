@@ -50,6 +50,29 @@ Este documento proporciona una vista completa y navegable de toda la documentaci
 
 ## 🔧 Documentación Técnica
 
+### 📁 Estructura del Proyecto (REORGANIZADO ✅)
+
+**Importante**: El proyecto EduPlayKids utiliza una arquitectura **documentation-first** con separación clara entre documentación y código fuente:
+
+```
+📁 EduPlayKids/ (raíz)
+├── 📋 CLAUDE.md, README.md
+├── 📁 docs/ (Hub de documentación técnica)
+├── 📁 1.1-2.2 Documentación de Diseño/ (Fases completadas)
+├── 📁 app/ ⭐ CÓDIGO FUENTE .NET MAUI
+│   ├── 🔧 EduPlayKids.sln (Solución principal)
+│   ├── 📁 src/ (Clean Architecture + MVVM)
+│   └── 📁 tests/ (Pruebas por capas)
+└── 📁 tools/ (Herramientas de desarrollo)
+```
+
+**Para Desarrolladores**: Todos los comandos de desarrollo deben ejecutarse desde el directorio `app/`:
+```bash
+cd app          # Navegar al código fuente
+dotnet build    # Compilar la solución
+dotnet test     # Ejecutar pruebas
+```
+
 ### 🚀 Fase 4: Implementación Técnica (NUEVA ✅)
 - **[technical/development/](technical/development/)**
   - **[phase-4-implementation-guide.md](technical/development/phase-4-implementation-guide.md)** - Guía completa de implementación Phase 4 ✅

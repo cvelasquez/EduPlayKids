@@ -412,7 +412,7 @@ public static class MauiProgram
 
 ```bash
 # Navigate to infrastructure project
-cd src/EduPlayKids.Infrastructure
+cd app/src/EduPlayKids.Infrastructure
 
 # Add Entity Framework Tools (if not installed globally)
 dotnet tool install --global dotnet-ef
