@@ -397,11 +397,24 @@ public static class MauiProgram
 #endif
         });
 
-        // Repository Pattern
+        // Repository Pattern (Week 2 Implementation)
         builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+        // Core Entity Repositories
         builder.Services.AddScoped<IChildRepository, ChildRepository>();
         builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
         builder.Services.AddScoped<IProgressRepository, ProgressRepository>();
+        builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+        // Supporting Entity Repositories
+        builder.Services.AddScoped<IAchievementRepository, AchievementRepository>();
+        builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
+        builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+        builder.Services.AddScoped<IContentAssetRepository, ContentAssetRepository>();
+        builder.Services.AddScoped<ILocalizationRepository, LocalizationRepository>();
+        builder.Services.AddScoped<ISettingsRepository, SettingsRepository>();
+        builder.Services.AddScoped<IAnalyticsRepository, AnalyticsRepository>();
+        builder.Services.AddScoped<IGameSessionRepository, GameSessionRepository>();
 
         return builder.Build();
     }
@@ -570,6 +583,280 @@ public partial class App : Application
             System.Diagnostics.Debug.WriteLine($"Database initialization error: {ex.Message}");
         }
     }
+}
+```
+
+## 🗃️ Repository Pattern Usage (Week 2 Implementation)
+
+### Using Repositories for Educational Workflows
+
+The repository pattern provides specialized methods for educational workflows beyond basic CRUD operations:
+
+#### Activity Selection and Progression
+```csharp
+// Get age-appropriate activities for a child
+public class EducationalContentService
+{
+    private readonly IUnitOfWork _unitOfWork;
+
+    public async Task<List<ActivityDto>> GetRecommendedActivitiesAsync(int childId)
+    {
+        var child = await _unitOfWork.Children.GetByIdAsync(childId);
+
+        // Get activities appropriate for child's age and completed prerequisites
+        var activities = await _unitOfWork.Activities
+            .GetAgeAppropriateActivitiesAsync(childId, child.Age);
+
+        // Filter based on child's progress and unlock prerequisites
+        var completedActivities = await _unitOfWork.Progress
+            .GetCompletedActivitiesAsync(childId);
+
+        var recommendedActivities = activities
+            .Where(a => a.Prerequisites.All(p => completedActivities.Contains(p.Id)))
+            .OrderBy(a => a.DifficultyLevel)
+            .ThenBy(a => a.SortOrder)
+            .ToList();
+
+        return _mapper.Map<List<ActivityDto>>(recommendedActivities);
+    }
+}
+```
+
+#### Progress Tracking with Analytics
+```csharp
+// Record progress with educational insights
+public class ProgressTrackingService
+{
+    private readonly IUnitOfWork _unitOfWork;
+
+    public async Task<ProgressResult> RecordActivityCompletionAsync(
+        int childId, int activityId, ActivityResult result)
+    {
+        using var transaction = await _unitOfWork.BeginTransactionAsync();
+        try
+        {
+            // Record progress
+            var progress = await _unitOfWork.Progress.RecordProgressAsync(new Progress
+            {
+                ChildId = childId,
+                ActivityId = activityId,
+                Score = result.Score,
+                TimeSpent = result.TimeSpent,
+                HintsUsed = result.HintsUsed,
+                CompletedAt = DateTime.UtcNow
+            });
+
+            // Check for achievement unlocks
+            var newAchievements = await _unitOfWork.Achievements
+                .CheckAndUnlockAchievementsAsync(childId, progress);
+
+            // Update difficulty if needed (adaptive learning)
+            var difficultyAdjustment = await _unitOfWork.Activities
+                .CalculateDifficultyAdjustmentAsync(childId, activityId, result.Score);
+
+            // Record analytics (privacy-safe)
+            await _unitOfWork.Analytics.RecordEducationalEventAsync(new AnalyticsEvent
+            {
+                EventType = "ActivityCompleted",
+                ChildAgeGroup = GetAgeGroup(child.Age),
+                SubjectArea = activity.Subject.Name,
+                DifficultyLevel = activity.DifficultyLevel.ToString(),
+                // No personal identifiers stored
+            });
+
+            await _unitOfWork.CommitTransactionAsync();
+
+            return new ProgressResult
+            {
+                Progress = progress,
+                NewAchievements = newAchievements,
+                DifficultyAdjustment = difficultyAdjustment
+            };
+        }
+        catch
+        {
+            await _unitOfWork.RollbackTransactionAsync();
+            throw;
+        }
+    }
+}
+```
+
+#### Parental Dashboard Data
+```csharp
+// Generate comprehensive progress reports for parents
+public class ParentalReportService
+{
+    private readonly IUnitOfWork _unitOfWork;
+
+    public async Task<ParentalDashboardDto> GetParentalDashboardAsync(int userId)
+    {
+        var children = await _unitOfWork.Children.GetChildrenByUserAsync(userId);
+        var dashboard = new ParentalDashboardDto();
+
+        foreach (var child in children)
+        {
+            // Get progress summary by subject
+            var progressSummary = await _unitOfWork.Progress
+                .GetProgressSummaryBySubjectAsync(child.Id);
+
+            // Get recent achievements
+            var recentAchievements = await _unitOfWork.Achievements
+                .GetRecentAchievementsAsync(child.Id, days: 7);
+
+            // Calculate learning streaks
+            var learningStreak = await _unitOfWork.Progress
+                .GetCurrentLearningStreakAsync(child.Id);
+
+            // Get time spent analytics
+            var timeAnalytics = await _unitOfWork.Analytics
+                .GetTimeSpentAnalyticsAsync(child.Id, days: 30);
+
+            dashboard.Children.Add(new ChildProgressDto
+            {
+                Child = child,
+                ProgressSummary = progressSummary,
+                RecentAchievements = recentAchievements,
+                LearningStreak = learningStreak,
+                TimeAnalytics = timeAnalytics
+            });
+        }
+
+        return dashboard;
+    }
+}
+```
+
+### Repository Method Categories
+
+#### Educational Content Methods
+- **Age Filtering**: `GetAgeAppropriateActivitiesAsync(childId, age)`
+- **Prerequisite Validation**: `GetUnlockedActivitiesAsync(childId)`
+- **Difficulty Progression**: `GetNextDifficultyActivitiesAsync(childId, subject)`
+- **Curriculum Alignment**: `GetActivitiesByStandardAsync(standard, grade)`
+
+#### Progress Analytics Methods
+- **Performance Tracking**: `GetPerformanceMetricsAsync(childId, timeframe)`
+- **Learning Patterns**: `GetLearningPatternsAsync(childId)`
+- **Subject Mastery**: `GetSubjectMasteryLevelsAsync(childId)`
+- **Time Analytics**: `GetTimeSpentAnalyticsAsync(childId, period)`
+
+#### Child Safety Methods
+- **Data Encryption**: `EncryptChildDataAsync(data)`
+- **Session Management**: `ValidateSessionTimeAsync(childId)`
+- **Content Filtering**: `GetChildSafeContentAsync(ageGroup)`
+- **Privacy Compliance**: `GetCOPPACompliantDataAsync(childId)`
+
+#### Gamification Methods
+- **Achievement Tracking**: `CheckAchievementProgressAsync(childId, criteria)`
+- **Badge Unlocking**: `UnlockBadgeAsync(childId, achievementId)`
+- **Crown Challenges**: `GetCrownChallengeAsync(childId, subject)`
+- **Star Calculations**: `CalculateStarRatingAsync(score, attempts, hints)`
+
+### Unit of Work Pattern for Complex Operations
+
+```csharp
+// Example: Child profile creation with initial data setup
+public async Task<Child> CreateChildWithInitialSetupAsync(CreateChildRequest request)
+{
+    using var transaction = await _unitOfWork.BeginTransactionAsync();
+    try
+    {
+        // Create child profile (encrypted data)
+        var child = await _unitOfWork.Children.CreateChildAsync(request);
+
+        // Set up initial achievements
+        var initialAchievements = await _unitOfWork.Achievements
+            .CreateInitialAchievementsAsync(child.Id);
+
+        // Create user preferences
+        var settings = await _unitOfWork.Settings.CreateChildSettingsAsync(child.Id, new ChildSettings
+        {
+            Language = request.PreferredLanguage,
+            DifficultyPreference = DifficultyLevel.Auto,
+            SessionTimeLimit = GetAgeAppropriateTimeLimit(child.Age)
+        });
+
+        // Record analytics (anonymous)
+        await _unitOfWork.Analytics.RecordEventAsync(new AnalyticsEvent
+        {
+            EventType = "ChildProfileCreated",
+            AgeGroup = GetAgeGroup(child.Age),
+            Language = child.PreferredLanguage.ToString()
+        });
+
+        await _unitOfWork.CommitTransactionAsync();
+        return child;
+    }
+    catch
+    {
+        await _unitOfWork.RollbackTransactionAsync();
+        throw;
+    }
+}
+```
+
+### Performance Optimization in Repositories
+
+#### Mobile-Optimized Queries
+```csharp
+public class ActivityRepository : GenericRepository<Activity>, IActivityRepository
+{
+    // Optimized for mobile: limit data, use indexes, enable caching
+    public async Task<List<Activity>> GetActivitiesForDashboardAsync(int childId)
+    {
+        var child = await _context.Children
+            .AsNoTracking()
+            .FirstAsync(c => c.Id == childId);
+
+        return await _context.Activities
+            .Where(a => a.MinimumAge.Years <= child.Age.Years)
+            .Where(a => a.MaximumAge.Years >= child.Age.Years)
+            .Where(a => a.IsPublished)
+            .Include(a => a.Subject)
+            .Include(a => a.ContentAssets.Where(ca => ca.Language == child.PreferredLanguage))
+            .OrderBy(a => a.Subject.SortOrder)
+            .ThenBy(a => a.SortOrder)
+            .Take(20) // Limit for mobile performance
+            .AsSplitQuery()
+            .AsNoTracking()
+            .ToListAsync();
+    }
+}
+```
+
+### COPPA Compliance Throughout Repository Layer
+
+Every repository method includes child safety considerations:
+
+- **Data Minimization**: Only store necessary educational data
+- **Encryption**: All personal data encrypted before storage
+- **Access Control**: Parent PIN validation for sensitive operations
+- **Audit Logging**: Track all data access for compliance
+- **Anonymous Analytics**: No personal identifiers in usage metrics
+
+```csharp
+// Example: COPPA-compliant progress recording
+public async Task<Progress> RecordProgressAsync(Progress progress)
+{
+    // Validate child session is active and within time limits
+    await ValidateChildSessionAsync(progress.ChildId);
+
+    // Encrypt sensitive data
+    progress.EncryptedDetails = await _encryptionService
+        .EncryptAsync(JsonSerializer.Serialize(progress.DetailedResults));
+    progress.DetailedResults = null; // Clear plaintext
+
+    // Audit log the operation
+    await _auditService.LogDataAccessAsync(new AuditEntry
+    {
+        Operation = "ProgressRecorded",
+        ChildId = progress.ChildId,
+        Timestamp = DateTime.UtcNow,
+        ComplianceNote = "COPPA-compliant educational data only"
+    });
+
+    return await CreateAsync(progress);
 }
 ```
 
@@ -960,4 +1247,5 @@ public class DatabaseMaintenanceService
 **Database Version**: 1.0
 **Entity Framework**: 8.0
 **SQLite Version**: 3.x
-**Last Updated**: September 2025
+**Repository Layer**: Week 2 Complete (200+ methods)
+**Last Updated**: September 2025 (Week 2 Implementation)
