@@ -1,14 +1,17 @@
 using System.Windows.Input;
 using EduPlayKids.App.Services;
+using EduPlayKids.Application.Interfaces;
+using EduPlayKids.Application.Models.Audio;
 using Microsoft.Extensions.Logging;
 
 namespace EduPlayKids.App.ViewModels;
 
 /// <summary>
-/// ViewModel for the activity page where children complete educational exercises.
+/// ViewModel for the activity page where children complete educational exercises with comprehensive audio feedback.
+/// Provides child-friendly audio guidance, encouragement, and celebration throughout the learning process.
 /// This is a foundation implementation that will be expanded with specific activity types.
 /// </summary>
-public class ActivityViewModel : BaseViewModel
+public class ActivityViewModel : AudioAwareBaseViewModel
 {
     private readonly IChildSafeNavigationService _navigationService;
     private int _childId;
@@ -17,10 +20,14 @@ public class ActivityViewModel : BaseViewModel
     private int _currentProgress;
     private int _totalSteps = 5;
     private bool _isCompleted;
+    private int _consecutiveCorrectAnswers = 0;
+    private int _incorrectAttempts = 0;
+    private bool _backgroundMusicPlaying = false;
 
     public ActivityViewModel(
         IChildSafeNavigationService navigationService,
-        ILogger<ActivityViewModel> logger) : base(logger)
+        ILogger<ActivityViewModel> logger,
+        IAudioService? audioService = null) : base(logger, audioService)
     {
         _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
 
@@ -221,13 +228,17 @@ public class ActivityViewModel : BaseViewModel
     }
 
     /// <summary>
-    /// Proceeds to the next step in the activity.
+    /// Proceeds to the next step in the activity with comprehensive audio feedback.
     /// </summary>
     private async Task NextStepAsync()
     {
         if (!CanGoToNextStep()) return;
 
         _logger.LogInformation("Advancing to next step: {CurrentStep} -> {NextStep}", CurrentProgress, CurrentProgress + 1);
+
+        // Play step completion audio
+        _consecutiveCorrectAnswers++;
+        await PlayCorrectAnswerFeedbackAsync(_consecutiveCorrectAnswers, ChildId);
 
         // Provide haptic feedback
         try
@@ -243,6 +254,13 @@ public class ActivityViewModel : BaseViewModel
 
         CurrentProgress++;
         OnPropertyChanged(nameof(CurrentStepContent));
+
+        // Play next step instruction
+        if (CurrentProgress < TotalSteps)
+        {
+            await Task.Delay(800); // Pause after success feedback
+            await PlayStepInstructionAsync(CurrentProgress);
+        }
 
         // Check if activity is completed
         if (CurrentProgress >= TotalSteps)
@@ -286,23 +304,33 @@ public class ActivityViewModel : BaseViewModel
     }
 
     /// <summary>
-    /// Navigates back to the previous page.
+    /// Navigates back to the previous page with audio feedback.
     /// </summary>
     private async Task GoBackAsync()
     {
+        await PlayBackNavigationAudioAsync();
+        if (_backgroundMusicPlaying)
+        {
+            await StopBackgroundMusicAsync();
+        }
         await _navigationService.GoBackAsync();
     }
 
     /// <summary>
-    /// Navigates to the home page.
+    /// Navigates to the home page with audio feedback.
     /// </summary>
     private async Task GoHomeAsync()
     {
+        await PlayNavigationAudioAsync("home");
+        if (_backgroundMusicPlaying)
+        {
+            await StopBackgroundMusicAsync();
+        }
         await _navigationService.GoToHomeAsync();
     }
 
     /// <summary>
-    /// Shows a celebration for completing a step or activity.
+    /// Shows a celebration for completing a step or activity with audio feedback.
     /// </summary>
     private async Task ShowCelebrationAsync()
     {
@@ -318,8 +346,14 @@ public class ActivityViewModel : BaseViewModel
         var randomMessage = messages[Random.Shared.Next(messages.Length)];
         await Task.Delay(500); // Brief pause for effect
 
-        // In a real implementation, this would show animations and sounds
-        _logger.LogInformation("Celebrating step completion: {Message}", randomMessage);
+        // Play celebration audio with full intensity
+        await PlayCompletionFeedbackAsync(3, SubjectName.ToLowerInvariant());
+
+        // Play activity completion instruction
+        await Task.Delay(1500);
+        await PlayInstructionAsync($"activity_complete_{SubjectName.ToLowerInvariant()}", ChildId);
+
+        _logger.LogInformation("Celebrating activity completion: {Message}", randomMessage);
     }
 
     /// <summary>
@@ -339,9 +373,9 @@ public class ActivityViewModel : BaseViewModel
     }
 
     /// <summary>
-    /// Initializes the activity with the provided parameters.
+    /// Initializes the activity with the provided parameters and starts background music.
     /// </summary>
-    public void Initialize(int childId, int activityId, string subjectName)
+    public async Task InitializeAsync(int childId, int activityId, string subjectName)
     {
         ChildId = childId;
         ActivityId = activityId;
@@ -350,20 +384,97 @@ public class ActivityViewModel : BaseViewModel
         Title = $"{subjectName} Activity";
         CurrentProgress = 0;
         IsCompleted = false;
+        _consecutiveCorrectAnswers = 0;
+        _incorrectAttempts = 0;
 
         OnPropertyChanged(nameof(CurrentStepContent));
 
-        _logger.LogInformation("Activity initialized: Child={ChildId}, Activity={ActivityId}, Subject={SubjectName}",
-            ChildId, ActivityId, SubjectName);
+        // Start background music for the activity
+        _backgroundMusicPlaying = await StartBackgroundMusicAsync(subjectName.ToLowerInvariant());
+
+        _logger.LogInformation("Activity initialized: Child={ChildId}, Activity={ActivityId}, Subject={SubjectName}, BackgroundMusic={BackgroundMusic}",
+            ChildId, ActivityId, SubjectName, _backgroundMusicPlaying);
     }
 
     /// <summary>
-    /// Called when the page appears.
+    /// Legacy synchronous initialization method for backward compatibility.
     /// </summary>
-    public override Task OnAppearingAsync()
+    public void Initialize(int childId, int activityId, string subjectName)
+    {
+        _ = Task.Run(async () => await InitializeAsync(childId, activityId, subjectName));
+    }
+
+    /// <summary>
+    /// Called when the page appears with audio introduction.
+    /// </summary>
+    public override async Task OnAppearingAsync()
     {
         _logger.LogDebug("Activity page appearing: {ActivityId}", ActivityId);
         OnPropertyChanged(nameof(CurrentStepContent));
-        return base.OnAppearingAsync();
+        await base.OnAppearingAsync();
+    }
+
+    /// <summary>
+    /// Called when the page disappears - stops background music.
+    /// </summary>
+    public override async Task OnDisappearingAsync()
+    {
+        if (_backgroundMusicPlaying)
+        {
+            await StopBackgroundMusicAsync();
+            _backgroundMusicPlaying = false;
+        }
+        await base.OnDisappearingAsync();
+    }
+
+    /// <summary>
+    /// Plays introduction audio specific to the activity page.
+    /// </summary>
+    protected override async Task PlayPageIntroductionAudio()
+    {
+        // Play activity welcome message
+        await PlayActivityIntroductionAsync(SubjectName.ToLowerInvariant(), ChildId);
+
+        // Brief pause, then play first step instruction
+        await Task.Delay(1500);
+        await PlayStepInstructionAsync(CurrentProgress);
+    }
+
+    /// <summary>
+    /// Plays instruction audio for a specific step.
+    /// </summary>
+    private async Task PlayStepInstructionAsync(int stepIndex)
+    {
+        var instructionKey = $"{SubjectName.ToLowerInvariant()}_step_{stepIndex}";
+        await PlayInstructionAsync(instructionKey, ChildId);
+    }
+
+    /// <summary>
+    /// Handles when a child makes an incorrect answer.
+    /// </summary>
+    public async Task HandleIncorrectAnswerAsync()
+    {
+        _incorrectAttempts++;
+        _consecutiveCorrectAnswers = 0; // Reset streak
+
+        await PlayIncorrectAnswerFeedbackAsync(Math.Max(0, 3 - _incorrectAttempts), ChildId);
+
+        // Play encouragement if child is struggling
+        if (_incorrectAttempts >= 2)
+        {
+            await Task.Delay(1000);
+            await PlayEncouragementAsync(_incorrectAttempts, ChildId);
+        }
+    }
+
+    /// <summary>
+    /// Handles when a child makes a correct answer.
+    /// </summary>
+    public async Task HandleCorrectAnswerAsync()
+    {
+        _consecutiveCorrectAnswers++;
+        _incorrectAttempts = 0; // Reset error count
+
+        await PlayCorrectAnswerFeedbackAsync(_consecutiveCorrectAnswers, ChildId);
     }
 }

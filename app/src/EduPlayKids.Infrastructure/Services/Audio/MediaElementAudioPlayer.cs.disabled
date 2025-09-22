@@ -1,0 +1,575 @@
+using EduPlayKids.Application.Models.Audio;
+using Microsoft.Extensions.Logging;
+using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Maui.Core;
+
+namespace EduPlayKids.Infrastructure.Services.Audio;
+
+/// <summary>
+/// Real platform-specific audio player implementation using .NET MAUI Community Toolkit MediaElement.
+/// Provides hardware-accelerated audio playback optimized for educational content targeting children aged 3-8.
+/// </summary>
+public class MediaElementAudioPlayer : IAudioPlayer
+{
+    #region Private Fields
+
+    private readonly ILogger _logger;
+    private readonly AudioItem _audioItem;
+    private readonly string _filePath;
+    private readonly MediaElement _mediaElement;
+
+    private bool _isPlaying;
+    private bool _isPaused;
+    private bool _disposed;
+    private float _volume = 1.0f;
+    private TaskCompletionSource<bool>? _playbackCompletionSource;
+
+    #endregion
+
+    #region Events
+
+    public event EventHandler? PlaybackCompleted;
+    public event EventHandler<AudioPlayerErrorEventArgs>? PlaybackError;
+
+    #endregion
+
+    #region Properties
+
+    public bool IsPlaying => _isPlaying && !_isPaused && _mediaElement.CurrentState == MediaElementState.Playing;
+
+    public bool IsPaused => _isPaused && _mediaElement.CurrentState == MediaElementState.Paused;
+
+    public int CurrentPositionMs => (int)_mediaElement.Position.TotalMilliseconds;
+
+    public int DurationMs => (int)(_mediaElement.Duration?.TotalMilliseconds ?? 0);
+
+    public float Volume
+    {
+        get => _volume;
+        set
+        {
+            _volume = Math.Clamp(value, 0.0f, 1.0f);
+            if (_mediaElement != null)
+            {
+                _mediaElement.Volume = _volume;
+            }
+        }
+    }
+
+    #endregion
+
+    #region Constructor
+
+    /// <summary>
+    /// Initializes a new instance of the MediaElementAudioPlayer class.
+    /// </summary>
+    /// <param name="filePath">Path to the audio file</param>
+    /// <param name="audioItem">Audio item configuration</param>
+    /// <param name="logger">Logger for debugging and error tracking</param>
+    public MediaElementAudioPlayer(string filePath, AudioItem audioItem, ILogger logger)
+    {
+        _filePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
+        _audioItem = audioItem ?? throw new ArgumentNullException(nameof(audioItem));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+        // Create MediaElement for audio playback
+        _mediaElement = new MediaElement
+        {
+            ShouldAutoPlay = false,
+            ShouldLoopPlayback = audioItem.Loop,
+            Volume = audioItem.Volume,
+            ShouldShowPlaybackControls = false, // Hide controls for child-friendly UI
+            ShouldMute = false,
+            AspectRatio = Aspect.AspectFit
+        };
+
+        // Subscribe to MediaElement events
+        _mediaElement.MediaEnded += OnMediaEnded;
+        _mediaElement.MediaFailed += OnMediaFailed;
+        _mediaElement.StateChanged += OnStateChanged;
+
+        _volume = audioItem.Volume;
+
+        _logger.LogDebug("Created MediaElement audio player for {AudioType}: {FilePath}",
+            audioItem.AudioType, filePath);
+    }
+
+    #endregion
+
+    #region Public Methods
+
+    public async Task<bool> PlayAsync(CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            if (_disposed)
+            {
+                _logger.LogWarning("Attempted to play disposed MediaElement audio player");
+                return false;
+            }
+
+            if (!await PrepareAsync())
+            {
+                return false;
+            }
+
+            // Apply fade-in if configured
+            if (_audioItem.FadeInDuration > 0)
+            {
+                await ApplyFadeInAsync(_audioItem.FadeInDuration, cancellationToken);
+            }
+
+            // Start playback
+            _mediaElement.Play();
+            _isPlaying = true;
+            _isPaused = false;
+
+            _logger.LogDebug("Started MediaElement playback for {AudioType} at volume {Volume}",
+                _audioItem.AudioType, _volume);
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error starting MediaElement audio playback: {FilePath}", _filePath);
+            OnPlaybackError(ex, "Failed to start audio playback");
+            return false;
+        }
+    }
+
+    public async Task StopAsync(int fadeOutDurationMs = 0)
+    {
+        try
+        {
+            if (!_isPlaying && !_isPaused)
+            {
+                return;
+            }
+
+            if (fadeOutDurationMs > 0)
+            {
+                await ApplyFadeOutAsync(fadeOutDurationMs);
+            }
+
+            _mediaElement.Stop();
+            _isPlaying = false;
+            _isPaused = false;
+
+            _logger.LogDebug("Stopped MediaElement playback for {AudioType}", _audioItem.AudioType);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error stopping MediaElement audio playback: {FilePath}", _filePath);
+            OnPlaybackError(ex, "Failed to stop audio playback");
+        }
+    }
+
+    public async Task PauseAsync()
+    {
+        try
+        {
+            if (!_isPlaying || _isPaused)
+            {
+                return;
+            }
+
+            _mediaElement.Pause();
+            _isPaused = true;
+
+            _logger.LogDebug("Paused MediaElement playback for {AudioType} at position {Position}ms",
+                _audioItem.AudioType, CurrentPositionMs);
+
+            await Task.CompletedTask;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error pausing MediaElement audio playback: {FilePath}", _filePath);
+            OnPlaybackError(ex, "Failed to pause audio playback");
+        }
+    }
+
+    public async Task ResumeAsync()
+    {
+        try
+        {
+            if (!_isPlaying || !_isPaused)
+            {
+                return;
+            }
+
+            _mediaElement.Play();
+            _isPaused = false;
+
+            _logger.LogDebug("Resumed MediaElement playback for {AudioType} from position {Position}ms",
+                _audioItem.AudioType, CurrentPositionMs);
+
+            await Task.CompletedTask;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error resuming MediaElement audio playback: {FilePath}", _filePath);
+            OnPlaybackError(ex, "Failed to resume audio playback");
+        }
+    }
+
+    public async Task SetVolumeAsync(float volume)
+    {
+        try
+        {
+            Volume = volume;
+            _logger.LogDebug("Set MediaElement volume to {Volume} for {AudioType}", volume, _audioItem.AudioType);
+            await Task.CompletedTask;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error setting MediaElement audio volume: {FilePath}", _filePath);
+            OnPlaybackError(ex, "Failed to set audio volume");
+        }
+    }
+
+    public async Task SeekToAsync(int positionMs)
+    {
+        try
+        {
+            var position = TimeSpan.FromMilliseconds(positionMs);
+            var duration = _mediaElement.Duration ?? TimeSpan.Zero;
+
+            if (position < TimeSpan.Zero || position > duration)
+            {
+                throw new ArgumentOutOfRangeException(nameof(positionMs), "Position out of range");
+            }
+
+            _mediaElement.SeekTo(position);
+
+            _logger.LogDebug("Seeked MediaElement to position {Position}ms for {AudioType}",
+                positionMs, _audioItem.AudioType);
+
+            await Task.CompletedTask;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error seeking MediaElement audio: {FilePath}", _filePath);
+            OnPlaybackError(ex, "Failed to seek audio position");
+        }
+    }
+
+    public async Task<bool> PrepareAsync()
+    {
+        try
+        {
+            // Validate audio file exists
+            if (!await ValidateAudioFileAsync())
+            {
+                return false;
+            }
+
+            // Set the source for MediaElement
+            var mediaSource = await CreateMediaSourceAsync();
+            if (mediaSource == null)
+            {
+                return false;
+            }
+
+            _mediaElement.Source = mediaSource;
+
+            // Wait for MediaElement to be ready
+            var maxWaitTime = TimeSpan.FromSeconds(5);
+            var startTime = DateTime.UtcNow;
+
+            while (_mediaElement.CurrentState == MediaElementState.None ||
+                   _mediaElement.CurrentState == MediaElementState.Opening)
+            {
+                if (DateTime.UtcNow - startTime > maxWaitTime)
+                {
+                    _logger.LogWarning("MediaElement preparation timeout for {FilePath}", _filePath);
+                    return false;
+                }
+
+                await Task.Delay(50);
+            }
+
+            if (_mediaElement.CurrentState == MediaElementState.Failed)
+            {
+                _logger.LogWarning("MediaElement failed to prepare {FilePath}", _filePath);
+                return false;
+            }
+
+            _logger.LogDebug("Prepared MediaElement for playback: {FilePath}", _filePath);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error preparing MediaElement audio: {FilePath}", _filePath);
+            OnPlaybackError(ex, "Failed to prepare audio for playback");
+            return false;
+        }
+    }
+
+    #endregion
+
+    #region Private Methods
+
+    private async Task<bool> ValidateAudioFileAsync()
+    {
+        try
+        {
+            // Check if file exists in app package or local storage
+            if (_filePath.StartsWith("http"))
+            {
+                // URL-based audio - assume valid
+                return true;
+            }
+
+            // Check local file or app package file
+            var exists = File.Exists(_filePath);
+            if (!exists)
+            {
+                // Try to find in app package
+                try
+                {
+                    using var stream = await FileSystem.OpenAppPackageFileAsync(_filePath);
+                    exists = stream != null;
+                }
+                catch
+                {
+                    exists = false;
+                }
+            }
+
+            if (!exists)
+            {
+                _logger.LogWarning("Audio file not found: {FilePath}", _filePath);
+                return false;
+            }
+
+            // Validate file format
+            var supportedExtensions = new[] { ".mp3", ".wav", ".m4a", ".ogg", ".aac" };
+            var extension = Path.GetExtension(_filePath).ToLowerInvariant();
+
+            if (!supportedExtensions.Contains(extension))
+            {
+                _logger.LogWarning("Unsupported audio format: {Extension} for file {FilePath}",
+                    extension, _filePath);
+                return false;
+            }
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error validating audio file: {FilePath}", _filePath);
+            return false;
+        }
+    }
+
+    private async Task<MediaSource?> CreateMediaSourceAsync()
+    {
+        try
+        {
+            if (_filePath.StartsWith("http"))
+            {
+                // URL-based media source
+                return MediaSource.FromUri(_filePath);
+            }
+            else if (File.Exists(_filePath))
+            {
+                // Local file media source
+                return MediaSource.FromFile(_filePath);
+            }
+            else
+            {
+                // Try app package resource
+                try
+                {
+                    var stream = await FileSystem.OpenAppPackageFileAsync(_filePath);
+                    return MediaSource.FromStream(stream);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error opening app package file: {FilePath}", _filePath);
+                    return null;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error creating media source for: {FilePath}", _filePath);
+            return null;
+        }
+    }
+
+    private async Task ApplyFadeInAsync(int durationMs, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var steps = 20;
+            var stepDelay = durationMs / steps;
+            var targetVolume = _volume;
+            var volumeStep = targetVolume / steps;
+
+            // Start with zero volume
+            _mediaElement.Volume = 0.0f;
+
+            for (int i = 1; i <= steps && !cancellationToken.IsCancellationRequested; i++)
+            {
+                var currentVolume = volumeStep * i;
+                _mediaElement.Volume = Math.Min(currentVolume, targetVolume);
+                await Task.Delay(stepDelay, cancellationToken);
+            }
+
+            // Ensure final volume is set
+            _mediaElement.Volume = targetVolume;
+        }
+        catch (OperationCanceledException)
+        {
+            // Restore target volume if cancelled
+            _mediaElement.Volume = _volume;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during MediaElement fade-in effect");
+        }
+    }
+
+    private async Task ApplyFadeOutAsync(int durationMs)
+    {
+        try
+        {
+            var steps = 20;
+            var stepDelay = durationMs / steps;
+            var startVolume = _mediaElement.Volume;
+            var volumeStep = startVolume / steps;
+
+            for (int i = steps; i >= 0; i--)
+            {
+                var currentVolume = volumeStep * i;
+                _mediaElement.Volume = Math.Max(currentVolume, 0.0f);
+                await Task.Delay(stepDelay);
+            }
+
+            // Ensure volume is at zero
+            _mediaElement.Volume = 0.0f;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during MediaElement fade-out effect");
+        }
+    }
+
+    #endregion
+
+    #region Event Handlers
+
+    private void OnMediaEnded(object? sender, EventArgs e)
+    {
+        try
+        {
+            _isPlaying = false;
+            _isPaused = false;
+
+            _logger.LogDebug("MediaElement playback completed for {AudioType}", _audioItem.AudioType);
+
+            PlaybackCompleted?.Invoke(this, EventArgs.Empty);
+            _playbackCompletionSource?.SetResult(true);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in MediaElement playback completed event handler");
+        }
+    }
+
+    private void OnMediaFailed(object? sender, MediaFailedEventArgs e)
+    {
+        try
+        {
+            _isPlaying = false;
+            _isPaused = false;
+
+            var errorMessage = $"MediaElement playback failed: {e.ErrorMessage}";
+            _logger.LogError("MediaElement error for {AudioType}: {Error}", _audioItem.AudioType, errorMessage);
+
+            var exception = new InvalidOperationException(errorMessage);
+            OnPlaybackError(exception, errorMessage);
+            _playbackCompletionSource?.SetException(exception);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in MediaElement playback error event handler");
+        }
+    }
+
+    private void OnStateChanged(object? sender, MediaStateChangedEventArgs e)
+    {
+        _logger.LogDebug("MediaElement state changed to {State} for {AudioType}",
+            e.NewState, _audioItem.AudioType);
+
+        // Update internal state based on MediaElement state
+        switch (e.NewState)
+        {
+            case MediaElementState.Playing:
+                _isPlaying = true;
+                _isPaused = false;
+                break;
+            case MediaElementState.Paused:
+                _isPaused = true;
+                break;
+            case MediaElementState.Stopped:
+                _isPlaying = false;
+                _isPaused = false;
+                break;
+            case MediaElementState.Failed:
+                _isPlaying = false;
+                _isPaused = false;
+                break;
+        }
+    }
+
+    private void OnPlaybackError(Exception error, string message)
+    {
+        try
+        {
+            var eventArgs = new AudioPlayerErrorEventArgs(error, message);
+            PlaybackError?.Invoke(this, eventArgs);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in MediaElement playback error event handler");
+        }
+    }
+
+    #endregion
+
+    #region IDisposable
+
+    public void Dispose()
+    {
+        if (!_disposed)
+        {
+            // Stop playback
+            try
+            {
+                _mediaElement.Stop();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error stopping MediaElement during disposal");
+            }
+
+            // Unsubscribe from events
+            _mediaElement.MediaEnded -= OnMediaEnded;
+            _mediaElement.MediaFailed -= OnMediaFailed;
+            _mediaElement.StateChanged -= OnStateChanged;
+
+            // Dispose MediaElement
+            _mediaElement?.Handler?.DisconnectHandler();
+
+            _isPlaying = false;
+            _isPaused = false;
+            _disposed = true;
+
+            _logger.LogDebug("Disposed MediaElement audio player for {AudioType}", _audioItem.AudioType);
+        }
+    }
+
+    #endregion
+}

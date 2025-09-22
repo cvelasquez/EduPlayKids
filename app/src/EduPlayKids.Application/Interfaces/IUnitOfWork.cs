@@ -72,6 +72,11 @@ public interface IUnitOfWork : IDisposable
     /// </summary>
     IAuditLogRepository AuditLogs { get; }
 
+    /// <summary>
+    /// Gets the ParentalPin repository for secure parental controls access.
+    /// </summary>
+    IParentalPinRepository ParentalPins { get; }
+
     #endregion
 
     #region Transaction Management

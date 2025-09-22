@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="EduPlayKids.App.Views.Parental.PinVerificationPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:EduPlayKids.App.ViewModels.Parental"
+             x:DataType="vm:PinVerificationViewModel"
+             Title="Parental Access"
+             Shell.NavBarIsVisible="True"
+             BackgroundColor="#F8F9FA">
+
+    <!-- Professional PIN verification interface for parental access -->
+    <Grid Padding="20" RowSpacing="30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Header Section -->
+        <StackLayout Grid.Row="0" Spacing="15" VerticalOptions="Center">
+            <Label Text="🔐 Parental Access"
+                   FontSize="32"
+                   FontAttributes="Bold"
+                   TextColor="#2C3E50"
+                   HorizontalOptions="Center" />
+
+            <Label Text="Enter your 4-digit PIN to access parental controls and settings."
+                   FontSize="16"
+                   TextColor="#5D6D7E"
+                   HorizontalOptions="Center"
+                   HorizontalTextAlignment="Center"
+                   LineBreakMode="WordWrap" />
+        </StackLayout>
+
+        <!-- PIN Entry Section -->
+        <Frame Grid.Row="1"
+               BackgroundColor="White"
+               BorderColor="#E0E6ED"
+               CornerRadius="16"
+               HasShadow="True"
+               Padding="40"
+               VerticalOptions="Center"
+               HorizontalOptions="Center"
+               WidthRequest="350">
+            <StackLayout Spacing="25">
+                <Label Text="Enter PIN"
+                       FontSize="20"
+                       FontAttributes="Bold"
+                       TextColor="#2C3E50"
+                       HorizontalOptions="Center" />
+
+                <!-- PIN Input with Visual Feedback -->
+                <StackLayout Orientation="Horizontal"
+                             HorizontalOptions="Center"
+                             Spacing="20">
+                    <Entry x:Name="PinDigit1"
+                           FontSize="28"
+                           FontAttributes="Bold"
+                           TextColor="#2C3E50"
+                           BackgroundColor="#F8F9FA"
+                           WidthRequest="60"
+                           HeightRequest="60"
+                           HorizontalTextAlignment="Center"
+                           VerticalTextAlignment="Center"
+                           MaxLength="1"
+                           Keyboard="Numeric"
+                           IsPassword="True"
+                           TextChanged="OnPinDigitChanged" />
+
+                    <Entry x:Name="PinDigit2"
+                           FontSize="28"
+                           FontAttributes="Bold"
+                           TextColor="#2C3E50"
+                           BackgroundColor="#F8F9FA"
+                           WidthRequest="60"
+                           HeightRequest="60"
+                           HorizontalTextAlignment="Center"
+                           VerticalTextAlignment="Center"
+                           MaxLength="1"
+                           Keyboard="Numeric"
+                           IsPassword="True"
+                           TextChanged="OnPinDigitChanged" />
+
+                    <Entry x:Name="PinDigit3"
+                           FontSize="28"
+                           FontAttributes="Bold"
+                           TextColor="#2C3E50"
+                           BackgroundColor="#F8F9FA"
+                           WidthRequest="60"
+                           HeightRequest="60"
+                           HorizontalTextAlignment="Center"
+                           VerticalTextAlignment="Center"
+                           MaxLength="1"
+                           Keyboard="Numeric"
+                           IsPassword="True"
+                           TextChanged="OnPinDigitChanged" />
+
+                    <Entry x:Name="PinDigit4"
+                           FontSize="28"
+                           FontAttributes="Bold"
+                           TextColor="#2C3E50"
+                           BackgroundColor="#F8F9FA"
+                           WidthRequest="60"
+                           HeightRequest="60"
+                           HorizontalTextAlignment="Center"
+                           VerticalTextAlignment="Center"
+                           MaxLength="1"
+                           Keyboard="Numeric"
+                           IsPassword="True"
+                           TextChanged="OnPinDigitChanged" />
+                </StackLayout>
+
+                <!-- Loading indicator -->
+                <ActivityIndicator IsVisible="{Binding IsLoading}"
+                                   IsRunning="{Binding IsLoading}"
+                                   Color="#3498DB"
+                                   WidthRequest="30"
+                                   HeightRequest="30" />
+            </StackLayout>
+        </Frame>
+
+        <!-- Lockout Warning -->
+        <Frame Grid.Row="2"
+               BackgroundColor="#FCF3CF"
+               BorderColor="#F1C40F"
+               CornerRadius="8"
+               Padding="15"
+               IsVisible="{Binding IsLocked}">
+            <StackLayout Spacing="8" Orientation="Horizontal">
+                <Label Text="⚠️"
+                       FontSize="20"
+                       VerticalOptions="Center" />
+                <StackLayout Spacing="2">
+                    <Label Text="PIN Entry Locked"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           TextColor="#B7950B" />
+                    <Label Text="{Binding LockoutMessage}"
+                           FontSize="14"
+                           TextColor="#85651A"
+                           LineBreakMode="WordWrap" />
+                </StackLayout>
+            </StackLayout>
+        </Frame>
+
+        <!-- Error Message -->
+        <Label Grid.Row="3"
+               Text="{Binding ErrorMessage}"
+               FontSize="14"
+               TextColor="#E74C3C"
+               IsVisible="{Binding HasError}"
+               HorizontalOptions="Center"
+               HorizontalTextAlignment="Center"
+               LineBreakMode="WordWrap" />
+
+        <!-- Action Buttons -->
+        <StackLayout Grid.Row="4" Spacing="15" Margin="0,20,0,0">
+            <Button Text="Verify PIN"
+                    Command="{Binding VerifyPinCommand}"
+                    BackgroundColor="#3498DB"
+                    TextColor="White"
+                    FontSize="18"
+                    FontAttributes="Bold"
+                    HeightRequest="50"
+                    CornerRadius="25"
+                    IsEnabled="{Binding CanVerifyPin}" />
+
+            <StackLayout Orientation="Horizontal"
+                         HorizontalOptions="Center"
+                         Spacing="20">
+                <Button Text="Forgot PIN?"
+                        Command="{Binding ForgotPinCommand}"
+                        BackgroundColor="Transparent"
+                        TextColor="#7F8C8D"
+                        FontSize="14"
+                        BorderWidth="0" />
+
+                <Label Text="|"
+                       TextColor="#BDC3C7"
+                       FontSize="14"
+                       VerticalOptions="Center" />
+
+                <Button Text="Cancel"
+                        Command="{Binding CancelCommand}"
+                        BackgroundColor="Transparent"
+                        TextColor="#7F8C8D"
+                        FontSize="14"
+                        BorderWidth="0" />
+            </StackLayout>
+        </StackLayout>
+    </Grid>
+</ContentPage>

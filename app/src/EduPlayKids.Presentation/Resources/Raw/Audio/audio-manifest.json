@@ -1,0 +1,92 @@
+{
+  "ui_button_press": {
+    "category": "ui",
+    "description": "Button press sound",
+    "estimatedDurationMs": 200,
+    "paths": {
+      "en": "Audio/en/ui_button_press.mp3",
+      "es": "Audio/es/ui_button_press.mp3"
+    }
+  },
+  "ui_page_transition": {
+    "category": "ui",
+    "description": "Page transition sound",
+    "estimatedDurationMs": 300,
+    "paths": {
+      "en": "Audio/en/ui_page_transition.mp3",
+      "es": "Audio/es/ui_page_transition.mp3"
+    }
+  },
+  "feedback_success_medium": {
+    "category": "feedback",
+    "description": "Medium success celebration",
+    "estimatedDurationMs": 1500,
+    "paths": {
+      "en": "Audio/en/feedback_success_medium.mp3",
+      "es": "Audio/es/feedback_success_medium.mp3"
+    }
+  },
+  "feedback_error_gentle": {
+    "category": "feedback",
+    "description": "Gentle correction sound",
+    "estimatedDurationMs": 800,
+    "paths": {
+      "en": "Audio/en/feedback_error_gentle.mp3",
+      "es": "Audio/es/feedback_error_gentle.mp3"
+    }
+  },
+  "completion_three_stars": {
+    "category": "completion",
+    "description": "Three stars completion celebration",
+    "estimatedDurationMs": 3000,
+    "paths": {
+      "en": "Audio/en/completion_three_stars.mp3",
+      "es": "Audio/es/completion_three_stars.mp3"
+    }
+  },
+  "welcome_age_selection": {
+    "category": "instruction",
+    "description": "Welcome to age selection page",
+    "estimatedDurationMs": 3000,
+    "paths": {
+      "en": "Audio/en/welcome_age_selection.mp3",
+      "es": "Audio/es/welcome_age_selection.mp3"
+    }
+  },
+  "welcome_subject_selection": {
+    "category": "instruction",
+    "description": "Welcome to subject selection page",
+    "estimatedDurationMs": 3000,
+    "paths": {
+      "en": "Audio/en/welcome_subject_selection.mp3",
+      "es": "Audio/es/welcome_subject_selection.mp3"
+    }
+  },
+  "activity_intro_math": {
+    "category": "instruction",
+    "description": "Mathematics activity introduction",
+    "estimatedDurationMs": 4000,
+    "paths": {
+      "en": "Audio/en/activity_intro_math.mp3",
+      "es": "Audio/es/activity_intro_math.mp3"
+    }
+  },
+  "activity_intro_reading": {
+    "category": "instruction",
+    "description": "Reading activity introduction",
+    "estimatedDurationMs": 4000,
+    "paths": {
+      "en": "Audio/en/activity_intro_reading.mp3",
+      "es": "Audio/es/activity_intro_reading.mp3"
+    }
+  },
+  "encouragement_gentle": {
+    "category": "instruction",
+    "description": "Gentle encouragement for struggling learners",
+    "estimatedDurationMs": 3000,
+    "paths": {
+      "en": "Audio/en/encouragement_gentle.mp3",
+      "es": "Audio/es/encouragement_gentle.mp3"
+    }
+  }
+}

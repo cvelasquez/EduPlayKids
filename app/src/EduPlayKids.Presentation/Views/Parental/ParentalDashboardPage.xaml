@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="EduPlayKids.App.Views.Parental.ParentalDashboardPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:EduPlayKids.App.ViewModels.Parental"
+             x:DataType="vm:ParentalDashboardViewModel"
+             Title="Parental Dashboard"
+             Shell.NavBarIsVisible="True"
+             BackgroundColor="#F8F9FA">
+
+    <Shell.TitleView>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Column="0"
+                   Text="Parental Dashboard"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   TextColor="White"
+                   VerticalOptions="Center" />
+
+            <Button Grid.Column="1"
+                    Text="⚙️"
+                    Command="{Binding OpenSettingsCommand}"
+                    BackgroundColor="Transparent"
+                    TextColor="White"
+                    FontSize="18"
+                    WidthRequest="40"
+                    HeightRequest="40" />
+        </Grid>
+    </Shell.TitleView>
+
+    <!-- Professional dashboard for parental controls and monitoring -->
+    <ScrollView>
+        <Grid Padding="15" RowSpacing="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- Welcome Section -->
+            <Frame Grid.Row="0"
+                   BackgroundColor="White"
+                   BorderColor="#E0E6ED"
+                   CornerRadius="12"
+                   HasShadow="True"
+                   Padding="20">
+                <StackLayout Spacing="10">
+                    <Label Text="{Binding WelcomeMessage}"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="#2C3E50" />
+
+                    <Label Text="{Binding LastAccessMessage}"
+                           FontSize="14"
+                           TextColor="#5D6D7E" />
+                </StackLayout>
+            </Frame>
+
+            <!-- Child Selection -->
+            <Frame Grid.Row="1"
+                   BackgroundColor="White"
+                   BorderColor="#E0E6ED"
+                   CornerRadius="12"
+                   HasShadow="True"
+                   Padding="20">
+                <StackLayout Spacing="15">
+                    <Label Text="👶 Select Child"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           TextColor="#2C3E50" />
+
+                    <CollectionView ItemsSource="{Binding Children}"
+                                    SelectedItem="{Binding SelectedChild}"
+                                    SelectionMode="Single"
+                                    HeightRequest="80">
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Horizontal"
+                                               ItemSpacing="15" />
+                        </CollectionView.ItemsLayout>
+
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid WidthRequest="100">
+                                    <Frame BackgroundColor="{Binding IsSelected, Converter={StaticResource BoolToColorConverter}}"
+                                           BorderColor="#3498DB"
+                                           CornerRadius="8"
+                                           Padding="10"
+                                           HasShadow="False">
+                                        <StackLayout Spacing="5">
+                                            <Label Text="{Binding Avatar, FallbackValue='👤'}"
+                                                   FontSize="24"
+                                                   HorizontalOptions="Center" />
+
+                                            <Label Text="{Binding Name}"
+                                                   FontSize="12"
+                                                   FontAttributes="Bold"
+                                                   TextColor="#2C3E50"
+                                                   HorizontalOptions="Center"
+                                                   LineBreakMode="TailTruncation" />
+
+                                            <Label Text="{Binding Age, StringFormat='Age {0}'}"
+                                                   FontSize="10"
+                                                   TextColor="#5D6D7E"
+                                                   HorizontalOptions="Center" />
+                                        </StackLayout>
+                                    </Frame>
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <Button Text="+ Add Child"
+                            Command="{Binding AddChildCommand}"
+                            BackgroundColor="#3498DB"
+                            TextColor="White"
+                            FontSize="14"
+                            HeightRequest="40"
+                            CornerRadius="20" />
+                </StackLayout>
+            </Frame>
+
+            <!-- Quick Stats -->
+            <Grid Grid.Row="2" ColumnSpacing="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Today's Usage -->
+                <Frame Grid.Column="0"
+                       BackgroundColor="White"
+                       BorderColor="#E0E6ED"
+                       CornerRadius="12"
+                       HasShadow="True"
+                       Padding="15">
+                    <StackLayout Spacing="8">
+                        <Label Text="📊 Today's Usage"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#2C3E50" />
+
+                        <Label Text="{Binding TodayUsageMinutes, StringFormat='{0} minutes'}"
+                               FontSize="20"
+                               FontAttributes="Bold"
+                               TextColor="#27AE60" />
+
+                        <Label Text="{Binding UsageStatusMessage}"
+                               FontSize="12"
+                               TextColor="#5D6D7E"
+                               LineBreakMode="WordWrap" />
+                    </StackLayout>
+                </Frame>
+
+                <!-- Current Streak -->
+                <Frame Grid.Column="1"
+                       BackgroundColor="White"
+                       BorderColor="#E0E6ED"
+                       CornerRadius="12"
+                       HasShadow="True"
+                       Padding="15">
+                    <StackLayout Spacing="8">
+                        <Label Text="🔥 Learning Streak"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#2C3E50" />
+
+                        <Label Text="{Binding LearningStreak, StringFormat='{0} days'}"
+                               FontSize="20"
+                               FontAttributes="Bold"
+                               TextColor="#E67E22" />
+
+                        <Label Text="{Binding StreakMessage}"
+                               FontSize="12"
+                               TextColor="#5D6D7E"
+                               LineBreakMode="WordWrap" />
+                    </StackLayout>
+                </Frame>
+            </Grid>
+
+            <!-- Progress Overview -->
+            <Frame Grid.Row="3"
+                   BackgroundColor="White"
+                   BorderColor="#E0E6ED"
+                   CornerRadius="12"
+                   HasShadow="True"
+                   Padding="20">
+                <StackLayout Spacing="15">
+                    <Label Text="📈 Progress Overview"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           TextColor="#2C3E50" />
+
+                    <CollectionView ItemsSource="{Binding SubjectProgress}"
+                                    HeightRequest="200">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Padding="0,5" ColumnSpacing="15">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Label Grid.Column="0"
+                                           Text="{Binding Icon}"
+                                           FontSize="20"
+                                           VerticalOptions="Center" />
+
+                                    <StackLayout Grid.Column="1" Spacing="5">
+                                        <Label Text="{Binding SubjectName}"
+                                               FontSize="14"
+                                               FontAttributes="Bold"
+                                               TextColor="#2C3E50" />
+
+                                        <ProgressBar Progress="{Binding ProgressPercentage}"
+                                                     ProgressColor="#3498DB"
+                                                     BackgroundColor="#ECF0F1"
+                                                     HeightRequest="8" />
+
+                                        <Label Text="{Binding ProgressText}"
+                                               FontSize="12"
+                                               TextColor="#5D6D7E" />
+                                    </StackLayout>
+
+                                    <Label Grid.Column="2"
+                                           Text="{Binding CompletionPercentage, StringFormat='{0}%'}"
+                                           FontSize="14"
+                                           FontAttributes="Bold"
+                                           TextColor="#27AE60"
+                                           VerticalOptions="Center" />
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </StackLayout>
+            </Frame>
+
+            <!-- Recent Achievements -->
+            <Frame Grid.Row="4"
+                   BackgroundColor="White"
+                   BorderColor="#E0E6ED"
+                   CornerRadius="12"
+                   HasShadow="True"
+                   Padding="20">
+                <StackLayout Spacing="15">
+                    <StackLayout Orientation="Horizontal" Spacing="10">
+                        <Label Text="🏆 Recent Achievements"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               TextColor="#2C3E50"
+                               VerticalOptions="Center" />
+
+                        <Label Text="{Binding RecentAchievementsCount, StringFormat='({0})'}"
+                               FontSize="14"
+                               TextColor="#5D6D7E"
+                               VerticalOptions="Center" />
+                    </StackLayout>
+
+                    <CollectionView ItemsSource="{Binding RecentAchievements}"
+                                    HeightRequest="120">
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Horizontal"
+                                               ItemSpacing="15" />
+                        </CollectionView.ItemsLayout>
+
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Frame BackgroundColor="#E8F6F3"
+                                       BorderColor="#27AE60"
+                                       CornerRadius="8"
+                                       Padding="15"
+                                       WidthRequest="150"
+                                       HasShadow="False">
+                                    <StackLayout Spacing="8">
+                                        <Label Text="{Binding Icon}"
+                                               FontSize="24"
+                                               HorizontalOptions="Center" />
+
+                                        <Label Text="{Binding Title}"
+                                               FontSize="12"
+                                               FontAttributes="Bold"
+                                               TextColor="#2C3E50"
+                                               HorizontalOptions="Center"
+                                               LineBreakMode="WordWrap" />
+
+                                        <Label Text="{Binding EarnedDate, StringFormat='{0:MMM d}'}"
+                                               FontSize="10"
+                                               TextColor="#5D6D7E"
+                                               HorizontalOptions="Center" />
+                                    </StackLayout>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </StackLayout>
+            </Frame>
+
+            <!-- Action Buttons -->
+            <Grid Grid.Row="5" ColumnSpacing="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0"
+                        Text="📊 View Reports"
+                        Command="{Binding ViewReportsCommand}"
+                        BackgroundColor="#3498DB"
+                        TextColor="White"
+                        FontSize="14"
+                        FontAttributes="Bold"
+                        HeightRequest="45"
+                        CornerRadius="22" />
+
+                <Button Grid.Column="1"
+                        Text="⚙️ Settings"
+                        Command="{Binding OpenSettingsCommand}"
+                        BackgroundColor="#95A5A6"
+                        TextColor="White"
+                        FontSize="14"
+                        FontAttributes="Bold"
+                        HeightRequest="45"
+                        CornerRadius="22" />
+            </Grid>
+        </Grid>
+    </ScrollView>
+</ContentPage>

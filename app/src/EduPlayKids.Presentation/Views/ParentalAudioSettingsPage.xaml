@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:EduPlayKids.App.Controls.Audio"
+             x:Class="EduPlayKids.App.Views.ParentalAudioSettingsPage"
+             Title="Audio Settings"
+             BackgroundColor="{StaticResource BackgroundColor}">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <!-- Page Title Style -->
+            <Style x:Key="PageTitleStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="24" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="TextColor" Value="{StaticResource PrimaryTextColor}" />
+                <Setter Property="HorizontalOptions" Value="Center" />
+                <Setter Property="Margin" Value="0,20,0,10" />
+            </Style>
+
+            <!-- Section Header Style -->
+            <Style x:Key="SectionHeaderStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="TextColor" Value="{StaticResource SecondaryTextColor}" />
+                <Setter Property="Margin" Value="0,20,0,10" />
+            </Style>
+
+            <!-- Description Style -->
+            <Style x:Key="DescriptionStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="TextColor" Value="{StaticResource TertiaryTextColor}" />
+                <Setter Property="Margin" Value="0,0,0,15" />
+            </Style>
+
+            <!-- Switch Style -->
+            <Style x:Key="SettingsSwitchStyle" TargetType="Switch">
+                <Setter Property="OnColor" Value="{StaticResource PrimaryColor}" />
+                <Setter Property="ThumbColor" Value="White" />
+                <Setter Property="VerticalOptions" Value="Center" />
+            </Style>
+
+            <!-- Settings Row Style -->
+            <Style x:Key="SettingsRowStyle" TargetType="Grid">
+                <Setter Property="Padding" Value="20,15" />
+                <Setter Property="BackgroundColor" Value="White" />
+                <Setter Property="Margin" Value="10,5" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <StackLayout Padding="20" Spacing="0">
+
+            <!-- Page Header -->
+            <Label Text="🔊 Audio Settings"
+                   Style="{StaticResource PageTitleStyle}" />
+
+            <Label Text="Customize audio settings to create the perfect learning environment for your child."
+                   Style="{StaticResource DescriptionStyle}"
+                   HorizontalOptions="Center"
+                   HorizontalTextAlignment="Center" />
+
+            <!-- Master Volume Section -->
+            <Label Text="Master Volume"
+                   Style="{StaticResource SectionHeaderStyle}" />
+
+            <Border BackgroundColor="White"
+                    Stroke="{StaticResource BorderColor}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 10"
+                    Margin="0,0,0,20">
+
+                <StackLayout Padding="20" Spacing="15">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Grid.Column="0"
+                               Text="Overall Volume"
+                               FontSize="16"
+                               VerticalOptions="Center" />
+                        <Label Grid.Column="1"
+                               Text="{Binding MasterVolumePercentage}"
+                               FontSize="14"
+                               TextColor="{StaticResource SecondaryTextColor}"
+                               VerticalOptions="Center" />
+                    </Grid>
+
+                    <Slider x:Name="MasterVolumeSlider"
+                            Minimum="0"
+                            Maximum="0.85"
+                            Value="{Binding MasterVolume, Mode=TwoWay}"
+                            MinimumTrackColor="{StaticResource PrimaryColor}"
+                            MaximumTrackColor="{StaticResource LightGrayColor}"
+                            ThumbColor="{StaticResource PrimaryColor}" />
+
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                        <Button Grid.Column="0"
+                                Text="🔇 Mute"
+                                Command="{Binding MuteAllCommand}"
+                                BackgroundColor="Transparent"
+                                BorderColor="{StaticResource BorderColor}"
+                                BorderWidth="1"
+                                CornerRadius="20"
+                                FontSize="12" />
+
+                        <Button Grid.Column="1"
+                                Text="🔉 Low"
+                                Command="{Binding SetLowVolumeCommand}"
+                                BackgroundColor="Transparent"
+                                BorderColor="{StaticResource BorderColor}"
+                                BorderWidth="1"
+                                CornerRadius="20"
+                                FontSize="12" />
+
+                        <Button Grid.Column="2"
+                                Text="🔊 High"
+                                Command="{Binding SetHighVolumeCommand}"
+                                BackgroundColor="Transparent"
+                                BorderColor="{StaticResource BorderColor}"
+                                BorderWidth="1"
+                                CornerRadius="20"
+                                FontSize="12" />
+                    </Grid>
+                </StackLayout>
+            </Border>
+
+            <!-- Individual Audio Type Controls -->
+            <Label Text="Audio Types"
+                   Style="{StaticResource SectionHeaderStyle}" />
+
+            <!-- UI Sounds -->
+            <controls:AudioVolumeControl x:Name="UISoundsControl"
+                                       AudioType="UIInteraction"
+                                       ShowControlButtons="True"
+                                       ShowVolumeIcons="True"
+                                       ShowResetButton="True"
+                                       MaxVolumeLevel="0.85" />
+
+            <!-- Instructions -->
+            <controls:AudioVolumeControl x:Name="InstructionsControl"
+                                       AudioType="Instruction"
+                                       ShowControlButtons="True"
+                                       ShowVolumeIcons="True"
+                                       ShowResetButton="True"
+                                       MaxVolumeLevel="0.85" />
+
+            <!-- Success Sounds -->
+            <controls:AudioVolumeControl x:Name="SuccessSoundsControl"
+                                       AudioType="SuccessFeedback"
+                                       ShowControlButtons="True"
+                                       ShowVolumeIcons="True"
+                                       ShowResetButton="True"
+                                       MaxVolumeLevel="0.85" />
+
+            <!-- Correction Sounds -->
+            <controls:AudioVolumeControl x:Name="CorrectionSoundsControl"
+                                       AudioType="ErrorFeedback"
+                                       ShowControlButtons="True"
+                                       ShowVolumeIcons="True"
+                                       ShowResetButton="True"
+                                       MaxVolumeLevel="0.85" />
+
+            <!-- Background Music -->
+            <controls:AudioVolumeControl x:Name="BackgroundMusicControl"
+                                       AudioType="BackgroundMusic"
+                                       ShowControlButtons="True"
+                                       ShowVolumeIcons="True"
+                                       ShowResetButton="True"
+                                       MaxVolumeLevel="0.85" />
+
+            <!-- Audio Settings Section -->
+            <Label Text="Audio Preferences"
+                   Style="{StaticResource SectionHeaderStyle}" />
+
+            <!-- Language Selection -->
+            <Border BackgroundColor="White"
+                    Stroke="{StaticResource BorderColor}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 10"
+                    Margin="0,0,0,10">
+
+                <Grid Style="{StaticResource SettingsRowStyle}"
+                      ColumnDefinitions="*,Auto">
+                    <StackLayout Grid.Column="0">
+                        <Label Text="Audio Language"
+                               FontSize="16"
+                               FontAttributes="Bold" />
+                        <Label Text="Choose the language for voice instructions and feedback"
+                               FontSize="12"
+                               TextColor="{StaticResource SecondaryTextColor}" />
+                    </StackLayout>
+
+                    <Picker Grid.Column="1"
+                            x:Name="LanguagePicker"
+                            SelectedItem="{Binding SelectedAudioLanguage, Mode=TwoWay}"
+                            ItemsSource="{Binding AvailableLanguages}"
+                            VerticalOptions="Center"
+                            WidthRequest="120">
+                        <Picker.ItemDisplayBinding>
+                            <Binding Path="DisplayName" />
+                        </Picker.ItemDisplayBinding>
+                    </Picker>
+                </Grid>
+            </Border>
+
+            <!-- Auto-Pause Setting -->
+            <Border BackgroundColor="White"
+                    Stroke="{StaticResource BorderColor}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 10"
+                    Margin="0,0,0,10">
+
+                <Grid Style="{StaticResource SettingsRowStyle}"
+                      ColumnDefinitions="*,Auto">
+                    <StackLayout Grid.Column="0">
+                        <Label Text="Auto-Pause Audio"
+                               FontSize="16"
+                               FontAttributes="Bold" />
+                        <Label Text="Automatically pause audio when child is inactive"
+                               FontSize="12"
+                               TextColor="{StaticResource SecondaryTextColor}" />
+                    </StackLayout>
+
+                    <Switch Grid.Column="1"
+                            IsToggled="{Binding AutoPauseEnabled, Mode=TwoWay}"
+                            Style="{StaticResource SettingsSwitchStyle}" />
+                </Grid>
+            </Border>
+
+            <!-- Fade Transitions Setting -->
+            <Border BackgroundColor="White"
+                    Stroke="{StaticResource BorderColor}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 10"
+                    Margin="0,0,0,10">
+
+                <Grid Style="{StaticResource SettingsRowStyle}"
+                      ColumnDefinitions="*,Auto">
+                    <StackLayout Grid.Column="0">
+                        <Label Text="Smooth Audio Transitions"
+                               FontSize="16"
+                               FontAttributes="Bold" />
+                        <Label Text="Use gentle fade effects to prevent sudden audio changes"
+                               FontSize="12"
+                               TextColor="{StaticResource SecondaryTextColor}" />
+                    </StackLayout>
+
+                    <Switch Grid.Column="1"
+                            IsToggled="{Binding FadeTransitionsEnabled, Mode=TwoWay}"
+                            Style="{StaticResource SettingsSwitchStyle}" />
+                </Grid>
+            </Border>
+
+            <!-- Hearing Protection Setting -->
+            <Border BackgroundColor="White"
+                    Stroke="{StaticResource BorderColor}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 10"
+                    Margin="0,0,0,10">
+
+                <Grid Style="{StaticResource SettingsRowStyle}"
+                      ColumnDefinitions="*,Auto">
+                    <StackLayout Grid.Column="0">
+                        <Label Text="Hearing Protection"
+                               FontSize="16"
+                               FontAttributes="Bold" />
+                        <Label Text="Limit maximum volume to protect young ears"
+                               FontSize="12"
+                               TextColor="{StaticResource SecondaryTextColor}" />
+                    </StackLayout>
+
+                    <Switch Grid.Column="1"
+                            IsToggled="{Binding HearingProtectionEnabled, Mode=TwoWay}"
+                            Style="{StaticResource SettingsSwitchStyle}" />
+                </Grid>
+            </Border>
+
+            <!-- Audio Cache Section -->
+            <Label Text="Audio Performance"
+                   Style="{StaticResource SectionHeaderStyle}" />
+
+            <Border BackgroundColor="White"
+                    Stroke="{StaticResource BorderColor}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 10"
+                    Margin="0,0,0,20">
+
+                <StackLayout Padding="20" Spacing="15">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <StackLayout Grid.Column="0">
+                            <Label Text="Audio Cache"
+                                   FontSize="16"
+                                   FontAttributes="Bold" />
+                            <Label Text="{Binding AudioCacheStatus}"
+                                   FontSize="12"
+                                   TextColor="{StaticResource SecondaryTextColor}" />
+                        </StackLayout>
+
+                        <Button Grid.Column="1"
+                                Text="Clear Cache"
+                                Command="{Binding ClearAudioCacheCommand}"
+                                BackgroundColor="Transparent"
+                                BorderColor="{StaticResource BorderColor}"
+                                BorderWidth="1"
+                                CornerRadius="20"
+                                FontSize="12"
+                                IsEnabled="{Binding CanClearCache}"
+                                VerticalOptions="Center" />
+                    </Grid>
+
+                    <ProgressBar Progress="{Binding CacheUsagePercentage}"
+                                 ProgressColor="{StaticResource PrimaryColor}"
+                                 BackgroundColor="{StaticResource LightGrayColor}"
+                                 HeightRequest="6" />
+                </StackLayout>
+            </Border>
+
+            <!-- Action Buttons -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="20" Margin="0,20,0,40">
+                <Button Grid.Column="0"
+                        Text="Reset All"
+                        Command="{Binding ResetAllSettingsCommand}"
+                        BackgroundColor="Transparent"
+                        BorderColor="{StaticResource SecondaryColor}"
+                        BorderWidth="2"
+                        CornerRadius="25"
+                        HeightRequest="50"
+                        FontSize="16"
+                        TextColor="{StaticResource SecondaryColor}" />
+
+                <Button Grid.Column="1"
+                        Text="Save Settings"
+                        Command="{Binding SaveSettingsCommand}"
+                        BackgroundColor="{StaticResource PrimaryColor}"
+                        CornerRadius="25"
+                        HeightRequest="50"
+                        FontSize="16"
+                        TextColor="White" />
+            </Grid>
+
+        </StackLayout>
+    </ScrollView>
+
+</ContentPage>

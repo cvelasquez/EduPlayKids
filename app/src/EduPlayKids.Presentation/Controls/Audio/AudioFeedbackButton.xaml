@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="EduPlayKids.App.Controls.Audio.AudioFeedbackButton"
+             x:Name="this">
+
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <!-- Success Button Style -->
+            <Style x:Key="SuccessButtonStyle" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="#4CAF50" />
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="CornerRadius" Value="25" />
+                <Setter Property="HeightRequest" Value="60" />
+                <Setter Property="MinimumWidthRequest" Value="120" />
+                <Setter Property="Shadow">
+                    <Setter.Value>
+                        <Shadow Brush="#40000000" Offset="0,4" Radius="8" Opacity="0.3" />
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="VisualStateManager.VisualStateGroups">
+                    <VisualStateGroupList>
+                        <VisualStateGroup x:Name="CommonStates">
+                            <VisualState x:Name="Normal">
+                                <VisualState.Setters>
+                                    <Setter Property="Scale" Value="1.0" />
+                                    <Setter Property="Opacity" Value="1.0" />
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState x:Name="Pressed">
+                                <VisualState.Setters>
+                                    <Setter Property="Scale" Value="0.95" />
+                                    <Setter Property="Opacity" Value="0.8" />
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState x:Name="Disabled">
+                                <VisualState.Setters>
+                                    <Setter Property="Opacity" Value="0.5" />
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateGroupList>
+                </Setter>
+            </Style>
+
+            <!-- Error Button Style -->
+            <Style x:Key="ErrorButtonStyle" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="#FF9800" />
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="CornerRadius" Value="25" />
+                <Setter Property="HeightRequest" Value="60" />
+                <Setter Property="MinimumWidthRequest" Value="120" />
+                <Setter Property="Shadow">
+                    <Setter.Value>
+                        <Shadow Brush="#40000000" Offset="0,4" Radius="8" Opacity="0.3" />
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="VisualStateManager.VisualStateGroups">
+                    <VisualStateGroupList>
+                        <VisualStateGroup x:Name="CommonStates">
+                            <VisualState x:Name="Normal">
+                                <VisualState.Setters>
+                                    <Setter Property="Scale" Value="1.0" />
+                                    <Setter Property="Opacity" Value="1.0" />
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState x:Name="Pressed">
+                                <VisualState.Setters>
+                                    <Setter Property="Scale" Value="0.95" />
+                                    <Setter Property="Opacity" Value="0.8" />
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState x:Name="Disabled">
+                                <VisualState.Setters>
+                                    <Setter Property="Opacity" Value="0.5" />
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateGroupList>
+                </Setter>
+            </Style>
+
+            <!-- Standard Button Style -->
+            <Style x:Key="StandardButtonStyle" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="#2196F3" />
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="CornerRadius" Value="25" />
+                <Setter Property="HeightRequest" Value="60" />
+                <Setter Property="MinimumWidthRequest" Value="120" />
+                <Setter Property="Shadow">
+                    <Setter.Value>
+                        <Shadow Brush="#40000000" Offset="0,4" Radius="8" Opacity="0.3" />
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="VisualStateManager.VisualStateGroups">
+                    <VisualStateGroupList>
+                        <VisualStateGroup x:Name="CommonStates">
+                            <VisualState x:Name="Normal">
+                                <VisualState.Setters>
+                                    <Setter Property="Scale" Value="1.0" />
+                                    <Setter Property="Opacity" Value="1.0" />
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState x:Name="Pressed">
+                                <VisualState.Setters>
+                                    <Setter Property="Scale" Value="0.95" />
+                                    <Setter Property="Opacity" Value="0.8" />
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState x:Name="Disabled">
+                                <VisualState.Setters>
+                                    <Setter Property="Opacity" Value="0.5" />
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateGroupList>
+                </Setter>
+            </Style>
+
+            <!-- Audio Playing Animation -->
+            <DataTemplate x:Key="AudioPlayingIndicator">
+                <Grid WidthRequest="20" HeightRequest="20">
+                    <Ellipse Fill="#FFF" Opacity="0.8" />
+                    <Label Text="♪"
+                           FontSize="12"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           TextColor="Black">
+                        <Label.Triggers>
+                            <DataTrigger TargetType="Label"
+                                       Binding="{Binding Source={x:Reference this}, Path=IsPlayingAudio}"
+                                       Value="True">
+                                <DataTrigger.EnterActions>
+                                    <BeginAnimation>
+                                        <Animation>
+                                            <DoubleAnimation Property="Opacity"
+                                                           To="0.3"
+                                                           Duration="500"
+                                                           AutoReverse="True"
+                                                           RepeatForever="True" />
+                                        </Animation>
+                                    </BeginAnimation>
+                                </DataTrigger.EnterActions>
+                                <DataTrigger.ExitActions>
+                                    <StopAnimation />
+                                </DataTrigger.ExitActions>
+                            </DataTrigger>
+                        </Label.Triggers>
+                    </Label>
+                </Grid>
+            </DataTemplate>
+        </ResourceDictionary>
+    </ContentView.Resources>
+
+    <Grid>
+        <Button x:Name="MainButton"
+                Text="{Binding Source={x:Reference this}, Path=ButtonText}"
+                Command="{Binding Source={x:Reference this}, Path=Command}"
+                CommandParameter="{Binding Source={x:Reference this}, Path=CommandParameter}"
+                IsEnabled="{Binding Source={x:Reference this}, Path=IsEnabled}"
+                Style="{Binding Source={x:Reference this}, Path=ButtonStyle}">
+
+            <!-- Button Press Animation -->
+            <Button.Triggers>
+                <EventTrigger Event="Pressed">
+                    <BeginAnimation>
+                        <Animation>
+                            <DoubleAnimation Property="Scale" To="0.95" Duration="100" />
+                        </Animation>
+                    </BeginAnimation>
+                </EventTrigger>
+                <EventTrigger Event="Released">
+                    <BeginAnimation>
+                        <Animation>
+                            <DoubleAnimation Property="Scale" To="1.0" Duration="100" />
+                        </Animation>
+                    </BeginAnimation>
+                </EventTrigger>
+            </Button.Triggers>
+        </Button>
+
+        <!-- Audio Playing Indicator -->
+        <ContentView x:Name="AudioIndicator"
+                     IsVisible="{Binding Source={x:Reference this}, Path=IsPlayingAudio}"
+                     HorizontalOptions="End"
+                     VerticalOptions="Start"
+                     Margin="0,-5,-5,0"
+                     ContentTemplate="{StaticResource AudioPlayingIndicator}" />
+
+        <!-- Loading Indicator -->
+        <ActivityIndicator x:Name="LoadingIndicator"
+                          IsVisible="{Binding Source={x:Reference this}, Path=IsLoading}"
+                          IsRunning="{Binding Source={x:Reference this}, Path=IsLoading}"
+                          Color="White"
+                          WidthRequest="30"
+                          HeightRequest="30"
+                          HorizontalOptions="Center"
+                          VerticalOptions="Center" />
+    </Grid>
+
+</ContentView>

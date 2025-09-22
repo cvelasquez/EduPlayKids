@@ -41,6 +41,11 @@ public class EduPlayKidsDbContext : DbContext
     /// Application configuration and user preferences.
     /// </summary>
     public DbSet<Settings> Settings { get; set; } = null!;
+
+    /// <summary>
+    /// Parental PIN authentication data for secure access to parental controls.
+    /// </summary>
+    public DbSet<ParentalPin> ParentalPins { get; set; } = null!;
     #endregion
 
     #region Educational Content

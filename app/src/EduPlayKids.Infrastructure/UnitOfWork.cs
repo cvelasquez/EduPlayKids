@@ -6,6 +6,7 @@ using EduPlayKids.Application.Interfaces.Repositories;
 using EduPlayKids.Domain.Entities;
 using EduPlayKids.Infrastructure.Data.Context;
 using EduPlayKids.Infrastructure.Repositories;
+using EduPlayKids.Infrastructure.Data.Repositories;
 
 namespace EduPlayKids.Infrastructure;
 
@@ -35,6 +36,7 @@ public class UnitOfWork : IUnitOfWork
     private ISettingsRepository? _settings;
     private ISubscriptionRepository? _subscriptions;
     private IAuditLogRepository? _auditLogs;
+    private IParentalPinRepository? _parentalPins;
 
     /// <summary>
     /// Initializes a new instance of the UnitOfWork class.
@@ -86,6 +88,9 @@ public class UnitOfWork : IUnitOfWork
 
     /// <inheritdoc />
     public IAuditLogRepository AuditLogs => _auditLogs ??= CreateRepository<IAuditLogRepository, AuditLogRepository>();
+
+    /// <inheritdoc />
+    public IParentalPinRepository ParentalPins => _parentalPins ??= CreateRepository<IParentalPinRepository, ParentalPinRepository>();
 
     #endregion
 

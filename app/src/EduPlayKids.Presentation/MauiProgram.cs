@@ -1,4 +1,6 @@
-﻿using EduPlayKids.Infrastructure.Data.Context;
+using EduPlayKids.Infrastructure.Data.Context;
+using EduPlayKids.App.Extensions;
+using CommunityToolkit.Maui;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -20,6 +22,8 @@ public static class MauiProgram
 
 		builder
 			.UseMauiApp<App>()
+			.UseMauiCommunityToolkit()
+			.UseMauiCommunityToolkitMediaElement()
 			.ConfigureFonts(fonts =>
 			{
 				// Child-friendly fonts - Nunito will be added later per design system
@@ -33,11 +37,14 @@ public static class MauiProgram
 		// Configure database services
 		ConfigureDatabase(builder);
 
-		// Configure application services
-		ConfigureApplicationServices(builder);
-
-		// Configure presentation services (ViewModels, Pages)
-		ConfigurePresentationServices(builder);
+		// Configure all application services using extension methods
+		builder.Services.AddEduPlayKidsServices(isDevelopment:
+#if DEBUG
+			true
+#else
+			false
+#endif
+		);
 
 		return builder.Build();
 	}
@@ -81,44 +88,6 @@ public static class MauiProgram
 		// Register database initialization service
 		builder.Services.AddScoped<IDatabaseInitializationService, DatabaseInitializationService>();
 	}
-
-	/// <summary>
-	/// Configures application layer services.
-	/// </summary>
-	/// <param name="builder">The MAUI app builder.</param>
-	private static void ConfigureApplicationServices(MauiAppBuilder builder)
-	{
-		// TODO: Register application services from EduPlayKids.Application
-		// Examples:
-		// - User management services
-		// - Educational content services
-		// - Progress tracking services
-		// - Analytics services (COPPA-compliant)
-
-		// Localization services for Spanish/English support
-		builder.Services.AddLocalization();
-	}
-
-	/// <summary>
-	/// Configures presentation layer services (ViewModels and Pages).
-	/// </summary>
-	/// <param name="builder">The MAUI app builder.</param>
-	private static void ConfigurePresentationServices(MauiAppBuilder builder)
-	{
-		// Register navigation services
-		builder.Services.AddSingleton<INavigationService, NavigationService>();
-		builder.Services.AddSingleton<EduPlayKids.App.Services.IChildSafeNavigationService, EduPlayKids.App.Services.ChildSafeNavigationService>();
-
-		// Register ViewModels
-		builder.Services.AddTransient<EduPlayKids.App.ViewModels.AgeSelectionViewModel>();
-		builder.Services.AddTransient<EduPlayKids.App.ViewModels.SubjectSelectionViewModel>();
-		builder.Services.AddTransient<EduPlayKids.App.ViewModels.ActivityViewModel>();
-
-		// Register Pages
-		builder.Services.AddTransient<EduPlayKids.App.Views.AgeSelectionPage>();
-		builder.Services.AddTransient<EduPlayKids.App.Views.SubjectSelectionPage>();
-		builder.Services.AddTransient<EduPlayKids.App.Views.ActivityPage>();
-	}
 }
 
 // Placeholder service interfaces and implementations
@@ -131,16 +100,6 @@ public interface IDatabaseInitializationService
 {
 	Task InitializeAsync();
 	Task SeedDataAsync();
-}
-
-/// <summary>
-/// Service for child-safe navigation between pages.
-/// </summary>
-public interface INavigationService
-{
-	Task NavigateToAsync(string route, IDictionary<string, object>? parameters = null);
-	Task GoBackAsync();
-	Task GoToRootAsync();
 }
 
 public class DatabaseInitializationService : IDatabaseInitializationService
@@ -162,23 +121,5 @@ public class DatabaseInitializationService : IDatabaseInitializationService
 	public async Task SeedDataAsync()
 	{
 		await _context.SeedInitialDataAsync();
-	}
-}
-
-public class NavigationService : INavigationService
-{
-	public async Task NavigateToAsync(string route, IDictionary<string, object>? parameters = null)
-	{
-		await Shell.Current.GoToAsync(route, parameters);
-	}
-
-	public async Task GoBackAsync()
-	{
-		await Shell.Current.GoToAsync("..");
-	}
-
-	public async Task GoToRootAsync()
-	{
-		await Shell.Current.GoToAsync("//");
 	}
 }

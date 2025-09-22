@@ -1,16 +1,19 @@
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using EduPlayKids.App.Services;
+using EduPlayKids.Application.Interfaces;
+using EduPlayKids.Application.Models.Audio;
 using Microsoft.Extensions.Logging;
 
 namespace EduPlayKids.App.ViewModels;
 
 /// <summary>
-/// ViewModel for the age selection page.
+/// ViewModel for the age selection page with audio feedback support.
 /// Allows parents to set up their child's profile by selecting the appropriate age.
 /// Age determines curriculum level and content difficulty.
+/// Provides child-friendly audio guidance for the age selection process.
 /// </summary>
-public class AgeSelectionViewModel : BaseViewModel
+public class AgeSelectionViewModel : AudioAwareBaseViewModel
 {
     private readonly IChildSafeNavigationService _navigationService;
     private AgeOption? _selectedAge;
@@ -18,7 +21,8 @@ public class AgeSelectionViewModel : BaseViewModel
 
     public AgeSelectionViewModel(
         IChildSafeNavigationService navigationService,
-        ILogger<AgeSelectionViewModel> logger) : base(logger)
+        ILogger<AgeSelectionViewModel> logger,
+        IAudioService? audioService = null) : base(logger, audioService)
     {
         _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
 
@@ -159,7 +163,7 @@ public class AgeSelectionViewModel : BaseViewModel
     }
 
     /// <summary>
-    /// Handles age selection.
+    /// Handles age selection with audio feedback.
     /// </summary>
     /// <param name="ageOption">The selected age option.</param>
     private async Task SelectAgeAsync(AgeOption ageOption)
@@ -168,6 +172,13 @@ public class AgeSelectionViewModel : BaseViewModel
 
         _logger.LogInformation("Age selected: {Age} years old", ageOption.Age);
         SelectedAge = ageOption;
+
+        // Play selection audio feedback
+        await PlayUIFeedbackAsync(UIInteractionType.ItemSelection);
+
+        // Play age-specific confirmation audio
+        await Task.Delay(200); // Brief pause
+        await PlayInstructionAsync($"age_selected_{ageOption.Age}");
 
         // Provide haptic feedback for selection (on supported devices)
         try
@@ -183,21 +194,30 @@ public class AgeSelectionViewModel : BaseViewModel
     }
 
     /// <summary>
-    /// Handles continue action to proceed with the selected age.
+    /// Handles continue action to proceed with the selected age with audio feedback.
     /// </summary>
     private async Task ContinueAsync()
     {
         if (!CanContinue()) return;
 
+        // Play confirmation audio
+        await PlaySuccessFeedbackAsync(FeedbackIntensity.Medium);
+
         await ExecuteAsync(async () =>
         {
             _logger.LogInformation("Creating child profile: Name={ChildName}, Age={Age}", ChildName, SelectedAge!.Age);
+
+            // Play profile creation audio
+            await PlayInstructionAsync("creating_profile");
 
             // TODO: Create child profile using application services
             // For now, we'll simulate profile creation and navigate
 
             // Simulate profile creation
             await Task.Delay(1000);
+
+            // Play completion audio
+            await PlayCompletionFeedbackAsync(3, "profile_creation");
 
             // Navigate to subject selection with child information
             var parameters = new Dictionary<string, object>
@@ -207,16 +227,18 @@ public class AgeSelectionViewModel : BaseViewModel
                 ["childName"] = Uri.EscapeDataString(ChildName)
             };
 
+            await PlayNavigationAudioAsync("subjects");
             await _navigationService.NavigateToAsync("//subjects", parameters);
 
         }, "Creating your child's profile...");
     }
 
     /// <summary>
-    /// Handles going back to the previous page.
+    /// Handles going back to the previous page with audio feedback.
     /// </summary>
     private async Task GoBackAsync()
     {
+        await PlayBackNavigationAudioAsync();
         await _navigationService.GoBackAsync();
     }
 
@@ -230,9 +252,9 @@ public class AgeSelectionViewModel : BaseViewModel
     }
 
     /// <summary>
-    /// Called when the page appears.
+    /// Called when the page appears with audio introduction.
     /// </summary>
-    public override Task OnAppearingAsync()
+    public override async Task OnAppearingAsync()
     {
         _logger.LogDebug("Age selection page appearing");
 
@@ -240,7 +262,20 @@ public class AgeSelectionViewModel : BaseViewModel
         SelectedAge = null;
         ChildName = string.Empty;
 
-        return base.OnAppearingAsync();
+        await base.OnAppearingAsync();
+    }
+
+    /// <summary>
+    /// Plays introduction audio specific to the age selection page.
+    /// </summary>
+    protected override async Task PlayPageIntroductionAudio()
+    {
+        // Play welcome message for age selection
+        await PlayInstructionAsync("age_selection_welcome");
+
+        // Brief pause, then play instructions
+        await Task.Delay(1000);
+        await PlayInstructionAsync("age_selection_instructions");
     }
 }
 
