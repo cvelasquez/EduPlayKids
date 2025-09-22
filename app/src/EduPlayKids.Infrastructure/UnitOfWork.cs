@@ -18,6 +18,7 @@ public class UnitOfWork : IUnitOfWork
 {
     private readonly EduPlayKidsDbContext _context;
     private readonly ILogger<UnitOfWork> _logger;
+    private readonly ILoggerFactory _loggerFactory;
     private IDbContextTransaction? _transaction;
     private bool _disposed = false;
 
@@ -40,16 +41,18 @@ public class UnitOfWork : IUnitOfWork
     /// </summary>
     /// <param name="context">The database context</param>
     /// <param name="logger">Logger for error handling and debugging</param>
-    public UnitOfWork(EduPlayKidsDbContext context, ILogger<UnitOfWork> logger)
+    /// <param name="loggerFactory">Logger factory for creating repository loggers</param>
+    public UnitOfWork(EduPlayKidsDbContext context, ILogger<UnitOfWork> logger, ILoggerFactory loggerFactory)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
     }
 
     #region Repository Properties
 
     /// <inheritdoc />
-    public IUserRepository Users => _users ??= new UserRepository(_context, _logger.CreateLogger<UserRepository>());
+    public IUserRepository Users => _users ??= new UserRepository(_context, _loggerFactory.CreateLogger<UserRepository>());
 
     /// <inheritdoc />
     public IChildRepository Children => _children ??= CreateRepository<IChildRepository, ChildRepository>();
@@ -253,9 +256,9 @@ public class UnitOfWork : IUnitOfWork
                 UserId = userId,
                 Name = childName,
                 Age = childAge,
-                AvatarImagePath = avatarImagePath ?? "/images/avatars/default.png",
-                FavoriteColor = "#4CAF50", // Default green
-                PreferredDifficulty = childAge <= 4 ? "Easy" : childAge == 5 ? "Medium" : "Hard"
+                AvatarId = avatarImagePath ?? "default",
+                GradeLevel = childAge <= 4 ? "PreK" : childAge == 5 ? "Kindergarten" : "Grade1",
+                DifficultyPreference = childAge <= 4 ? "Easy" : childAge == 5 ? "Medium" : "Hard"
             };
 
             var createdChild = await Children.AddAsync(child, cancellationToken);
@@ -303,7 +306,7 @@ public class UnitOfWork : IUnitOfWork
             };
 
             // Create subscription
-            var subscription = await Subscriptions.UpgradeToPremi​umAsync(userId, subscriptionType, amount, expiresAt, paymentMethod, cancellationToken);
+            var subscription = await Subscriptions.UpgradeToPremiumAsync(userId, subscriptionType, amount, expiresAt, paymentMethod, cancellationToken);
             result["Subscription"] = subscription;
 
             // Update user premium status
@@ -677,7 +680,7 @@ public class UnitOfWork : IUnitOfWork
     private TInterface CreateRepository<TInterface, TImplementation>()
         where TImplementation : class, TInterface
     {
-        var logger = _logger.CreateLogger<TImplementation>();
+        var logger = _loggerFactory.CreateLogger<TImplementation>();
         return (TInterface)Activator.CreateInstance(typeof(TImplementation), _context, logger)!;
     }
 

@@ -102,51 +102,32 @@ public static class DependencyInjection
     /// <summary>
     /// Registers application services for complex business operations.
     /// Uses scoped lifetime for proper dependency injection and state management.
+    /// NOTE: Service implementations will be added in Phase 3 - Application Services
     /// </summary>
     /// <param name="services">The service collection to configure</param>
     private static void RegisterApplicationServices(IServiceCollection services)
     {
-        // Educational and learning services
-        services.AddScoped<IEducationalProgressService, EducationalProgressService>();
-        services.AddScoped<IGameificationService, GameificationService>();
+        // Application services will be implemented in Phase 3
+        // For now, keep this method for future service registration
 
-        // Authentication and security services
-        services.AddScoped<IAuthenticationService, AuthenticationService>();
-        services.AddScoped<IParentalControlService, ParentalControlService>();
-
-        // Content and curriculum services
-        services.AddScoped<IContentManagementService, ContentManagementService>();
-        services.AddScoped<ICurriculumService, CurriculumService>();
-
-        // Analytics and reporting services
-        services.AddScoped<IAnalyticsService, AnalyticsService>();
-        services.AddScoped<IReportingService, ReportingService>();
-
-        // Subscription and billing services
-        services.AddScoped<ISubscriptionService, SubscriptionService>();
-        services.AddScoped<IBillingService, BillingService>();
-
-        // Notification and communication services
-        services.AddScoped<INotificationService, NotificationService>();
-        services.AddScoped<ICommunicationService, CommunicationService>();
-
-        // COPPA compliance and audit services
-        services.AddScoped<IComplianceService, ComplianceService>();
-        services.AddScoped<IAuditService, AuditService>();
+        // TODO: Implement application services in Phase 3:
+        // - Educational and learning services
+        // - Authentication and security services
+        // - Content and curriculum services
+        // - Analytics and reporting services
+        // - Subscription and billing services
+        // - Notification and communication services
+        // - COPPA compliance and audit services
     }
 
     /// <summary>
     /// Registers infrastructure-specific services and utilities.
     /// Includes background services, caching, and mobile-specific optimizations.
+    /// NOTE: Service implementations will be added in Phase 3 - Infrastructure Services
     /// </summary>
     /// <param name="services">The service collection to configure</param>
     private static void RegisterInfrastructureServices(IServiceCollection services)
     {
-        // Background services for maintenance and cleanup
-        services.AddHostedService<DatabaseMaintenanceService>();
-        services.AddHostedService<AuditLogCleanupService>();
-        services.AddHostedService<PerformanceMonitoringService>();
-
         // Caching services optimized for mobile
         services.AddMemoryCache(options =>
         {
@@ -154,27 +135,13 @@ public static class DependencyInjection
             options.CompactionPercentage = 0.25; // Aggressive compaction for memory management
         });
 
-        // File and asset management services
-        services.AddScoped<IFileStorageService, LocalFileStorageService>();
-        services.AddScoped<IImageProcessingService, ImageProcessingService>();
-        services.AddScoped<IAudioService, AudioService>();
-
-        // Health check services
-        services.AddScoped<IHealthCheckService, HealthCheckService>();
-        services.AddScoped<IPerformanceMetricsService, PerformanceMetricsService>();
-
-        // Configuration and settings services
-        services.AddScoped<IConfigurationService, ConfigurationService>();
-        services.AddScoped<ILocalizationService, LocalizationService>();
-
-        // Security and encryption services
-        services.AddScoped<IEncryptionService, EncryptionService>();
-        services.AddScoped<IHashingService, HashingService>();
-
-        // Mobile-specific services
-        services.AddScoped<IDeviceInfoService, DeviceInfoService>();
-        services.AddScoped<IConnectivityService, ConnectivityService>();
-        services.AddScoped<IStorageService, StorageService>();
+        // TODO: Implement infrastructure services in Phase 3:
+        // - Background services for maintenance and cleanup
+        // - File and asset management services
+        // - Health check services
+        // - Configuration and settings services
+        // - Security and encryption services
+        // - Mobile-specific services
     }
 
     /// <summary>
@@ -206,13 +173,7 @@ public static class DependencyInjection
         },
         poolSize: 32); // Limited pool size for mobile devices
 
-        // Configure query optimization
-        services.Configure<DbContextOptions<EduPlayKidsDbContext>>(options =>
-        {
-            // Configure for read-heavy workloads typical in educational apps
-            options.EnableSensitiveDataLogging(false);
-            options.EnableDetailedErrors(false);
-        });
+        // Query optimization configured in AddDbContext method above
     }
 
     /// <summary>
@@ -272,32 +233,14 @@ public static class DependencyInjection
     /// <summary>
     /// Configures logging for the Infrastructure layer.
     /// Sets up appropriate log levels and filtering for mobile performance.
+    /// NOTE: Logging configuration will be handled by the MAUI app startup
     /// </summary>
     /// <param name="services">The service collection to configure</param>
     /// <param name="configuration">The application configuration</param>
     public static void ConfigureLogging(IServiceCollection services, IConfiguration configuration)
     {
-        services.AddLogging(builder =>
-        {
-            builder.AddConfiguration(configuration.GetSection("Logging"));
-
-#if DEBUG
-            builder.AddConsole();
-            builder.AddDebug();
-            builder.SetMinimumLevel(LogLevel.Debug);
-#else
-            builder.SetMinimumLevel(LogLevel.Information);
-#endif
-
-            // Configure logging filters for performance
-            builder.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning);
-            builder.AddFilter("Microsoft.EntityFrameworkCore.Infrastructure", LogLevel.Warning);
-            builder.AddFilter("Microsoft.EntityFrameworkCore.Update", LogLevel.Warning);
-
-            // Educational app specific logging
-            builder.AddFilter("EduPlayKids.Infrastructure.Repositories", LogLevel.Information);
-            builder.AddFilter("EduPlayKids.Application.Services", LogLevel.Information);
-        });
+        // TODO: Implement logging configuration in MAUI app startup
+        // Basic logging is already configured by default .NET 8 infrastructure
     }
 
     /// <summary>
@@ -311,7 +254,8 @@ public static class DependencyInjection
         try
         {
             using var scope = serviceProvider.CreateScope();
-            var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+            var loggerFactory = scope.ServiceProvider.GetRequiredService<ILoggerFactory>();
+            var logger = loggerFactory.CreateLogger("HealthCheck");
 
             logger.LogInformation("Performing infrastructure health check...");
 

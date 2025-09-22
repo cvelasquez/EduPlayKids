@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="EduPlayKids.App.Views.ActivityPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:EduPlayKids.App.ViewModels"
+             Title="{Binding Title}"
+             BackgroundColor="#F0F8FF">
+
+    <!-- BindingContext will be set from code-behind -->
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Header with Progress -->
+        <Frame Grid.Row="0"
+               BackgroundColor="White"
+               CornerRadius="0,0,30,30"
+               HasShadow="True"
+               Padding="20">
+
+            <StackLayout Spacing="15">
+                <!-- Activity Title -->
+                <Label Text="{Binding Title}"
+                       FontSize="22"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center"
+                       TextColor="#2E3440" />
+
+                <!-- Progress Bar -->
+                <StackLayout Spacing="8">
+                    <Label Text="{Binding ProgressText}"
+                           FontSize="14"
+                           HorizontalOptions="Center"
+                           TextColor="#5E81AC" />
+
+                    <ProgressBar Progress="{Binding ProgressPercentage}"
+                                ProgressColor="#A3BE8C"
+                                BackgroundColor="#E5E9F0"
+                                HeightRequest="8" />
+                </StackLayout>
+            </StackLayout>
+        </Frame>
+
+        <!-- Main Content Area -->
+        <ScrollView Grid.Row="1" Padding="20">
+            <StackLayout Spacing="30" VerticalOptions="CenterAndExpand">
+
+                <!-- Activity Content -->
+                <Frame BackgroundColor="White"
+                       CornerRadius="25"
+                       HasShadow="True"
+                       Padding="30"
+                       MinimumHeightRequest="300">
+
+                    <StackLayout Spacing="20" VerticalOptions="CenterAndExpand">
+                        <!-- Step Content -->
+                        <Label Text="{Binding CurrentStepContent}"
+                               FontSize="18"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center"
+                               TextColor="#2E3440"
+                               LineBreakMode="WordWrap" />
+
+                        <!-- Interactive Area Placeholder -->
+                        <Frame BackgroundColor="#F8F9FA"
+                               CornerRadius="15"
+                               Padding="20"
+                               HeightRequest="120"
+                               IsVisible="{Binding IsCompleted, Converter={StaticResource IsNotNullConverter}}">
+
+                            <Label Text="🎯 Interactive content area"
+                                   FontSize="16"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"
+                                   TextColor="#81A1C1"
+                                   HorizontalTextAlignment="Center" />
+                        </Frame>
+                    </StackLayout>
+                </Frame>
+
+                <!-- Completion Message -->
+                <Frame BackgroundColor="#A3BE8C"
+                       CornerRadius="20"
+                       Padding="20"
+                       IsVisible="{Binding IsCompleted}">
+
+                    <Label Text="{Binding CompletionMessage}"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center"
+                           TextColor="White" />
+                </Frame>
+            </StackLayout>
+        </ScrollView>
+
+        <!-- Bottom Navigation -->
+        <Frame Grid.Row="2"
+               BackgroundColor="White"
+               CornerRadius="30,30,0,0"
+               HasShadow="True"
+               Padding="20">
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Back Button -->
+                <Button Grid.Column="0"
+                        Text="⬅️ Back"
+                        Command="{Binding GoBackCommand}"
+                        BackgroundColor="#81A1C1"
+                        TextColor="White"
+                        CornerRadius="25"
+                        HeightRequest="50"
+                        FontSize="14"
+                        FontAttributes="Bold" />
+
+                <!-- Next Step Button (when not completed) -->
+                <Button Grid.Column="1"
+                        Text="Next Step 🚀"
+                        Command="{Binding NextStepCommand}"
+                        BackgroundColor="#A3BE8C"
+                        TextColor="White"
+                        CornerRadius="25"
+                        HeightRequest="50"
+                        FontSize="14"
+                        FontAttributes="Bold"
+                        Margin="10,0"
+                        IsVisible="{Binding IsCompleted, Converter={StaticResource InverseBoolConverter}}" />
+
+                <!-- Complete Button (when completed) -->
+                <Button Grid.Column="1"
+                        Text="Complete! 🎉"
+                        Command="{Binding CompleteActivityCommand}"
+                        BackgroundColor="#5E81AC"
+                        TextColor="White"
+                        CornerRadius="25"
+                        HeightRequest="50"
+                        FontSize="14"
+                        FontAttributes="Bold"
+                        Margin="10,0"
+                        IsVisible="{Binding IsCompleted}" />
+
+                <!-- Home Button -->
+                <Button Grid.Column="2"
+                        Text="🏠 Home"
+                        Command="{Binding GoHomeCommand}"
+                        BackgroundColor="#D08770"
+                        TextColor="White"
+                        CornerRadius="25"
+                        HeightRequest="50"
+                        FontSize="14"
+                        FontAttributes="Bold" />
+            </Grid>
+        </Frame>
+
+        <!-- Loading Overlay -->
+        <Grid Grid.Row="0" Grid.RowSpan="3"
+              BackgroundColor="#80000000"
+              IsVisible="{Binding IsBusy}">
+
+            <Frame BackgroundColor="White"
+                   CornerRadius="20"
+                   Padding="30"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   HasShadow="True">
+
+                <StackLayout Spacing="15" HorizontalOptions="Center">
+                    <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                      Color="#5E81AC"
+                                      HeightRequest="40"
+                                      WidthRequest="40" />
+
+                    <Label Text="{Binding BusyText}"
+                           FontSize="16"
+                           TextColor="#2E3440"
+                           HorizontalOptions="Center" />
+                </StackLayout>
+            </Frame>
+        </Grid>
+    </Grid>
+</ContentPage>

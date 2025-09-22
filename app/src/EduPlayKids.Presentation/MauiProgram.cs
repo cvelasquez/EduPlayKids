@@ -105,9 +105,19 @@ public static class MauiProgram
 	/// <param name="builder">The MAUI app builder.</param>
 	private static void ConfigurePresentationServices(MauiAppBuilder builder)
 	{
-		// TODO: Register ViewModels and Pages as they are created
-		// Navigation service for child-safe navigation
+		// Register navigation services
 		builder.Services.AddSingleton<INavigationService, NavigationService>();
+		builder.Services.AddSingleton<EduPlayKids.App.Services.IChildSafeNavigationService, EduPlayKids.App.Services.ChildSafeNavigationService>();
+
+		// Register ViewModels
+		builder.Services.AddTransient<EduPlayKids.App.ViewModels.AgeSelectionViewModel>();
+		builder.Services.AddTransient<EduPlayKids.App.ViewModels.SubjectSelectionViewModel>();
+		builder.Services.AddTransient<EduPlayKids.App.ViewModels.ActivityViewModel>();
+
+		// Register Pages
+		builder.Services.AddTransient<EduPlayKids.App.Views.AgeSelectionPage>();
+		builder.Services.AddTransient<EduPlayKids.App.Views.SubjectSelectionPage>();
+		builder.Services.AddTransient<EduPlayKids.App.Views.ActivityPage>();
 	}
 }
 

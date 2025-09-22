@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="EduPlayKids.App.Views.SubjectSelectionPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:EduPlayKids.App.ViewModels"
+             Title="{Binding Title}"
+             BackgroundColor="#F0F4F8">
+
+    <!-- BindingContext will be set from code-behind -->
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Header Section -->
+        <Frame Grid.Row="0"
+               BackgroundColor="White"
+               CornerRadius="0,0,30,30"
+               HasShadow="True"
+               Padding="20,30,20,30">
+
+            <StackLayout Spacing="15">
+                <!-- Greeting -->
+                <Label Text="{Binding GreetingMessage}"
+                       FontSize="24"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center"
+                       TextColor="#2E3440" />
+
+                <!-- Subtitle -->
+                <Label Text="Choose a subject to start your learning adventure! 🚀"
+                       FontSize="16"
+                       HorizontalOptions="Center"
+                       HorizontalTextAlignment="Center"
+                       TextColor="#5E81AC"
+                       Margin="0,0,0,10" />
+
+                <!-- Child Info (for debugging/parent view) -->
+                <StackLayout Orientation="Horizontal"
+                            HorizontalOptions="Center"
+                            IsVisible="False">
+                    <Label Text="Child ID:" FontSize="12" TextColor="#81A1C1" />
+                    <Label Text="{Binding ChildId}" FontSize="12" TextColor="#81A1C1" />
+                    <Label Text="Age:" FontSize="12" TextColor="#81A1C1" Margin="10,0,0,0" />
+                    <Label Text="{Binding ChildAge}" FontSize="12" TextColor="#81A1C1" />
+                </StackLayout>
+            </StackLayout>
+        </Frame>
+
+        <!-- Subjects Grid -->
+        <ScrollView Grid.Row="1" Padding="20">
+            <CollectionView ItemsSource="{Binding Subjects}"
+                           VerticalOptions="FillAndExpand">
+
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical"
+                                   Span="2"
+                                   HorizontalItemSpacing="15"
+                                   VerticalItemSpacing="15" />
+                </CollectionView.ItemsLayout>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame BackgroundColor="{Binding Color}"
+                               CornerRadius="25"
+                               HasShadow="True"
+                               Padding="0"
+                               HeightRequest="180">
+
+                            <!-- Visual State Manager for Selection -->
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup Name="CommonStates">
+                                    <VisualState Name="Normal">
+                                        <VisualState.Setters>
+                                            <Setter Property="Scale" Value="1.0" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState Name="Selected">
+                                        <VisualState.Setters>
+                                            <Setter Property="Scale" Value="1.05" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+
+                            <Grid Padding="15">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <!-- Subject Icon -->
+                                <Label Grid.Row="0"
+                                       Text="{Binding IconEmoji}"
+                                       FontSize="40"
+                                       HorizontalOptions="Center"
+                                       Margin="0,0,0,10" />
+
+                                <!-- Subject Title -->
+                                <Label Grid.Row="1"
+                                       Text="{Binding Title}"
+                                       FontSize="16"
+                                       FontAttributes="Bold"
+                                       HorizontalOptions="Center"
+                                       HorizontalTextAlignment="Center"
+                                       TextColor="White"
+                                       Margin="0,0,0,8" />
+
+                                <!-- Subject Description -->
+                                <Label Grid.Row="2"
+                                       Text="{Binding Description}"
+                                       FontSize="12"
+                                       HorizontalOptions="Center"
+                                       HorizontalTextAlignment="Center"
+                                       TextColor="White"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="CenterAndExpand"
+                                       Opacity="0.9" />
+
+                                <!-- Activity Info -->
+                                <StackLayout Grid.Row="3"
+                                           Orientation="Vertical"
+                                           Spacing="2">
+                                    <Label Text="{Binding ActivityCountText}"
+                                           FontSize="10"
+                                           HorizontalOptions="Center"
+                                           TextColor="White"
+                                           Opacity="0.8" />
+                                    <Label Text="{Binding DurationText}"
+                                           FontSize="10"
+                                           HorizontalOptions="Center"
+                                           TextColor="White"
+                                           Opacity="0.8" />
+                                </StackLayout>
+                            </Grid>
+
+                            <!-- Tap Gesture for Selection -->
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:SubjectSelectionViewModel}}, Path=SelectSubjectCommand}"
+                                                     CommandParameter="{Binding .}" />
+                            </Frame.GestureRecognizers>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </ScrollView>
+
+        <!-- Bottom Action Bar -->
+        <Frame Grid.Row="2"
+               BackgroundColor="White"
+               CornerRadius="30,30,0,0"
+               HasShadow="True"
+               Padding="20">
+
+            <StackLayout Orientation="Horizontal"
+                        Spacing="15"
+                        HorizontalOptions="FillAndExpand">
+
+                <!-- Back Button -->
+                <Button Text="⬅️ Back"
+                        Command="{Binding GoBackCommand}"
+                        BackgroundColor="#81A1C1"
+                        TextColor="White"
+                        CornerRadius="25"
+                        HeightRequest="50"
+                        FontSize="16"
+                        FontAttributes="Bold"
+                        HorizontalOptions="StartAndExpand"
+                        WidthRequest="120" />
+
+                <!-- Parental Controls Button -->
+                <Button Text="👨‍👩‍👧‍👦"
+                        Command="{Binding GoToParentalControlsCommand}"
+                        BackgroundColor="#D08770"
+                        TextColor="White"
+                        CornerRadius="25"
+                        HeightRequest="50"
+                        FontSize="20"
+                        WidthRequest="60"
+                        HorizontalOptions="Center" />
+
+                <!-- Start Learning Button -->
+                <Button Text="Let's Learn! 🎉"
+                        Command="{Binding StartLearningCommand}"
+                        BackgroundColor="#A3BE8C"
+                        TextColor="White"
+                        CornerRadius="25"
+                        HeightRequest="50"
+                        FontSize="16"
+                        FontAttributes="Bold"
+                        HorizontalOptions="EndAndExpand"
+                        IsEnabled="{Binding SelectedSubject, Converter={StaticResource IsNotNullConverter}}" />
+            </StackLayout>
+        </Frame>
+
+        <!-- Loading Overlay -->
+        <Grid Grid.Row="0" Grid.RowSpan="3"
+              BackgroundColor="#80000000"
+              IsVisible="{Binding IsBusy}">
+
+            <Frame BackgroundColor="White"
+                   CornerRadius="20"
+                   Padding="30"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   HasShadow="True">
+
+                <StackLayout Spacing="15" HorizontalOptions="Center">
+                    <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                      Color="#5E81AC"
+                                      HeightRequest="40"
+                                      WidthRequest="40" />
+
+                    <Label Text="{Binding BusyText}"
+                           FontSize="16"
+                           TextColor="#2E3440"
+                           HorizontalOptions="Center" />
+                </StackLayout>
+            </Frame>
+        </Grid>
+    </Grid>
+</ContentPage>

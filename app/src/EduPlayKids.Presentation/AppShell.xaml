@@ -4,12 +4,39 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:EduPlayKids.App"
+    xmlns:views="clr-namespace:EduPlayKids.App.Views"
     Shell.FlyoutBehavior="Disabled"
-    Title="EduPlayKids.App">
+    Title="EduPlayKids">
 
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+    <!-- Main App Flow -->
+    <TabBar>
+        <!-- Home/Welcome Tab -->
+        <ShellContent
+            Title="Home"
+            Icon="home.png"
+            ContentTemplate="{DataTemplate local:MainPage}"
+            Route="home" />
+
+        <!-- Age Selection (Setup) Tab -->
+        <ShellContent
+            Title="Setup"
+            Icon="setup.png"
+            ContentTemplate="{DataTemplate views:AgeSelectionPage}"
+            Route="ageselection" />
+
+        <!-- Subject Selection Tab -->
+        <ShellContent
+            Title="Subjects"
+            Icon="subjects.png"
+            ContentTemplate="{DataTemplate views:SubjectSelectionPage}"
+            Route="subjects" />
+
+        <!-- Activity Tab -->
+        <ShellContent
+            Title="Activity"
+            Icon="activity.png"
+            ContentTemplate="{DataTemplate views:ActivityPage}"
+            Route="activity" />
+    </TabBar>
 
 </Shell>

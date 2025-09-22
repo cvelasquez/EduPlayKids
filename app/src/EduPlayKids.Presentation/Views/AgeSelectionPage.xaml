@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="EduPlayKids.App.Views.AgeSelectionPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:EduPlayKids.App.ViewModels"
+             Title="{Binding Title}"
+             BackgroundColor="#F8F9FA">
+
+    <!-- BindingContext will be set from code-behind -->
+
+    <ScrollView>
+        <Grid Padding="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- Header Section -->
+            <StackLayout Grid.Row="0" Spacing="10" Margin="0,20,0,30">
+                <Label Text="👶 Let's Get Started! 👶"
+                       FontSize="28"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center"
+                       TextColor="#2E3440" />
+
+                <Label Text="Tell us about your child so we can create the perfect learning experience!"
+                       FontSize="16"
+                       HorizontalOptions="Center"
+                       HorizontalTextAlignment="Center"
+                       TextColor="#5E81AC"
+                       Margin="0,0,0,10" />
+            </StackLayout>
+
+            <!-- Child Name Input -->
+            <StackLayout Grid.Row="1" Spacing="10" Margin="0,0,0,20">
+                <Label Text="What's your child's name?"
+                       FontSize="18"
+                       FontAttributes="Bold"
+                       TextColor="#2E3440" />
+
+                <Frame BackgroundColor="White"
+                       CornerRadius="15"
+                       HasShadow="True"
+                       Padding="0">
+                    <Entry x:Name="ChildNameEntry"
+                           Text="{Binding ChildName}"
+                           Placeholder="Enter child's name"
+                           PlaceholderColor="#81A1C1"
+                           FontSize="16"
+                           HeightRequest="50"
+                           BackgroundColor="Transparent"
+                           TextColor="#2E3440"
+                           Margin="15,0" />
+                </Frame>
+            </StackLayout>
+
+            <!-- Age Selection Title -->
+            <Label Grid.Row="2"
+                   Text="{Binding Title}"
+                   FontSize="18"
+                   FontAttributes="Bold"
+                   TextColor="#2E3440"
+                   Margin="0,0,0,15" />
+
+            <!-- Age Options Collection -->
+            <CollectionView Grid.Row="3"
+                           ItemsSource="{Binding AgeOptions}"
+                           SelectedItem="{Binding SelectedAge}"
+                           SelectionMode="Single"
+                           VerticalOptions="FillAndExpand">
+
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="15" />
+                </CollectionView.ItemsLayout>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame BackgroundColor="White"
+                               CornerRadius="20"
+                               HasShadow="True"
+                               Padding="20"
+                               HeightRequest="120">
+
+                            <!-- Visual State Manager for Selection -->
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup Name="CommonStates">
+                                    <VisualState Name="Normal">
+                                        <VisualState.Setters>
+                                            <Setter Property="BackgroundColor" Value="White" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState Name="Selected">
+                                        <VisualState.Setters>
+                                            <Setter Property="BackgroundColor" Value="#E8F4FD" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="60" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Age Icon -->
+                                <Label Grid.Column="0"
+                                       Text="{Binding IconEmoji}"
+                                       FontSize="40"
+                                       VerticalOptions="Center"
+                                       HorizontalOptions="Center" />
+
+                                <!-- Age Information -->
+                                <StackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center">
+                                    <Label Text="{Binding DisplayText}"
+                                           FontSize="18"
+                                           FontAttributes="Bold"
+                                           TextColor="#2E3440" />
+
+                                    <Label Text="{Binding Description}"
+                                           FontSize="14"
+                                           TextColor="#5E81AC"
+                                           LineBreakMode="WordWrap" />
+                                </StackLayout>
+                            </Grid>
+
+                            <!-- Tap Gesture for Selection -->
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:AgeSelectionViewModel}}, Path=SelectAgeCommand}"
+                                                     CommandParameter="{Binding .}" />
+                            </Frame.GestureRecognizers>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- Selected Age Description -->
+            <Frame Grid.Row="4"
+                   BackgroundColor="#D8DEE9"
+                   CornerRadius="15"
+                   Padding="15"
+                   Margin="0,20,0,0"
+                   IsVisible="{Binding SelectedAge, Converter={StaticResource IsNotNullConverter}}">
+
+                <StackLayout Spacing="10">
+                    <Label Text="Great Choice! 🎉"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           TextColor="#2E3440"
+                           HorizontalOptions="Center" />
+
+                    <Label Text="{Binding SelectedAgeDescription}"
+                           FontSize="14"
+                           TextColor="#2E3440"
+                           HorizontalTextAlignment="Center" />
+                </StackLayout>
+            </Frame>
+
+            <!-- Action Buttons -->
+            <StackLayout Grid.Row="5"
+                        Orientation="Horizontal"
+                        Spacing="15"
+                        Margin="0,30,0,20"
+                        HorizontalOptions="FillAndExpand">
+
+                <!-- Back Button -->
+                <Button Text="⬅️ Back"
+                        Command="{Binding GoBackCommand}"
+                        BackgroundColor="#81A1C1"
+                        TextColor="White"
+                        CornerRadius="25"
+                        HeightRequest="50"
+                        FontSize="16"
+                        FontAttributes="Bold"
+                        HorizontalOptions="FillAndExpand" />
+
+                <!-- Continue Button -->
+                <Button Text="Continue! 🚀"
+                        Command="{Binding ContinueCommand}"
+                        BackgroundColor="#5E81AC"
+                        TextColor="White"
+                        CornerRadius="25"
+                        HeightRequest="50"
+                        FontSize="16"
+                        FontAttributes="Bold"
+                        HorizontalOptions="FillAndExpand"
+                        IsEnabled="{Binding SelectedAge, Converter={StaticResource IsNotNullConverter}}" />
+            </StackLayout>
+
+            <!-- Loading Overlay -->
+            <Grid Grid.Row="0" Grid.RowSpan="6"
+                  BackgroundColor="#80000000"
+                  IsVisible="{Binding IsBusy}">
+
+                <Frame BackgroundColor="White"
+                       CornerRadius="20"
+                       Padding="30"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       HasShadow="True">
+
+                    <StackLayout Spacing="15" HorizontalOptions="Center">
+                        <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                          Color="#5E81AC"
+                                          HeightRequest="40"
+                                          WidthRequest="40" />
+
+                        <Label Text="{Binding BusyText}"
+                               FontSize="16"
+                               TextColor="#2E3440"
+                               HorizontalOptions="Center" />
+                    </StackLayout>
+                </Frame>
+            </Grid>
+        </Grid>
+    </ScrollView>
+</ContentPage>

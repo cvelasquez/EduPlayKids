@@ -1,4 +1,5 @@
 using EduPlayKids.Application.Interfaces.Repositories;
+using EduPlayKids.Domain.Entities;
 
 namespace EduPlayKids.Application.Interfaces;
 
