@@ -10,7 +10,9 @@
       "Bash(git mv:*)",
       "Bash(dotnet clean:*)",
       "Bash(dotnet:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(cat:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []
