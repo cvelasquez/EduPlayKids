@@ -37,7 +37,11 @@ public partial class PinSetupPage : ContentPage
             var entry = _pinEntries[i];
             var index = i;
 
-            entry.Focused += (s, e) => entry.SelectAll();
+            entry.Focused += (s, e) =>
+            {
+                entry.CursorPosition = 0;
+                entry.SelectionLength = entry.Text?.Length ?? 0;
+            };
             entry.Unfocused += (s, e) => entry.CursorPosition = entry.Text?.Length ?? 0;
         }
 
@@ -47,7 +51,11 @@ public partial class PinSetupPage : ContentPage
             var entry = _confirmPinEntries[i];
             var index = i;
 
-            entry.Focused += (s, e) => entry.SelectAll();
+            entry.Focused += (s, e) =>
+            {
+                entry.CursorPosition = 0;
+                entry.SelectionLength = entry.Text?.Length ?? 0;
+            };
             entry.Unfocused += (s, e) => entry.CursorPosition = entry.Text?.Length ?? 0;
         }
 

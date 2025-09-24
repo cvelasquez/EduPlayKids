@@ -63,6 +63,22 @@ public class Achievement : BaseEntity
     public string AchievementType { get; set; } = string.Empty;
 
     /// <summary>
+    /// Gets or sets the achievement title.
+    /// Alias for the primary name field for backward compatibility.
+    /// </summary>
+    public string Title => NameEn;
+
+    /// <summary>
+    /// Gets or sets the achievement type.
+    /// Alias for AchievementType for backward compatibility.
+    /// </summary>
+    public string Type
+    {
+        get => AchievementType;
+        set => AchievementType = value;
+    }
+
+    /// <summary>
     /// Gets or sets the badge icon identifier.
     /// References the visual badge asset for display.
     /// </summary>
@@ -114,6 +130,15 @@ public class Achievement : BaseEntity
     /// </summary>
     [StringLength(20)]
     public string Rarity { get; set; } = "Common";
+
+    /// <summary>
+    /// Gets or sets the achievement level (alias for Rarity for test compatibility).
+    /// </summary>
+    public string Level
+    {
+        get => Rarity;
+        set => Rarity = value;
+    }
 
     /// <summary>
     /// Gets or sets a value indicating whether this achievement is active.

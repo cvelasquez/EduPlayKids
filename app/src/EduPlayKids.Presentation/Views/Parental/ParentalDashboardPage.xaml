@@ -3,10 +3,17 @@
              xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:EduPlayKids.App.ViewModels.Parental"
+             xmlns:converters="clr-namespace:EduPlayKids.App.Converters"
              x:DataType="vm:ParentalDashboardViewModel"
              Title="Parental Dashboard"
              Shell.NavBarIsVisible="True"
              BackgroundColor="#F8F9FA">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:BoolToColorConverter x:Key="BoolToColorConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
     <Shell.TitleView>
         <Grid>
@@ -87,7 +94,7 @@
                         </CollectionView.ItemsLayout>
 
                         <CollectionView.ItemTemplate>
-                            <DataTemplate>
+                            <DataTemplate x:DataType="vm:ChildSummary">
                                 <Grid WidthRequest="100">
                                     <Frame BackgroundColor="{Binding IsSelected, Converter={StaticResource BoolToColorConverter}}"
                                            BorderColor="#3498DB"
@@ -201,7 +208,7 @@
                     <CollectionView ItemsSource="{Binding SubjectProgress}"
                                     HeightRequest="200">
                         <CollectionView.ItemTemplate>
-                            <DataTemplate>
+                            <DataTemplate x:DataType="vm:SubjectProgressSummary">
                                 <Grid Padding="0,5" ColumnSpacing="15">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />
@@ -272,7 +279,7 @@
                         </CollectionView.ItemsLayout>
 
                         <CollectionView.ItemTemplate>
-                            <DataTemplate>
+                            <DataTemplate x:DataType="vm:AchievementSummary">
                                 <Frame BackgroundColor="#E8F6F3"
                                        BorderColor="#27AE60"
                                        CornerRadius="8"

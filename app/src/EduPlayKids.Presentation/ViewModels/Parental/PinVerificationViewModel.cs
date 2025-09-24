@@ -299,9 +299,9 @@ public partial class PinVerificationViewModel : ObservableObject
     /// </summary>
     private async Task ShowAlert(string title, string message)
     {
-        if (Application.Current?.MainPage != null)
+        if (Microsoft.Maui.Controls.Application.Current?.MainPage != null)
         {
-            await Application.Current.MainPage.DisplayAlert(title, message, "OK");
+            await Microsoft.Maui.Controls.Application.Current.MainPage.DisplayAlert(title, message, "OK");
         }
     }
 

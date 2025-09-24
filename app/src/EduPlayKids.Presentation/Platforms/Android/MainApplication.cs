@@ -1,7 +1,7 @@
-﻿using Android.App;
+using Android.App;
 using Android.Runtime;
 
-namespace EduPlayKids.App;
+namespace EduPlayKids.App.Platforms.Android;
 
 [Application]
 public class MainApplication : MauiApplication

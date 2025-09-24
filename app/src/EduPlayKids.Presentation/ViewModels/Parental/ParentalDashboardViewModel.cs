@@ -118,7 +118,8 @@ public partial class ParentalDashboardViewModel : ObservableObject
             }
 
             // Get children for user
-            var children = await _unitOfWork.Children.GetByUserIdAsync(currentUser.Id);
+            var allChildren = await _unitOfWork.Children.GetAllAsync();
+            var children = allChildren.Where(c => c.UserId == currentUser.Id);
 
             Children.Clear();
             foreach (var child in children)
@@ -157,7 +158,8 @@ public partial class ParentalDashboardViewModel : ObservableObject
                 WelcomeMessage = $"Welcome back, {currentUser.Name}!";
 
                 // Get last access from audit logs
-                var recentLogs = await _unitOfWork.AuditLogs.GetByUserIdAsync(currentUser.Id);
+                var allAuditLogs = await _unitOfWork.AuditLogs.GetAllAsync();
+                var recentLogs = allAuditLogs.Where(a => a.UserId == currentUser.Id);
                 var lastParentalAccess = recentLogs
                     .Where(log => log.Action == "PIN Verification" && log.Details?.Contains("successfully") == true)
                     .OrderByDescending(log => log.EventDate)
@@ -222,7 +224,7 @@ public partial class ParentalDashboardViewModel : ObservableObject
         try
         {
             var today = DateTime.Today;
-            var sessions = await _unitOfWork.Sessions.GetByChildIdAsync(SelectedChild.Id);
+            var sessions = await _unitOfWork.Sessions.GetSessionsByChildAsync(SelectedChild.Id);
             var todaySessions = sessions.Where(s => s.StartedAt.Date == today);
 
             TodayUsageMinutes = (int)todaySessions.Sum(s => s.DurationMinutes);
@@ -230,8 +232,8 @@ public partial class ParentalDashboardViewModel : ObservableObject
             // Get daily limit from settings
             var users = await _unitOfWork.Users.GetAllAsync();
             var currentUser = users.FirstOrDefault();
-            var settings = currentUser != null ? await _unitOfWork.Settings.GetByUserIdAsync(currentUser.Id) : null;
-            var dailyLimit = settings?.FirstOrDefault()?.DailyTimeLimitMinutes ?? 60;
+            var settings = currentUser != null ? await _unitOfWork.Settings.GetByIdAsync(currentUser.Id) : null;
+            var dailyLimit = settings?.DailyTimeLimitMinutes ?? 60;
 
             if (dailyLimit > 0)
             {
@@ -260,7 +262,7 @@ public partial class ParentalDashboardViewModel : ObservableObject
 
         try
         {
-            var sessions = await _unitOfWork.Sessions.GetByChildIdAsync(SelectedChild.Id);
+            var sessions = await _unitOfWork.Sessions.GetSessionsByChildAsync(SelectedChild.Id);
             var sessionDates = sessions
                 .Where(s => s.CompletedAt.HasValue)
                 .Select(s => s.StartedAt.Date)
@@ -289,14 +291,16 @@ public partial class ParentalDashboardViewModel : ObservableObject
         try
         {
             var subjects = await _unitOfWork.Subjects.GetAllAsync();
-            var progressData = await _unitOfWork.UserProgress.GetByChildIdAsync(SelectedChild.Id);
+            var allProgress = await _unitOfWork.UserProgress.GetAllAsync();
+            var progressData = allProgress.Where(p => p.UserId == SelectedChild.Id);
 
             SubjectProgress.Clear();
 
             foreach (var subject in subjects)
             {
                 var subjectProgressData = progressData.Where(p => p.Activity.SubjectId == subject.Id);
-                var activitiesInSubject = await _unitOfWork.Activities.GetBySubjectIdAsync(subject.Id);
+                var allActivities = await _unitOfWork.Activities.GetAllAsync();
+                var activitiesInSubject = allActivities.Where(a => a.SubjectId == subject.Id);
 
                 var completedCount = subjectProgressData.Count(p => p.IsCompleted);
                 var totalCount = activitiesInSubject.Count();
@@ -329,7 +333,8 @@ public partial class ParentalDashboardViewModel : ObservableObject
 
         try
         {
-            var userAchievements = await _unitOfWork.UserAchievements.GetByChildIdAsync(SelectedChild.Id);
+            var allUserAchievements = await _unitOfWork.UserAchievements.GetAllAsync();
+            var userAchievements = allUserAchievements.Where(ua => ua.UserId == SelectedChild.Id);
             var recentAchievements = userAchievements
                 .OrderByDescending(ua => ua.EarnedAt)
                 .Take(5)

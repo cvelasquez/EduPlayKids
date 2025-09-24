@@ -206,6 +206,16 @@ public class Session : AuditableEntity
     public virtual Child Child { get; set; } = null!;
 
     /// <summary>
+    /// Gets the duration in minutes for convenience (calculated from DurationSeconds).
+    /// </summary>
+    public double DurationMinutes => DurationSeconds / 60.0;
+
+    /// <summary>
+    /// Gets the completion time (alias for EndedAt for ViewModel compatibility).
+    /// </summary>
+    public DateTime? CompletedAt => EndedAt;
+
+    /// <summary>
     /// Initializes a new instance of the Session class.
     /// Sets default values for new session tracking.
     /// </summary>

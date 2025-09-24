@@ -1,5 +1,4 @@
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.Logging;
 
 namespace EduPlayKids.App.ViewModels;
@@ -9,11 +8,17 @@ namespace EduPlayKids.App.ViewModels;
 /// Provides common functionality for property change notification, loading states,
 /// and child-safe UI patterns.
 /// </summary>
-public abstract class BaseViewModel : INotifyPropertyChanged
+public abstract partial class BaseViewModel : ObservableObject
 {
     protected readonly ILogger _logger;
+
+    [ObservableProperty]
     private bool _isBusy;
+
+    [ObservableProperty]
     private string _title = string.Empty;
+
+    [ObservableProperty]
     private string _busyText = "Loading...";
 
     /// <summary>
@@ -26,78 +31,19 @@ public abstract class BaseViewModel : INotifyPropertyChanged
     }
 
     /// <summary>
-    /// Gets or sets a value indicating whether the ViewModel is busy performing an operation.
-    /// Used to show loading indicators and prevent user interaction during async operations.
-    /// </summary>
-    public bool IsBusy
-    {
-        get => _isBusy;
-        set
-        {
-            if (SetProperty(ref _isBusy, value))
-            {
-                OnPropertyChanged(nameof(IsNotBusy));
-                OnBusyStateChanged();
-            }
-        }
-    }
-
-    /// <summary>
     /// Gets a value indicating whether the ViewModel is not busy.
     /// Useful for enabling/disabling UI elements.
     /// </summary>
     public bool IsNotBusy => !IsBusy;
 
     /// <summary>
-    /// Gets or sets the title of the current page or section.
-    /// Used for page titles and navigation breadcrumbs.
+    /// Called when IsBusy property changes.
+    /// Notifies IsNotBusy property and calls OnBusyStateChanged.
     /// </summary>
-    public string Title
+    partial void OnIsBusyChanged(bool value)
     {
-        get => _title;
-        set => SetProperty(ref _title, value);
-    }
-
-    /// <summary>
-    /// Gets or sets the text to display during loading operations.
-    /// Should be child-friendly and encouraging.
-    /// </summary>
-    public string BusyText
-    {
-        get => _busyText;
-        set => SetProperty(ref _busyText, value);
-    }
-
-    /// <summary>
-    /// Event that is raised when a property value changes.
-    /// </summary>
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    /// <summary>
-    /// Sets a property value and raises PropertyChanged event if the value has changed.
-    /// </summary>
-    /// <typeparam name="T">The type of the property.</typeparam>
-    /// <param name="backingStore">Reference to the backing field.</param>
-    /// <param name="value">The new value.</param>
-    /// <param name="propertyName">Name of the property (automatically provided).</param>
-    /// <returns>True if the value was changed, false otherwise.</returns>
-    protected bool SetProperty<T>(ref T backingStore, T value, [CallerMemberName] string? propertyName = null)
-    {
-        if (EqualityComparer<T>.Default.Equals(backingStore, value))
-            return false;
-
-        backingStore = value;
-        OnPropertyChanged(propertyName);
-        return true;
-    }
-
-    /// <summary>
-    /// Raises the PropertyChanged event for the specified property.
-    /// </summary>
-    /// <param name="propertyName">Name of the property (automatically provided).</param>
-    protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        OnPropertyChanged(nameof(IsNotBusy));
+        OnBusyStateChanged();
     }
 
     /// <summary>

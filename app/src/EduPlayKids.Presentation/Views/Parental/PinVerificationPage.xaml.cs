@@ -39,7 +39,11 @@ public partial class PinVerificationPage : ContentPage
             var entry = _pinEntries[i];
             var index = i;
 
-            entry.Focused += (s, e) => entry.SelectAll();
+            entry.Focused += (s, e) =>
+            {
+                entry.CursorPosition = 0;
+                entry.SelectionLength = entry.Text?.Length ?? 0;
+            };
             entry.Unfocused += (s, e) => entry.CursorPosition = entry.Text?.Length ?? 0;
         }
 
@@ -67,7 +71,7 @@ public partial class PinVerificationPage : ContentPage
     /// <summary>
     /// Handles PIN digit text changes and auto-advances to next field.
     /// </summary>
-    private void OnPinDigitChanged(object sender, TextChangedEventArgs e)
+    private async void OnPinDigitChanged(object sender, TextChangedEventArgs e)
     {
         if (sender is not Entry entry) return;
 

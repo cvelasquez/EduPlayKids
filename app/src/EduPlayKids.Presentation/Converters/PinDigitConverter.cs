@@ -16,7 +16,7 @@ public class PinDigitConverter : IValueConverter
     /// <param name="parameter">The digit position (0-3).</param>
     /// <param name="culture">The culture info.</param>
     /// <returns>The digit at the specified position or empty string.</returns>
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is not string pin || parameter is not string positionStr)
             return string.Empty;
@@ -41,7 +41,7 @@ public class PinDigitConverter : IValueConverter
     /// <param name="parameter">The digit position.</param>
     /// <param name="culture">The culture info.</param>
     /// <returns>Not implemented - throws NotImplementedException.</returns>
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotImplementedException("PinDigitConverter.ConvertBack is not implemented. Use code-behind for PIN digit management.");
     }

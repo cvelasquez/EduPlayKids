@@ -52,7 +52,19 @@ public enum AudioType
     /// Mascot (Leo the Lion) voice content and character interactions.
     /// Character-specific audio that provides personality and engagement to the learning experience.
     /// </summary>
-    Mascot
+    Mascot,
+
+    /// <summary>
+    /// Encouraging audio to motivate children and boost confidence during learning activities.
+    /// Positive reinforcement sounds that support continued effort and engagement.
+    /// </summary>
+    Encouragement,
+
+    /// <summary>
+    /// Gentle error correction audio that guides children without discouraging learning.
+    /// Supportive audio feedback for incorrect answers that promotes learning from mistakes.
+    /// </summary>
+    ErrorCorrection
 }
 
 /// <summary>
@@ -70,6 +82,11 @@ public enum AudioPriority
     /// Normal priority audio for standard interactions and feedback sounds.
     /// </summary>
     Normal = 2,
+
+    /// <summary>
+    /// Medium priority audio for educational content and moderate feedback.
+    /// </summary>
+    Medium = 2,
 
     /// <summary>
     /// High priority audio for important feedback and completion celebrations.
@@ -275,6 +292,23 @@ public enum SupportedLanguage
     /// Spanish (International) - Secondary language for Hispanic families.
     /// </summary>
     Spanish
+}
+
+/// <summary>
+/// Alias for SupportedLanguage to maintain compatibility with existing code.
+/// Defines the audio language settings for bilingual content delivery.
+/// </summary>
+public enum AudioLanguage
+{
+    /// <summary>
+    /// English (United States) - Primary language.
+    /// </summary>
+    English = 0,
+
+    /// <summary>
+    /// Spanish (International) - Secondary language for Hispanic families.
+    /// </summary>
+    Spanish = 1
 }
 
 /// <summary>

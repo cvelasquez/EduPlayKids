@@ -133,23 +133,21 @@
 
         </Grid>
 
-        <!-- Volume Change Animation -->
-        <Border.Triggers>
-            <DataTrigger TargetType="Border"
-                        Binding="{Binding Source={x:Reference this}, Path=IsVolumeChanging}"
-                        Value="True">
-                <DataTrigger.EnterActions>
-                    <BeginAnimation>
-                        <Animation>
-                            <DoubleAnimation Property="Scale"
-                                           To="1.05"
-                                           Duration="200"
-                                           AutoReverse="True" />
-                        </Animation>
-                    </BeginAnimation>
-                </DataTrigger.EnterActions>
-            </DataTrigger>
-        </Border.Triggers>
+        <!-- Volume Change Visual State (simplified for MAUI) -->
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup Name="VolumeStates">
+                <VisualState Name="VolumeChanging">
+                    <VisualState.Setters>
+                        <Setter Property="Scale" Value="1.05" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState Name="Normal">
+                    <VisualState.Setters>
+                        <Setter Property="Scale" Value="1.0" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
 
     </Border>
 

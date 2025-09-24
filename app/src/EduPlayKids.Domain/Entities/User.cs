@@ -78,6 +78,12 @@ public class User : AuditableEntity
     public bool IsPremium { get; set; } = false;
 
     /// <summary>
+    /// Gets or sets a value indicating whether the user account is active.
+    /// Inactive accounts cannot log in or access the application.
+    /// </summary>
+    public bool IsActive { get; set; } = true;
+
+    /// <summary>
     /// Gets or sets the date when the user's premium subscription expires.
     /// Null for non-premium users or unlimited subscriptions.
     /// </summary>
@@ -155,6 +161,11 @@ public class User : AuditableEntity
     {
         return IsInFreeTrial() || (IsPremium && (PremiumExpiresAt == null || DateTime.UtcNow <= PremiumExpiresAt));
     }
+
+    /// <summary>
+    /// Gets the name (alias for FullName for ViewModel compatibility).
+    /// </summary>
+    public string Name => FullName;
 
     /// <summary>
     /// Validates the provided PIN against the stored parental PIN.

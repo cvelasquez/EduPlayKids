@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView x:Class="EduPlayKids.App.Controls.ProgressDashboardControl"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Name="ProgressDashboardRoot">
+
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <!-- Note: Animations are handled programmatically in code-behind for .NET MAUI compatibility -->
+
+            <!-- Child-Safe Colors -->
+            <Color x:Key="ProgressBlue">#4A90E2</Color>
+            <Color x:Key="SuccessGreen">#A3BE8C</Color>
+            <Color x:Key="CelebrationGold">#FFD700</Color>
+            <Color x:Key="EncouragementOrange">#D08770</Color>
+            <Color x:Key="ChildBackground">#F0F8FF</Color>
+            <Color x:Key="ChildTextDark">#2E3440</Color>
+            <Color x:Key="ChildTextMedium">#434C5E</Color>
+
+            <!-- Progress Gradients -->
+            <LinearGradientBrush x:Key="ProgressGradient" StartPoint="0,0" EndPoint="1,0">
+                <GradientStop Color="{StaticResource ProgressBlue}" Offset="0.0" />
+                <GradientStop Color="{StaticResource SuccessGreen}" Offset="1.0" />
+            </LinearGradientBrush>
+
+            <LinearGradientBrush x:Key="LevelCompleteGradient" StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="{StaticResource CelebrationGold}" Offset="0.0" />
+                <GradientStop Color="{StaticResource EncouragementOrange}" Offset="1.0" />
+            </LinearGradientBrush>
+
+            <RadialGradientBrush x:Key="AchievementGlow" Center="0.5,0.5" Radius="0.8">
+                <GradientStop Color="#80FFD700" Offset="0.0" />
+                <GradientStop Color="#40FFB347" Offset="0.7" />
+                <GradientStop Color="Transparent" Offset="1.0" />
+            </RadialGradientBrush>
+        </ResourceDictionary>
+    </ContentView.Resources>
+
+    <ScrollView BackgroundColor="{StaticResource ChildBackground}"
+                VerticalOptions="FillAndExpand">
+
+        <Grid x:Name="MainProgressGrid"
+              Padding="20"
+              RowSpacing="20">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />  <!-- Welcome Header -->
+                <RowDefinition Height="Auto" />  <!-- Overall Progress -->
+                <RowDefinition Height="Auto" />  <!-- Subject Progress Cards -->
+                <RowDefinition Height="Auto" />  <!-- Recent Achievements -->
+                <RowDefinition Height="Auto" />  <!-- Learning Streak -->
+                <RowDefinition Height="Auto" />  <!-- Next Challenge -->
+            </Grid.RowDefinitions>
+
+            <!-- Welcome Header with Child's Avatar -->
+            <Frame Grid.Row="0"
+                   BackgroundColor="White"
+                   CornerRadius="25"
+                   HasShadow="True"
+                   Padding="25">
+
+                <StackLayout Orientation="Horizontal" Spacing="20">
+                    <!-- Child Avatar -->
+                    <Frame BackgroundColor="{StaticResource ProgressBlue}"
+                           CornerRadius="40"
+                           WidthRequest="80"
+                           HeightRequest="80"
+                           Padding="0"
+                           HasShadow="False">
+
+                        <Label Text="{Binding Source={x:Reference ProgressDashboardRoot}, Path=ChildAvatar}"
+                               FontSize="40"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               TextColor="White" />
+                    </Frame>
+
+                    <!-- Welcome Message -->
+                    <StackLayout Spacing="8" VerticalOptions="Center" HorizontalOptions="FillAndExpand">
+                        <Label Text="{Binding Source={x:Reference ProgressDashboardRoot}, Path=WelcomeMessage}"
+                               FontFamily="Nunito"
+                               FontSize="22"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource ChildTextDark}" />
+
+                        <Label Text="{Binding Source={x:Reference ProgressDashboardRoot}, Path=MotivationalMessage}"
+                               FontFamily="Nunito"
+                               FontSize="16"
+                               TextColor="{StaticResource ChildTextMedium}"
+                               LineBreakMode="WordWrap" />
+                    </StackLayout>
+                </StackLayout>
+            </Frame>
+
+            <!-- Overall Progress Display -->
+            <Frame Grid.Row="1"
+                   x:Name="ProgressContainer"
+                   BackgroundColor="White"
+                   CornerRadius="25"
+                   HasShadow="True"
+                   Padding="25">
+
+                <StackLayout Spacing="15">
+                    <!-- Progress Title -->
+                    <Label Text="{Binding Source={x:Reference ProgressDashboardRoot}, Path=ProgressTitle}"
+                           FontFamily="Nunito"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource ChildTextDark}"
+                           HorizontalTextAlignment="Center" />
+
+                    <!-- Circular Progress Display -->
+                    <Grid HorizontalOptions="Center" VerticalOptions="Center" WidthRequest="120" HeightRequest="120">
+                        <!-- Background Circle -->
+                        <Ellipse Fill="Transparent"
+                                Stroke="{StaticResource ChildTextMedium}"
+                                StrokeThickness="8"
+                                Opacity="0.2"
+                                WidthRequest="120"
+                                HeightRequest="120" />
+
+                        <!-- Progress Circle -->
+                        <Ellipse x:Name="ProgressCircle"
+                                Fill="Transparent"
+                                Stroke="{StaticResource ProgressGradient}"
+                                StrokeThickness="8"
+                                WidthRequest="120"
+                                HeightRequest="120" />
+
+                        <!-- Progress Text -->
+                        <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
+                            <Label Text="{Binding Source={x:Reference ProgressDashboardRoot}, Path=OverallProgressPercentage, StringFormat='{0:F0}%'}"
+                                   FontFamily="Nunito"
+                                   FontSize="24"
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource ProgressBlue}"
+                                   HorizontalTextAlignment="Center" />
+
+                            <Label Text="{Binding Source={x:Reference ProgressDashboardRoot}, Path=ProgressDescription}"
+                                   FontFamily="Nunito"
+                                   FontSize="12"
+                                   TextColor="{StaticResource ChildTextMedium}"
+                                   HorizontalTextAlignment="Center" />
+                        </StackLayout>
+                    </Grid>
+
+                    <!-- Level Information -->
+                    <Frame BackgroundColor="#E8F5E8"
+                           CornerRadius="15"
+                           Padding="15"
+                           HasShadow="False">
+
+                        <StackLayout Orientation="Horizontal" Spacing="10" HorizontalOptions="Center">
+                            <Label Text="🏆"
+                                   FontSize="20"
+                                   VerticalOptions="Center" />
+
+                            <Label Text="{Binding Source={x:Reference ProgressDashboardRoot}, Path=CurrentLevelText}"
+                                   FontFamily="Nunito"
+                                   FontSize="16"
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource SuccessGreen}"
+                                   VerticalOptions="Center" />
+
+                            <Label Text="{Binding Source={x:Reference ProgressDashboardRoot}, Path=PointsText}"
+                                   FontFamily="Nunito"
+                                   FontSize="14"
+                                   TextColor="{StaticResource ChildTextMedium}"
+                                   VerticalOptions="Center" />
+                        </StackLayout>
+                    </Frame>
+                </StackLayout>
+            </Frame>
+
+            <!-- Subject Progress Cards -->
+            <Frame Grid.Row="2"
+                   BackgroundColor="White"
+                   CornerRadius="25"
+                   HasShadow="True"
+                   Padding="20">
+
+                <StackLayout Spacing="15">
+                    <Label Text="{Binding Source={x:Reference ProgressDashboardRoot}, Path=SubjectsProgressTitle}"
+                           FontFamily="Nunito"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource ChildTextDark}"
+                           HorizontalTextAlignment="Center" />
+
+                    <!-- Subject Progress Grid -->
+                    <Grid x:Name="SubjectProgressGrid"
+                          RowSpacing="12"
+                          ColumnSpacing="10">
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Mathematics -->
+                        <Frame Grid.Row="0" Grid.Column="0"
+                               BackgroundColor="#E3F2FD"
+                               CornerRadius="15"
+                               Padding="15"
+                               HasShadow="False">
+
+                            <StackLayout Spacing="8" HorizontalOptions="Center">
+                                <Label Text="🔢" FontSize="24" HorizontalOptions="Center" />
+                                <Label Text="Math" FontFamily="Nunito" FontSize="14" FontAttributes="Bold"
+                                       TextColor="#1976D2" HorizontalTextAlignment="Center" />
+                                <ProgressBar Progress="{Binding Source={x:Reference ProgressDashboardRoot}, Path=MathProgress}"
+                                           ProgressColor="#2196F3" BackgroundColor="#BBDEFB" HeightRequest="8" />
+                                <Label Text="{Binding Source={x:Reference ProgressDashboardRoot}, Path=MathProgressText}"
+                                       FontFamily="Nunito" FontSize="12" TextColor="#1976D2"
+                                       HorizontalTextAlignment="Center" />
+                            </StackLayout>
+                        </Frame>
+
+                        <!-- Reading -->
+                        <Frame Grid.Row="0" Grid.Column="1"
+                               BackgroundColor="#E8F5E8"
+                               CornerRadius="15"
+                               Padding="15"
+                               HasShadow="False">
+
+                            <StackLayout Spacing="8" HorizontalOptions="Center">
+                                <Label Text="📚" FontSize="24" HorizontalOptions="Center" />
+                                <Label Text="Reading" FontFamily="Nunito" FontSize="14" FontAttributes="Bold"
+                                       TextColor="#388E3C" HorizontalTextAlignment="Center" />
+                                <ProgressBar Progress="{Binding Source={x:Reference ProgressDashboardRoot}, Path=ReadingProgress}"
+                                           ProgressColor="#4CAF50" BackgroundColor="#C8E6C9" HeightRequest="8" />
+                                <Label Text="{Binding Source={x:Reference ProgressDashboardRoot}, Path=ReadingProgressText}"
+                                       FontFamily="Nunito" FontSize="12" TextColor="#388E3C"
+                                       HorizontalTextAlignment="Center" />
+                            </StackLayout>
+                        </Frame>
+
+                        <!-- Science -->
+                        <Frame Grid.Row="1" Grid.Column="0"
+                               BackgroundColor="#FFF3E0"
+                               CornerRadius="15"
+                               Padding="15"
+                               HasShadow="False">
+
+                            <StackLayout Spacing="8" HorizontalOptions="Center">
+                                <Label Text="🔬" FontSize="24" HorizontalOptions="Center" />
+                                <Label Text="Science" FontFamily="Nunito" FontSize="14" FontAttributes="Bold"
+                                       TextColor="#F57C00" HorizontalTextAlignment="Center" />
+                                <ProgressBar Progress="{Binding Source={x:Reference ProgressDashboardRoot}, Path=ScienceProgress}"
+                                           ProgressColor="#FF9800" BackgroundColor="#FFE0B2" HeightRequest="8" />
+                                <Label Text="{Binding Source={x:Reference ProgressDashboardRoot}, Path=ScienceProgressText}"
+                                       FontFamily="Nunito" FontSize="12" TextColor="#F57C00"
+                                       HorizontalTextAlignment="Center" />
+                            </StackLayout>
+                        </Frame>
+
+                        <!-- Logic -->
+                        <Frame Grid.Row="1" Grid.Column="1"
+                               BackgroundColor="#F3E5F5"
+                               CornerRadius="15"
+                               Padding="15"
+                               HasShadow="False">
+
+                            <StackLayout Spacing="8" HorizontalOptions="Center">
+                                <Label Text="🧩" FontSize="24" HorizontalOptions="Center" />
+                                <Label Text="Logic" FontFamily="Nunito" FontSize="14" FontAttributes="Bold"
+                                       TextColor="#7B1FA2" HorizontalTextAlignment="Center" />
+                                <ProgressBar Progress="{Binding Source={x:Reference ProgressDashboardRoot}, Path=LogicProgress}"
+                                           ProgressColor="#9C27B0" BackgroundColor="#E1BEE7" HeightRequest="8" />
+                                <Label Text="{Binding Source={x:Reference ProgressDashboardRoot}, Path=LogicProgressText}"
+                                       FontFamily="Nunito" FontSize="12" TextColor="#7B1FA2"
+                                       HorizontalTextAlignment="Center" />
+                            </StackLayout>
+                        </Frame>
+
+                        <!-- Basic Concepts -->
+                        <Frame Grid.Row="2" Grid.ColumnSpan="2"
+                               BackgroundColor="#FFFDE7"
+                               CornerRadius="15"
+                               Padding="15"
+                               HasShadow="False">
+
+                            <StackLayout Spacing="8" HorizontalOptions="Center">
+                                <Label Text="🎨" FontSize="24" HorizontalOptions="Center" />
+                                <Label Text="Basic Concepts" FontFamily="Nunito" FontSize="14" FontAttributes="Bold"
+                                       TextColor="#F9A825" HorizontalTextAlignment="Center" />
+                                <ProgressBar Progress="{Binding Source={x:Reference ProgressDashboardRoot}, Path=ConceptsProgress}"
+                                           ProgressColor="#FFC107" BackgroundColor="#FFF9C4" HeightRequest="8" />
+                                <Label Text="{Binding Source={x:Reference ProgressDashboardRoot}, Path=ConceptsProgressText}"
+                                       FontFamily="Nunito" FontSize="12" TextColor="#F9A825"
+                                       HorizontalTextAlignment="Center" />
+                            </StackLayout>
+                        </Frame>
+                    </Grid>
+                </StackLayout>
+            </Frame>
+
+            <!-- Recent Achievements -->
+            <Frame Grid.Row="3"
+                   BackgroundColor="White"
+                   CornerRadius="25"
+                   HasShadow="True"
+                   Padding="20"
+                   IsVisible="{Binding Source={x:Reference ProgressDashboardRoot}, Path=ShowAchievements}">
+
+                <StackLayout Spacing="15">
+                    <Label Text="{Binding Source={x:Reference ProgressDashboardRoot}, Path=AchievementsTitle}"
+                           FontFamily="Nunito"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource ChildTextDark}"
+                           HorizontalTextAlignment="Center" />
+
+                    <!-- Achievement Badges Display -->
+                    <CollectionView x:Name="AchievementsCollection"
+                                  ItemsSource="{Binding Source={x:Reference ProgressDashboardRoot}, Path=RecentAchievements}"
+                                  HorizontalOptions="Center">
+
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Horizontal" ItemSpacing="15" />
+                        </CollectionView.ItemsLayout>
+
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Frame BackgroundColor="#F8F9FA"
+                                       CornerRadius="20"
+                                       Padding="15"
+                                       HasShadow="False"
+                                       WidthRequest="100">
+
+                                    <StackLayout Spacing="8" HorizontalOptions="Center">
+                                        <Label Text="{Binding Icon}"
+                                               FontSize="24"
+                                               HorizontalOptions="Center" />
+
+                                        <Label Text="{Binding Title}"
+                                               FontFamily="Nunito"
+                                               FontSize="12"
+                                               FontAttributes="Bold"
+                                               TextColor="{StaticResource ChildTextDark}"
+                                               HorizontalTextAlignment="Center"
+                                               LineBreakMode="WordWrap" />
+
+                                        <Label Text="{Binding Date}"
+                                               FontFamily="Nunito"
+                                               FontSize="10"
+                                               TextColor="{StaticResource ChildTextMedium}"
+                                               HorizontalTextAlignment="Center" />
+                                    </StackLayout>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <!-- New Achievement Animation Container -->
+                    <Frame x:Name="NewAchievementBadge"
+                           BackgroundColor="{StaticResource CelebrationGold}"
+                           CornerRadius="20"
+                           Padding="15"
+                           HasShadow="True"
+                           IsVisible="False"
+                           Scale="1"
+                           Opacity="1">
+
+                        <StackLayout Spacing="8" HorizontalOptions="Center">
+                            <Label Text="🎉" FontSize="30" HorizontalOptions="Center" />
+                            <Label Text="New Achievement!"
+                                   FontFamily="Nunito"
+                                   FontSize="16"
+                                   FontAttributes="Bold"
+                                   TextColor="White"
+                                   HorizontalTextAlignment="Center" />
+                        </StackLayout>
+                    </Frame>
+                </StackLayout>
+            </Frame>
+
+            <!-- Learning Streak -->
+            <Frame Grid.Row="4"
+                   BackgroundColor="White"
+                   CornerRadius="25"
+                   HasShadow="True"
+                   Padding="20">
+
+                <StackLayout Spacing="15">
+                    <Label Text="{Binding Source={x:Reference ProgressDashboardRoot}, Path=StreakTitle}"
+                           FontFamily="Nunito"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource ChildTextDark}"
+                           HorizontalTextAlignment="Center" />
+
+                    <!-- Streak Display -->
+                    <Frame Background="{StaticResource LevelCompleteGradient}"
+                           CornerRadius="20"
+                           Padding="20"
+                           HasShadow="False">
+
+                        <StackLayout Orientation="Horizontal" Spacing="15" HorizontalOptions="Center">
+                            <Label Text="🔥"
+                                   FontSize="32"
+                                   VerticalOptions="Center" />
+
+                            <StackLayout Spacing="4">
+                                <Label Text="{Binding Source={x:Reference ProgressDashboardRoot}, Path=StreakDays, StringFormat='{0} Days'}"
+                                       FontFamily="Nunito"
+                                       FontSize="24"
+                                       FontAttributes="Bold"
+                                       TextColor="White" />
+
+                                <Label Text="{Binding Source={x:Reference ProgressDashboardRoot}, Path=StreakMessage}"
+                                       FontFamily="Nunito"
+                                       FontSize="14"
+                                       TextColor="White"
+                                       Opacity="0.9" />
+                            </StackLayout>
+                        </StackLayout>
+                    </Frame>
+
+                    <!-- Streak Calendar -->
+                    <StackLayout Orientation="Horizontal" Spacing="8" HorizontalOptions="Center">
+                        <Label Text="📅" FontSize="16" VerticalOptions="Center" />
+                        <Label Text="{Binding Source={x:Reference ProgressDashboardRoot}, Path=WeeklyStreakText}"
+                               FontFamily="Nunito"
+                               FontSize="14"
+                               TextColor="{StaticResource ChildTextMedium}" />
+                    </StackLayout>
+                </StackLayout>
+            </Frame>
+
+            <!-- Next Challenge Preview -->
+            <Frame Grid.Row="5"
+                   BackgroundColor="White"
+                   CornerRadius="25"
+                   HasShadow="True"
+                   Padding="20">
+
+                <StackLayout Spacing="15">
+                    <Label Text="{Binding Source={x:Reference ProgressDashboardRoot}, Path=NextChallengeTitle}"
+                           FontFamily="Nunito"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource ChildTextDark}"
+                           HorizontalTextAlignment="Center" />
+
+                    <!-- Challenge Preview -->
+                    <Frame BackgroundColor="#F0F8FF"
+                           CornerRadius="20"
+                           Padding="20"
+                           HasShadow="False">
+
+                        <StackLayout Spacing="12">
+                            <StackLayout Orientation="Horizontal" Spacing="10" HorizontalOptions="Center">
+                                <Label Text="{Binding Source={x:Reference ProgressDashboardRoot}, Path=NextChallengeIcon}"
+                                       FontSize="24" />
+
+                                <Label Text="{Binding Source={x:Reference ProgressDashboardRoot}, Path=NextChallengeName}"
+                                       FontFamily="Nunito"
+                                       FontSize="16"
+                                       FontAttributes="Bold"
+                                       TextColor="{StaticResource ProgressBlue}"
+                                       VerticalOptions="Center" />
+                            </StackLayout>
+
+                            <Label Text="{Binding Source={x:Reference ProgressDashboardRoot}, Path=NextChallengeDescription}"
+                                   FontFamily="Nunito"
+                                   FontSize="14"
+                                   TextColor="{StaticResource ChildTextMedium}"
+                                   HorizontalTextAlignment="Center"
+                                   LineBreakMode="WordWrap" />
+
+                            <!-- Start Button -->
+                            <Button Text="{Binding Source={x:Reference ProgressDashboardRoot}, Path=StartChallengeButtonText}"
+                                    Command="{Binding Source={x:Reference ProgressDashboardRoot}, Path=StartNextChallengeCommand}"
+                                    BackgroundColor="{StaticResource ProgressBlue}"
+                                    TextColor="White"
+                                    FontFamily="Nunito"
+                                    FontSize="16"
+                                    FontAttributes="Bold"
+                                    CornerRadius="25"
+                                    HeightRequest="50"
+                                    Margin="0,10,0,0" />
+                        </StackLayout>
+                    </Frame>
+                </StackLayout>
+            </Frame>
+
+            <!-- Level Up Confetti (overlay) -->
+            <Grid x:Name="LevelUpOverlay"
+                  Grid.RowSpan="6"
+                  BackgroundColor="Transparent"
+                  IsVisible="False"
+                  InputTransparent="True">
+
+                <Label x:Name="LevelConfetti1" Text="🎉" FontSize="20" TextColor="Gold" Opacity="0"
+                       HorizontalOptions="Start" VerticalOptions="Start" Margin="80,50,0,0" />
+                <Label x:Name="LevelConfetti2" Text="⭐" FontSize="18" TextColor="Blue" Opacity="0"
+                       HorizontalOptions="End" VerticalOptions="Start" Margin="0,70,60,0" />
+                <Label x:Name="LevelConfetti3" Text="🏆" FontSize="22" TextColor="Orange" Opacity="0"
+                       HorizontalOptions="Center" VerticalOptions="Start" Margin="0,60,0,0" />
+            </Grid>
+        </Grid>
+    </ScrollView>
+</ContentView>

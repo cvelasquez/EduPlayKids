@@ -54,6 +54,12 @@ public class ChildSafeNavigationService : IChildSafeNavigationService
         }
     }
 
+    public async Task NavigateBackAsync()
+    {
+        // Alias for GoBackAsync for compatibility
+        await GoBackAsync();
+    }
+
     public async Task GoToHomeAsync()
     {
         try

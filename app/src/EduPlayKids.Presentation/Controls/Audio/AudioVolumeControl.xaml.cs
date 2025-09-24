@@ -324,7 +324,7 @@ public partial class AudioVolumeControl : ContentView
                     break;
 
                 case AudioType.BackgroundMusic:
-                    await _audioService.PlayBackgroundMusicAsync("test", VolumeLevel * 0.8f, false);
+                    await _audioService.PlayBackgroundMusicAsync("test", (float)(VolumeLevel * 0.8), false);
                     break;
 
                 case AudioType.Achievement:

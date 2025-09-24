@@ -108,6 +108,37 @@ public class AudioPlaybackSettings
     public int? BufferSize { get; set; }
 
     /// <summary>
+    /// Gets or sets the maximum volume override for this audio playback.
+    /// Provides additional safety control beyond normal volume settings.
+    /// Value between 0.0 and 1.0, where 0.85 ensures child hearing protection.
+    /// </summary>
+    public float? MaxVolumeOverride { get; set; }
+
+    /// <summary>
+    /// Gets or sets the priority for this audio playback.
+    /// Used for managing audio interruptions and mixing.
+    /// </summary>
+    public AudioPriority Priority { get; set; } = AudioPriority.Normal;
+
+    /// <summary>
+    /// Gets or sets the fade-in duration in milliseconds for smooth audio start.
+    /// Prevents jarring audio beginnings that might startle children.
+    /// </summary>
+    public int FadeInDuration { get; set; } = 0;
+
+    /// <summary>
+    /// Gets or sets whether child-safe mode is enabled for this audio.
+    /// Applies additional volume limits and content filtering.
+    /// </summary>
+    public bool ChildSafeMode { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the volume level for this audio (0.0 to 1.0).
+    /// Used for fine-tuned volume control at the playback settings level.
+    /// </summary>
+    public float Volume { get; set; } = 1.0f;
+
+    /// <summary>
     /// Initializes a new instance of the AudioPlaybackSettings class with default values.
     /// </summary>
     public AudioPlaybackSettings()
@@ -250,7 +281,12 @@ public class AudioPlaybackSettings
             SpeechEnhancement = SpeechEnhancement?.Clone(),
             MaxConcurrentPlayback = MaxConcurrentPlayback,
             PreloadNext = PreloadNext,
-            BufferSize = BufferSize
+            BufferSize = BufferSize,
+            MaxVolumeOverride = MaxVolumeOverride,
+            Priority = Priority,
+            FadeInDuration = FadeInDuration,
+            ChildSafeMode = ChildSafeMode,
+            Volume = Volume
         };
 
         if (PlatformSettings != null)

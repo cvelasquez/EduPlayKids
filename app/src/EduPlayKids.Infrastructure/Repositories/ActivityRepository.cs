@@ -142,4 +142,20 @@ public class ActivityRepository : GenericRepository<Activity>, IActivityReposito
     {
         throw new NotImplementedException();
     }
+
+    // Implementation of missing methods needed for compilation
+    public async Task<IEnumerable<Activity>> GetBySubjectIdAsync(int subjectId, CancellationToken cancellationToken = default)
+    {
+        return await _context.Set<Activity>()
+            .Where(a => a.SubjectId == subjectId && a.IsActive)
+            .OrderBy(a => a.DisplayOrder)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<Activity?> GetByIdWithQuestionsAsync(int activityId, CancellationToken cancellationToken = default)
+    {
+        return await _context.Set<Activity>()
+            .Include(a => a.Questions)
+            .FirstOrDefaultAsync(a => a.Id == activityId, cancellationToken);
+    }
 }

@@ -200,10 +200,13 @@ public partial class PinSetupViewModel : ObservableObject
     /// </summary>
     private async Task ShowSuccessMessage()
     {
-        await Application.Current?.MainPage?.DisplayAlert(
-            "PIN Setup Complete",
-            "Your parental controls PIN has been set up successfully. You can now access parental controls and settings.",
-            "OK") ?? Task.CompletedTask;
+        if (Microsoft.Maui.Controls.Application.Current?.MainPage != null)
+        {
+            await Microsoft.Maui.Controls.Application.Current.MainPage.DisplayAlert(
+                "PIN Setup Complete",
+                "Your parental controls PIN has been set up successfully. You can now access parental controls and settings.",
+                "OK");
+        }
     }
 
     /// <summary>
@@ -211,10 +214,10 @@ public partial class PinSetupViewModel : ObservableObject
     /// </summary>
     private async Task<bool> ConfirmCancel()
     {
-        if (Application.Current?.MainPage == null)
+        if (Microsoft.Maui.Controls.Application.Current?.MainPage == null)
             return true;
 
-        return await Application.Current.MainPage.DisplayAlert(
+        return await Microsoft.Maui.Controls.Application.Current.MainPage.DisplayAlert(
             "Cancel Setup",
             "Are you sure you want to cancel PIN setup? Parental controls will remain disabled.",
             "Yes, Cancel",

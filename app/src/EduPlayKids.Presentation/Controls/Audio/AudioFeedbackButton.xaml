@@ -123,38 +123,6 @@
                 </Setter>
             </Style>
 
-            <!-- Audio Playing Animation -->
-            <DataTemplate x:Key="AudioPlayingIndicator">
-                <Grid WidthRequest="20" HeightRequest="20">
-                    <Ellipse Fill="#FFF" Opacity="0.8" />
-                    <Label Text="♪"
-                           FontSize="12"
-                           HorizontalOptions="Center"
-                           VerticalOptions="Center"
-                           TextColor="Black">
-                        <Label.Triggers>
-                            <DataTrigger TargetType="Label"
-                                       Binding="{Binding Source={x:Reference this}, Path=IsPlayingAudio}"
-                                       Value="True">
-                                <DataTrigger.EnterActions>
-                                    <BeginAnimation>
-                                        <Animation>
-                                            <DoubleAnimation Property="Opacity"
-                                                           To="0.3"
-                                                           Duration="500"
-                                                           AutoReverse="True"
-                                                           RepeatForever="True" />
-                                        </Animation>
-                                    </BeginAnimation>
-                                </DataTrigger.EnterActions>
-                                <DataTrigger.ExitActions>
-                                    <StopAnimation />
-                                </DataTrigger.ExitActions>
-                            </DataTrigger>
-                        </Label.Triggers>
-                    </Label>
-                </Grid>
-            </DataTemplate>
         </ResourceDictionary>
     </ContentView.Resources>
 
@@ -166,23 +134,21 @@
                 IsEnabled="{Binding Source={x:Reference this}, Path=IsEnabled}"
                 Style="{Binding Source={x:Reference this}, Path=ButtonStyle}">
 
-            <!-- Button Press Animation -->
-            <Button.Triggers>
-                <EventTrigger Event="Pressed">
-                    <BeginAnimation>
-                        <Animation>
-                            <DoubleAnimation Property="Scale" To="0.95" Duration="100" />
-                        </Animation>
-                    </BeginAnimation>
-                </EventTrigger>
-                <EventTrigger Event="Released">
-                    <BeginAnimation>
-                        <Animation>
-                            <DoubleAnimation Property="Scale" To="1.0" Duration="100" />
-                        </Animation>
-                    </BeginAnimation>
-                </EventTrigger>
-            </Button.Triggers>
+            <!-- Button Visual States for press effect -->
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup Name="CommonStates">
+                    <VisualState Name="Normal">
+                        <VisualState.Setters>
+                            <Setter Property="Scale" Value="1.0" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState Name="Pressed">
+                        <VisualState.Setters>
+                            <Setter Property="Scale" Value="0.95" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
         </Button>
 
         <!-- Audio Playing Indicator -->
@@ -190,8 +156,16 @@
                      IsVisible="{Binding Source={x:Reference this}, Path=IsPlayingAudio}"
                      HorizontalOptions="End"
                      VerticalOptions="Start"
-                     Margin="0,-5,-5,0"
-                     ContentTemplate="{StaticResource AudioPlayingIndicator}" />
+                     Margin="0,-5,-5,0">
+            <!-- Audio playing indicator content -->
+            <Grid>
+                <Label Text="♪"
+                       FontSize="12"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       TextColor="Black" />
+            </Grid>
+        </ContentView>
 
         <!-- Loading Indicator -->
         <ActivityIndicator x:Name="LoadingIndicator"

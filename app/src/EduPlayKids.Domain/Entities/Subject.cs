@@ -214,4 +214,9 @@ public class Subject : BaseEntity
     {
         return Activities.Count(a => a.IsActive && a.IsAgeAppropriate(childAge));
     }
+
+    /// <summary>
+    /// Gets the default name property (English) for compatibility with ViewModels.
+    /// </summary>
+    public string Name => NameEn;
 }

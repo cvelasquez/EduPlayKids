@@ -21,6 +21,25 @@ public interface IAudioService
     Task<bool> PlayAudioAsync(AudioItem audioItem, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Plays an audio file with specified volume level.
+    /// Simple overload for testing and basic playback scenarios.
+    /// </summary>
+    /// <param name="audioItem">The audio item to play</param>
+    /// <param name="volume">Volume level (0.0 to 1.0), automatically capped at 0.85 for child safety</param>
+    /// <param name="cancellationToken">Cancellation token for async operation</param>
+    /// <returns>True if audio started playing successfully, false otherwise</returns>
+    Task<bool> PlayWithVolumeAsync(AudioItem audioItem, float volume = 1.0f, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Plays an audio file with default settings.
+    /// Simple overload for testing and basic playback scenarios.
+    /// </summary>
+    /// <param name="audioItem">The audio item to play</param>
+    /// <param name="cancellationToken">Cancellation token for async operation</param>
+    /// <returns>True if audio started playing successfully, false otherwise</returns>
+    Task<bool> PlayAsync(AudioItem audioItem, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Plays audio by file path with automatic type detection and language preference.
     /// Uses current user language settings and applies child-safe volume controls.
     /// </summary>
@@ -39,6 +58,13 @@ public interface IAudioService
     /// <param name="fadeOutDuration">Duration of fade-out in milliseconds (default: 200ms)</param>
     /// <returns>Task representing the async operation</returns>
     Task StopAudioAsync(AudioType? audioType = null, int fadeOutDuration = 200);
+
+    /// <summary>
+    /// Stops currently playing audio for testing purposes.
+    /// Simple overload for test scenarios.
+    /// </summary>
+    /// <returns>True if audio was stopped successfully, false otherwise</returns>
+    Task<bool> StopAsync();
 
     /// <summary>
     /// Pauses currently playing audio with ability to resume from the same position.
@@ -269,6 +295,130 @@ public interface IAudioService
     /// </summary>
     /// <returns>Audio cache statistics including size and file count</returns>
     AudioCacheInfo GetCacheInfo();
+
+    #endregion
+
+    #region Educational Activity Audio
+
+    /// <summary>
+    /// Plays bilingual activity introduction with age-appropriate narration.
+    /// Provides context and instructions for the learning activity about to begin.
+    /// </summary>
+    /// <param name="activityType">Type of educational activity (math, reading, etc.)</param>
+    /// <param name="activityLevel">Difficulty level (easy, medium, hard)</param>
+    /// <param name="childAge">Child's age for appropriate language complexity</param>
+    /// <param name="cancellationToken">Cancellation token for async operation</param>
+    /// <returns>True if introduction audio was played successfully, false otherwise</returns>
+    Task<bool> PlayActivityIntroductionAsync(string activityType, string activityLevel, int? childAge = null, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Plays step-by-step audio guidance for complex educational activities.
+    /// Breaks down activity instructions into manageable steps for young learners.
+    /// </summary>
+    /// <param name="stepInstructions">List of instruction steps to narrate</param>
+    /// <param name="stepDelay">Delay between steps in milliseconds</param>
+    /// <param name="childAge">Child's age for appropriate pacing</param>
+    /// <param name="cancellationToken">Cancellation token for async operation</param>
+    /// <returns>True if all step instructions were played successfully, false otherwise</returns>
+    Task<bool> PlayStepByStepGuidanceAsync(IEnumerable<string> stepInstructions, int stepDelay = 2000, int? childAge = null, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Plays answer choice audio for multiple choice questions.
+    /// Reads available options to support non-reading children.
+    /// </summary>
+    /// <param name="answerChoices">List of answer choices to narrate</param>
+    /// <param name="choiceDelay">Delay between choices in milliseconds</param>
+    /// <param name="cancellationToken">Cancellation token for async operation</param>
+    /// <returns>True if answer choices were played successfully, false otherwise</returns>
+    Task<bool> PlayAnswerChoicesAsync(IEnumerable<string> answerChoices, int choiceDelay = 1500, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Plays progress encouragement audio during lengthy activities.
+    /// Provides motivational feedback to maintain child engagement.
+    /// </summary>
+    /// <param name="progressPercentage">Current progress percentage (0-100)</param>
+    /// <param name="childAge">Child's age for appropriate encouragement style</param>
+    /// <param name="cancellationToken">Cancellation token for async operation</param>
+    /// <returns>True if encouragement audio was played successfully, false otherwise</returns>
+    Task<bool> PlayProgressEncouragementAsync(int progressPercentage, int? childAge = null, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Plays hint audio to help children who are struggling with a question.
+    /// Provides supportive guidance without giving away the answer.
+    /// </summary>
+    /// <param name="hintText">Hint content to narrate</param>
+    /// <param name="hintLevel">Progressive hint level (1=subtle, 2=moderate, 3=direct)</param>
+    /// <param name="cancellationToken">Cancellation token for async operation</param>
+    /// <returns>True if hint audio was played successfully, false otherwise</returns>
+    Task<bool> PlayHintAudioAsync(string hintText, int hintLevel = 1, CancellationToken cancellationToken = default);
+
+    #endregion
+
+    #region Achievement and Celebration Audio
+
+    /// <summary>
+    /// Plays crown challenge unlock celebration with exciting audio.
+    /// Celebrates achievement of accessing more difficult content.
+    /// </summary>
+    /// <param name="challengeType">Type of crown challenge unlocked</param>
+    /// <param name="childAge">Child's age for appropriate celebration intensity</param>
+    /// <param name="cancellationToken">Cancellation token for async operation</param>
+    /// <returns>True if crown celebration was played successfully, false otherwise</returns>
+    Task<bool> PlayCrownUnlockCelebrationAsync(string challengeType, int? childAge = null, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Plays milestone achievement audio with personalized congratulations.
+    /// Recognizes significant learning accomplishments with special audio.
+    /// </summary>
+    /// <param name="milestoneType">Type of milestone achieved</param>
+    /// <param name="achievementLevel">Level of achievement for celebration intensity</param>
+    /// <param name="childName">Optional child name for personalized congratulations</param>
+    /// <param name="cancellationToken">Cancellation token for async operation</param>
+    /// <returns>True if milestone audio was played successfully, false otherwise</returns>
+    Task<bool> PlayMilestoneAchievementAsync(string milestoneType, int achievementLevel, string? childName = null, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Plays learning streak celebration audio for consistent engagement.
+    /// Acknowledges consecutive days or activities completed.
+    /// </summary>
+    /// <param name="streakDays">Number of consecutive days or activities</param>
+    /// <param name="streakType">Type of streak (daily_login, activity_completion, etc.)</param>
+    /// <param name="cancellationToken">Cancellation token for async operation</param>
+    /// <returns>True if streak celebration was played successfully, false otherwise</returns>
+    Task<bool> PlayStreakCelebrationAsync(int streakDays, string streakType, CancellationToken cancellationToken = default);
+
+    #endregion
+
+    #region Accessibility and Support Audio
+
+    /// <summary>
+    /// Plays audio description of visual elements for accessibility support.
+    /// Helps children with visual impairments understand visual educational content.
+    /// </summary>
+    /// <param name="visualDescription">Description of visual elements</param>
+    /// <param name="elementType">Type of visual element (image, diagram, animation)</param>
+    /// <param name="cancellationToken">Cancellation token for async operation</param>
+    /// <returns>True if description audio was played successfully, false otherwise</returns>
+    Task<bool> PlayVisualDescriptionAsync(string visualDescription, string elementType, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Plays repeated question audio for children who need multiple hearings.
+    /// Supports different learning styles and attention spans.
+    /// </summary>
+    /// <param name="questionText">Question text to repeat</param>
+    /// <param name="repetitionSpeed">Speed of repetition (slower, normal, faster)</param>
+    /// <param name="cancellationToken">Cancellation token for async operation</param>
+    /// <returns>True if repeated question was played successfully, false otherwise</returns>
+    Task<bool> PlayRepeatedQuestionAsync(string questionText, string repetitionSpeed = "normal", CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Plays help system audio with navigation instructions.
+    /// Guides children on how to get help or access additional support.
+    /// </summary>
+    /// <param name="helpContext">Context of help needed (navigation, activity, technical)</param>
+    /// <param name="cancellationToken">Cancellation token for async operation</param>
+    /// <returns>True if help audio was played successfully, false otherwise</returns>
+    Task<bool> PlayHelpSystemAudioAsync(string helpContext, CancellationToken cancellationToken = default);
 
     #endregion
 

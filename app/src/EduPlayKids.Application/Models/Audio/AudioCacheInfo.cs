@@ -103,6 +103,18 @@ public class AudioCacheInfo
         }
     }
 
+    // Compatibility properties for specialized services
+    public int TotalCachedFiles => CachedFileCount;
+    public long TotalCacheSize => TotalCacheSizeBytes;
+    public long MaxCacheSize => MaxCacheSizeBytes;
+    public double CacheHitRate => CacheHitRatio;
+    public int PreloadedResourceCount => CachedItems?.Count(i => i.HighPriority) ?? 0;
+    public IEnumerable<CachedAudioInfo> MostAccessedResources => GetMostFrequentlyAccessed(10);
+    public int RecentlyAccessedCount => CachedItems?.Count(i => i.TimeSinceLastAccess < TimeSpan.FromHours(1)) ?? 0;
+    public List<string> AvailableLanguages => CachedItems?.Select(i => i.Language).Where(l => !string.IsNullOrEmpty(l)).Distinct().Cast<string>().ToList() ?? new List<string>();
+    public string CurrentLanguage { get; set; } = "en";
+    public string CurrentAgeGroup { get; set; } = "all";
+
     /// <summary>
     /// Gets the most frequently accessed audio items.
     /// </summary>

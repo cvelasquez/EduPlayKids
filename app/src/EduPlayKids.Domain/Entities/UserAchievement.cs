@@ -166,6 +166,11 @@ public class UserAchievement : AuditableEntity
     }
 
     /// <summary>
+    /// Gets the user ID (alias for ChildId for ViewModel compatibility).
+    /// </summary>
+    public int UserId => ChildId;
+
+    /// <summary>
     /// Updates the progress towards earning this achievement.
     /// </summary>
     /// <param name="newProgress">The new progress value.</param>

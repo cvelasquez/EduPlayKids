@@ -50,6 +50,15 @@ public class Child : AuditableEntity
     public string PreferredLanguage { get; set; } = "es";
 
     /// <summary>
+    /// Gets or sets the child's language preference (alias for PreferredLanguage for test compatibility).
+    /// </summary>
+    public string LanguagePreference
+    {
+        get => PreferredLanguage;
+        set => PreferredLanguage = value;
+    }
+
+    /// <summary>
     /// Gets or sets the child's learning profile.
     /// Tracks strengths, preferences, and adaptive learning settings.
     /// Stored as JSON for flexibility.
@@ -98,6 +107,15 @@ public class Child : AuditableEntity
     /// </summary>
     [StringLength(50)]
     public string? AvatarId { get; set; }
+
+    /// <summary>
+    /// Gets or sets the child's avatar URL (alias for AvatarId for test compatibility).
+    /// </summary>
+    public string? AvatarUrl
+    {
+        get => AvatarId;
+        set => AvatarId = value;
+    }
 
     /// <summary>
     /// Gets or sets a value indicating whether audio instructions are enabled.
@@ -158,6 +176,21 @@ public class Child : AuditableEntity
     /// Navigation property: Child's favorite subject reference.
     /// </summary>
     public virtual Subject? FavoriteSubject { get; set; }
+    /// <summary>
+    /// Gets or sets whether this child profile is active.
+    /// Used for soft-delete functionality and profile management.
+    /// </summary>
+    public bool IsActive { get; set; } = true;
+
+    /// <summary>
+    /// Gets the progress collection (alias for ProgressRecords for test compatibility).
+    /// </summary>
+    public virtual ICollection<UserProgress> Progress => ProgressRecords;
+
+    /// <summary>
+    /// Gets the user achievements collection (alias for Achievements for test compatibility).
+    /// </summary>
+    public virtual ICollection<UserAchievement> UserAchievements => Achievements;
 
     /// <summary>
     /// Initializes a new instance of the Child class.
@@ -240,4 +273,9 @@ public class Child : AuditableEntity
 
         LastActivityAt = DateTime.UtcNow;
     }
+
+    /// <summary>
+    /// Gets the avatar image path for ViewModel compatibility.
+    /// </summary>
+    public string AvatarImagePath => AvatarId ?? "default_child_avatar.png";
 }

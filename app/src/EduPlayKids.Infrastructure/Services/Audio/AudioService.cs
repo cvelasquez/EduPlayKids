@@ -184,6 +184,26 @@ public class AudioService : IAudioService, IDisposable
 
         return await PlayAudioAsync(audioItem, cancellationToken);
     }
+    public async Task<bool> PlayWithVolumeAsync(AudioItem audioItem, float volume = 1.0f, CancellationToken cancellationToken = default)
+    {
+        if (audioItem != null)
+        {
+            // Apply child-safe volume limit (85% max for hearing protection)
+            audioItem.Volume = Math.Min(volume, 0.85f);
+        }
+        return await PlayAudioAsync(audioItem, cancellationToken);
+    }
+
+    public async Task<bool> PlayAsync(AudioItem audioItem, CancellationToken cancellationToken = default)
+    {
+        return await PlayAudioAsync(audioItem, cancellationToken);
+    }
+
+    public async Task<bool> StopAsync()
+    {
+        await StopAudioAsync();
+        return true;
+    }
 
     public async Task StopAudioAsync(AudioType? audioType = null, int fadeOutDuration = 200)
     {
@@ -675,6 +695,384 @@ public class AudioService : IAudioService, IDisposable
             _logger.LogError(ex, "Error checking audio permissions");
             return false;
         }
+    }
+
+    #endregion
+
+    #region Educational Activity Audio
+
+    public async Task<bool> PlayActivityIntroductionAsync(string activityType, string activityLevel, int? childAge = null, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var audioKey = $"activity.intro.{activityType}.{activityLevel}";
+            var localizedPath = GetLocalizedAudioPath(audioKey, _currentLanguage);
+
+            if (string.IsNullOrEmpty(localizedPath))
+            {
+                _logger.LogWarning("No introduction audio found for activity: {ActivityType}, level: {Level}", activityType, activityLevel);
+                return false;
+            }
+
+            var audioItem = CreateEducationalAudioItem(localizedPath, AudioType.Instruction, childAge);
+            return await PlayAudioAsync(audioItem, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error playing activity introduction for {ActivityType}", activityType);
+            return false;
+        }
+    }
+
+    public async Task<bool> PlayStepByStepGuidanceAsync(IEnumerable<string> stepInstructions, int stepDelay = 2000, int? childAge = null, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var instructions = stepInstructions.ToList();
+            if (!instructions.Any())
+            {
+                _logger.LogWarning("No step instructions provided for guidance");
+                return false;
+            }
+
+            var adjustedDelay = AdjustDelayForAge(stepDelay, childAge);
+
+            for (int i = 0; i < instructions.Count; i++)
+            {
+                if (cancellationToken.IsCancellationRequested)
+                    return false;
+
+                var stepKey = $"guidance.step_{i + 1}";
+                var success = await PlayLocalizedAudioAsync(stepKey, AudioType.Instruction, _currentLanguage, cancellationToken);
+
+                if (!success)
+                {
+                    // Fallback to TTS if localized audio not available
+                    success = await PlayQuestionAudioAsync(instructions[i], "step_instruction", cancellationToken);
+                }
+
+                if (!success)
+                {
+                    _logger.LogWarning("Failed to play step {Step} of {Total}", i + 1, instructions.Count);
+                }
+
+                // Add delay between steps, except for the last one
+                if (i < instructions.Count - 1)
+                {
+                    await Task.Delay(adjustedDelay, cancellationToken);
+                }
+            }
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error playing step-by-step guidance");
+            return false;
+        }
+    }
+
+    public async Task<bool> PlayAnswerChoicesAsync(IEnumerable<string> answerChoices, int choiceDelay = 1500, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var choices = answerChoices.ToList();
+            if (!choices.Any())
+            {
+                _logger.LogWarning("No answer choices provided for audio playback");
+                return false;
+            }
+
+            // Play introductory phrase
+            await PlayLocalizedAudioAsync("question.choices_intro", AudioType.Instruction, _currentLanguage, cancellationToken);
+            await Task.Delay(500, cancellationToken);
+
+            for (int i = 0; i < choices.Count; i++)
+            {
+                if (cancellationToken.IsCancellationRequested)
+                    return false;
+
+                var choiceText = $"Choice {i + 1}: {choices[i]}";
+                var success = await PlayQuestionAudioAsync(choiceText, "answer_choice", cancellationToken);
+
+                if (!success)
+                {
+                    _logger.LogWarning("Failed to play answer choice {Choice}", i + 1);
+                }
+
+                // Add delay between choices, except for the last one
+                if (i < choices.Count - 1)
+                {
+                    await Task.Delay(choiceDelay, cancellationToken);
+                }
+            }
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error playing answer choices");
+            return false;
+        }
+    }
+
+    public async Task<bool> PlayProgressEncouragementAsync(int progressPercentage, int? childAge = null, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var encouragementKey = GetProgressEncouragementKey(progressPercentage);
+            var success = await PlayLocalizedAudioAsync(encouragementKey, AudioType.SuccessFeedback, _currentLanguage, cancellationToken);
+
+            if (!success)
+            {
+                // Fallback to generic success feedback
+                await PlaySuccessFeedbackAsync(FeedbackIntensity.Medium, childAge, cancellationToken);
+            }
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error playing progress encouragement for {Progress}%", progressPercentage);
+            return false;
+        }
+    }
+
+    public async Task<bool> PlayHintAudioAsync(string hintText, int hintLevel = 1, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            // Play a gentle hint introduction sound
+            await PlayUIFeedbackAsync(UIInteractionType.ButtonPress, cancellationToken);
+            await Task.Delay(300, cancellationToken);
+
+            // Play the hint text
+            return await PlayQuestionAudioAsync(hintText, "hint", cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error playing hint audio: {HintText}", hintText);
+            return false;
+        }
+    }
+
+    #endregion
+
+    #region Achievement and Celebration Audio
+
+    public async Task<bool> PlayCrownUnlockCelebrationAsync(string challengeType, int? childAge = null, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            // Play exciting achievement sound first
+            await PlayActivityCompletionAsync(3, challengeType, cancellationToken);
+            await Task.Delay(1000, cancellationToken);
+
+            // Play crown unlock specific celebration
+            var crownKey = $"celebration.crown_unlock.{challengeType}";
+            var success = await PlayLocalizedAudioAsync(crownKey, AudioType.Achievement, _currentLanguage, cancellationToken);
+
+            if (!success)
+            {
+                // Fallback to general crown celebration
+                success = await PlayLocalizedAudioAsync("celebration.crown_unlock.general", AudioType.Achievement, _currentLanguage, cancellationToken);
+            }
+
+            return success;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error playing crown unlock celebration for {ChallengeType}", challengeType);
+            return false;
+        }
+    }
+
+    public async Task<bool> PlayMilestoneAchievementAsync(string milestoneType, int achievementLevel, string? childName = null, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            // Determine celebration intensity based on achievement level
+            var intensity = achievementLevel switch
+            {
+                >= 10 => FeedbackIntensity.High,
+                >= 5 => FeedbackIntensity.Medium,
+                _ => FeedbackIntensity.Soft
+            };
+
+            await PlaySuccessFeedbackAsync(intensity, null, cancellationToken);
+            await Task.Delay(800, cancellationToken);
+
+            // Play milestone-specific celebration
+            var milestoneKey = $"milestone.{milestoneType}.level_{achievementLevel}";
+            var success = await PlayLocalizedAudioAsync(milestoneKey, AudioType.Achievement, _currentLanguage, cancellationToken);
+
+            if (!success)
+            {
+                // Fallback to generic milestone celebration
+                success = await PlayLocalizedAudioAsync("milestone.general", AudioType.Achievement, _currentLanguage, cancellationToken);
+            }
+
+            return success;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error playing milestone achievement for {MilestoneType}", milestoneType);
+            return false;
+        }
+    }
+
+    public async Task<bool> PlayStreakCelebrationAsync(int streakDays, string streakType, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            // Play celebration based on streak length
+            var intensity = streakDays switch
+            {
+                >= 30 => FeedbackIntensity.High,
+                >= 7 => FeedbackIntensity.Medium,
+                _ => FeedbackIntensity.Soft
+            };
+
+            await PlaySuccessFeedbackAsync(intensity, null, cancellationToken);
+            await Task.Delay(600, cancellationToken);
+
+            // Play streak-specific celebration
+            var streakMilestone = GetStreakMilestone(streakDays);
+            var streakKey = $"streak.{streakType}.{streakMilestone}";
+            var success = await PlayLocalizedAudioAsync(streakKey, AudioType.Achievement, _currentLanguage, cancellationToken);
+
+            if (!success)
+            {
+                // Fallback to generic streak celebration
+                success = await PlayLocalizedAudioAsync("streak.general", AudioType.Achievement, _currentLanguage, cancellationToken);
+            }
+
+            return success;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error playing streak celebration for {StreakDays} days", streakDays);
+            return false;
+        }
+    }
+
+    #endregion
+
+    #region Accessibility and Support Audio
+
+    public async Task<bool> PlayVisualDescriptionAsync(string visualDescription, string elementType, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            // Play accessibility introduction sound
+            await PlayUIFeedbackAsync(UIInteractionType.ButtonPress, cancellationToken);
+            await Task.Delay(300, cancellationToken);
+
+            // Play the visual description
+            return await PlayQuestionAudioAsync(visualDescription, "visual_description", cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error playing visual description: {Description}", visualDescription);
+            return false;
+        }
+    }
+
+    public async Task<bool> PlayRepeatedQuestionAsync(string questionText, string repetitionSpeed = "normal", CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            // For now, play at normal speed - speed control would require platform-specific implementation
+            return await PlayQuestionAudioAsync(questionText, "repeated_question", cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error playing repeated question: {QuestionText}", questionText);
+            return false;
+        }
+    }
+
+    public async Task<bool> PlayHelpSystemAudioAsync(string helpContext, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var helpKey = $"help.{helpContext}";
+            var success = await PlayLocalizedAudioAsync(helpKey, AudioType.Instruction, _currentLanguage, cancellationToken);
+
+            if (!success)
+            {
+                // Fallback to generic help audio
+                success = await PlayLocalizedAudioAsync("help.general", AudioType.Instruction, _currentLanguage, cancellationToken);
+            }
+
+            return success;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error playing help system audio for context: {HelpContext}", helpContext);
+            return false;
+        }
+    }
+
+    #endregion
+
+    #region Educational Helper Methods
+
+    private AudioItem CreateEducationalAudioItem(string filePath, AudioType audioType, int? childAge)
+    {
+        var settings = new AudioPlaybackSettings
+        {
+            Volume = GetVolumeLevel(audioType),
+            Priority = AudioPriority.High,
+            FadeInDuration = 300,
+            ChildSafeMode = true,
+            MaxVolumeOverride = childAge <= 4 ? 0.7f : 0.85f
+        };
+
+        return new AudioItem
+        {
+            FilePath = filePath,
+            AudioType = audioType,
+            PlaybackSettings = settings,
+            SessionId = Guid.NewGuid().ToString(),
+            CreatedAt = DateTime.UtcNow
+        };
+    }
+
+    private int AdjustDelayForAge(int baseDelay, int? childAge)
+    {
+        if (!childAge.HasValue) return baseDelay;
+
+        return childAge.Value switch
+        {
+            <= 4 => (int)(baseDelay * 1.5), // Slower for Pre-K
+            5 => (int)(baseDelay * 1.2),     // Slightly slower for Kindergarten
+            _ => baseDelay                   // Normal for Primary
+        };
+    }
+
+    private string GetProgressEncouragementKey(int progressPercentage)
+    {
+        return progressPercentage switch
+        {
+            >= 90 => "encouragement.nearly_done",
+            >= 75 => "encouragement.great_progress",
+            >= 50 => "encouragement.halfway",
+            >= 25 => "encouragement.good_start",
+            _ => "encouragement.keep_going"
+        };
+    }
+
+    private string GetStreakMilestone(int streakDays)
+    {
+        return streakDays switch
+        {
+            >= 30 => "month",
+            >= 14 => "two_weeks",
+            >= 7 => "week",
+            >= 3 => "three_days",
+            _ => "daily"
+        };
     }
 
     #endregion

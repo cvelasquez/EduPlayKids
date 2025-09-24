@@ -23,6 +23,13 @@ public interface IChildSafeNavigationService
     Task GoBackAsync();
 
     /// <summary>
+    /// Navigates back to the previous page (alias for GoBackAsync).
+    /// Ensures children can always return to a safe state.
+    /// </summary>
+    /// <returns>A task representing the navigation operation.</returns>
+    Task NavigateBackAsync();
+
+    /// <summary>
     /// Navigates to the root/home page.
     /// Provides a quick way for children to return to the main menu.
     /// </summary>

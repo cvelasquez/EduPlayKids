@@ -1,8 +1,14 @@
 using EduPlayKids.Application.Interfaces;
 using EduPlayKids.Application.Interfaces.Repositories;
+using EduPlayKids.Application.Services;
 using EduPlayKids.Infrastructure.Data.Repositories;
+using EduPlayKids.Infrastructure.Repositories;
 using EduPlayKids.Infrastructure.Services.Audio;
 using EduPlayKids.Infrastructure.Services;
+using EduPlayKids.Infrastructure;
+using EduPlayKids.Presentation.Services;
+using EduPlayKids.Presentation.ViewModels;
+using EduPlayKids.Presentation.ViewModels.Questions;
 
 namespace EduPlayKids.App.Extensions;
 
@@ -36,6 +42,25 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
         services.AddScoped<IAuditLogRepository, AuditLogRepository>();
         services.AddScoped<IParentalPinRepository, ParentalPinRepository>();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers educational content services for activity delivery and progression.
+    /// </summary>
+    /// <param name="services">The service collection</param>
+    /// <returns>The service collection for method chaining</returns>
+    public static IServiceCollection AddEducationalServices(this IServiceCollection services)
+    {
+        // Register educational content delivery services
+        services.AddScoped<IActivityDeliveryService, ActivityDeliveryService>();
+        services.AddScoped<IAnswerValidationService, AnswerValidationService>();
+        services.AddScoped<IContentProgressionService, ContentProgressionService>();
+        services.AddScoped<IEducationalProgressService, EducationalProgressService>();
+
+        // Register question model factory
+        services.AddScoped<QuestionModelFactory>();
 
         return services;
     }
@@ -93,6 +118,16 @@ public static class ServiceCollectionExtensions
         services.AddTransient<EduPlayKids.App.ViewModels.AgeSelectionViewModel>();
         services.AddTransient<EduPlayKids.App.ViewModels.SubjectSelectionViewModel>();
         services.AddTransient<EduPlayKids.App.ViewModels.ActivityViewModel>();
+
+        // Register enhanced educational ViewModels
+        services.AddTransient<EnhancedActivityViewModel>();
+
+        // Register question ViewModels
+        services.AddTransient<MultipleChoiceQuestionViewModel>();
+        // TODO: Add other question ViewModels as they're implemented
+        // services.AddTransient<DragDropQuestionViewModel>();
+        // services.AddTransient<MatchingQuestionViewModel>();
+        // services.AddTransient<TracingQuestionViewModel>();
 
         // Register audio-specific ViewModels
         services.AddTransient<EduPlayKids.App.ViewModels.ParentalAudioSettingsViewModel>();
@@ -163,6 +198,7 @@ public static class ServiceCollectionExtensions
     {
         return services
             .AddRepositories()
+            .AddEducationalServices()
             .AddParentalControlServices()
             .AddAudioServices(isDevelopment)
             .AddNavigationServices()

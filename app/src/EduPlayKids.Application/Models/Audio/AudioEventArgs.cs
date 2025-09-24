@@ -42,6 +42,11 @@ public class AudioPlaybackEventArgs : EventArgs
     public string SessionId { get; }
 
     /// <summary>
+    /// Gets the audio ID for compatibility with specialized services.
+    /// </summary>
+    public string AudioId => AudioItem.Id;
+
+    /// <summary>
     /// Initializes a new instance of the AudioPlaybackEventArgs class.
     /// </summary>
     /// <param name="audioItem">The audio item associated with this event</param>
@@ -153,6 +158,17 @@ public class AudioErrorEventArgs : EventArgs
     /// Gets the technical error message for logging and debugging.
     /// </summary>
     public string TechnicalMessage { get; }
+
+    /// <summary>
+    /// Gets the error message.
+    /// Alias for UserMessage property for backward compatibility.
+    /// </summary>
+    public string Message => UserMessage;
+
+    /// <summary>
+    /// Gets the error message for compatibility with specialized services.
+    /// </summary>
+    public string ErrorMessage => UserMessage;
 
     /// <summary>
     /// Gets the timestamp when this error occurred.

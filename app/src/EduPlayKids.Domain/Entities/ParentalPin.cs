@@ -24,6 +24,15 @@ public class ParentalPin : AuditableEntity
     public string PinHash { get; set; } = string.Empty;
 
     /// <summary>
+    /// Gets or sets the hashed PIN value (alias for test compatibility).
+    /// </summary>
+    public string HashedPin
+    {
+        get => PinHash;
+        set => PinHash = value;
+    }
+
+    /// <summary>
     /// Gets or sets the salt used for PIN hashing.
     /// Unique salt per PIN for enhanced security.
     /// </summary>

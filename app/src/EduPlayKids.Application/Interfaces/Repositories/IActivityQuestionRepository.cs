@@ -195,4 +195,17 @@ public interface IActivityQuestionRepository : IGenericRepository<ActivityQuesti
     Task<IEnumerable<ActivityQuestion>> GetRandomQuestionsByDifficultyAsync(string difficultyLevel, int count, CancellationToken cancellationToken = default);
 
     #endregion
+
+    #region Additional Missing Methods (for compilation fixes)
+
+    /// <summary>
+    /// Gets all questions for a specific activity by activity ID.
+    /// Alternative method name for activity question retrieval.
+    /// </summary>
+    /// <param name="activityId">The activity's unique identifier</param>
+    /// <param name="cancellationToken">Cancellation token for async operation</param>
+    /// <returns>Collection of questions for the activity</returns>
+    Task<IEnumerable<ActivityQuestion>> GetByActivityIdAsync(int activityId, CancellationToken cancellationToken = default);
+
+    #endregion
 }

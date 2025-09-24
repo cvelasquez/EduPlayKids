@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using EduPlayKids.Domain.Common;
+using EduPlayKids.Domain.Enums;
 
 namespace EduPlayKids.Domain.Entities;
 
@@ -57,6 +58,24 @@ public class Activity : BaseEntity
     public string DifficultyLevel { get; set; } = "Easy";
 
     /// <summary>
+    /// Gets or sets the difficulty level as enum (for test compatibility).
+    /// </summary>
+    public Enums.DifficultyLevel DifficultyLevelEnum
+    {
+        get => Enum.TryParse<Enums.DifficultyLevel>(DifficultyLevel, true, out var result) ? result : Enums.DifficultyLevel.Easy;
+        set => DifficultyLevel = value.ToString();
+    }
+
+    /// <summary>
+    /// Gets or sets the activity type as enum (for test compatibility).
+    /// </summary>
+    public Enums.ActivityType ActivityTypeEnum
+    {
+        get => Enum.TryParse<Enums.ActivityType>(ActivityType, true, out var result) ? result : Enums.ActivityType.MultipleChoice;
+        set => ActivityType = value.ToString();
+    }
+
+    /// <summary>
     /// Gets or sets the minimum age for this activity.
     /// Determines age-appropriate content delivery.
     /// </summary>
@@ -69,6 +88,47 @@ public class Activity : BaseEntity
     /// </summary>
     [Range(3, 8)]
     public int MaxAge { get; set; } = 8;
+    /// <summary>
+    /// Gets the target age group for this activity (calculated property).
+    /// Used for activity categorization and test compatibility.
+    /// </summary>
+    public string TargetAgeGroup => $"{MinAge}-{MaxAge}";
+
+    /// <summary>
+    /// Gets or sets the target age group as enum (for test compatibility).
+    /// </summary>
+    public Enums.AgeGroup TargetAgeGroupEnum
+    {
+        get
+        {
+            // Calculate age group based on age range
+            if (MinAge <= 4 && MaxAge <= 4) return Enums.AgeGroup.PreK;
+            if (MinAge <= 5 && MaxAge <= 5) return Enums.AgeGroup.Kindergarten;
+            if (MinAge <= 6 && MaxAge <= 6) return Enums.AgeGroup.Grade1;
+            if (MinAge >= 7) return Enums.AgeGroup.Grade2;
+            if (MinAge <= 6 && MaxAge >= 7) return Enums.AgeGroup.Primary;
+            return Enums.AgeGroup.All;
+        }
+        set
+        {
+            // Update age range based on enum
+            switch (value)
+            {
+                case Enums.AgeGroup.PreK:
+                    MinAge = 3; MaxAge = 4; break;
+                case Enums.AgeGroup.Kindergarten:
+                    MinAge = 5; MaxAge = 5; break;
+                case Enums.AgeGroup.Grade1:
+                    MinAge = 6; MaxAge = 6; break;
+                case Enums.AgeGroup.Grade2:
+                    MinAge = 7; MaxAge = 8; break;
+                case Enums.AgeGroup.Primary:
+                    MinAge = 6; MaxAge = 8; break;
+                default:
+                    MinAge = 3; MaxAge = 8; break;
+            }
+        }
+    }
 
     /// <summary>
     /// Gets or sets the display order within the subject.
@@ -77,11 +137,29 @@ public class Activity : BaseEntity
     public int DisplayOrder { get; set; }
 
     /// <summary>
+    /// Gets or sets the order in sequence (alias for DisplayOrder for test compatibility).
+    /// </summary>
+    public int OrderInSequence
+    {
+        get => DisplayOrder;
+        set => DisplayOrder = value;
+    }
+
+    /// <summary>
     /// Gets or sets the estimated completion time in minutes.
     /// Helps with session planning and progress tracking.
     /// </summary>
     [Range(1, 30)]
     public int EstimatedMinutes { get; set; } = 5;
+
+    /// <summary>
+    /// Gets or sets the estimated completion time in minutes (alias for test compatibility).
+    /// </summary>
+    public int EstimatedCompletionTimeMinutes
+    {
+        get => EstimatedMinutes;
+        set => EstimatedMinutes = value;
+    }
 
     /// <summary>
     /// Gets or sets the learning objectives for this activity.
@@ -126,11 +204,29 @@ public class Activity : BaseEntity
     public string? AudioInstructionEsPath { get; set; }
 
     /// <summary>
+    /// Gets or sets the audio instruction URL (alias for AudioInstructionEnPath for test compatibility).
+    /// </summary>
+    public string? AudioInstructionUrl
+    {
+        get => AudioInstructionEnPath;
+        set => AudioInstructionEnPath = value;
+    }
+
+    /// <summary>
     /// Gets or sets the thumbnail image path for the activity.
     /// Visual representation in activity lists and menus.
     /// </summary>
     [StringLength(255)]
     public string? ThumbnailPath { get; set; }
+
+    /// <summary>
+    /// Gets or sets the thumbnail image URL (alias for ThumbnailPath for test compatibility).
+    /// </summary>
+    public string? ThumbnailImageUrl
+    {
+        get => ThumbnailPath;
+        set => ThumbnailPath = value;
+    }
 
     /// <summary>
     /// Gets or sets a value indicating whether this activity is active.
@@ -214,6 +310,17 @@ public class Activity : BaseEntity
     public virtual ICollection<UserProgress> ProgressRecords { get; set; } = new List<UserProgress>();
 
     /// <summary>
+    /// Gets or sets the progress collection (alias for ProgressRecords for test compatibility).
+    /// </summary>
+    public virtual ICollection<UserProgress> Progress { get; set; } = new List<UserProgress>();
+
+    /// <summary>
+    /// Gets the activity title in the current locale (defaults to English).
+    /// For ViewModel compatibility and simple access scenarios.
+    /// </summary>
+    public string Title => TitleEn;
+
+    /// <summary>
     /// Initializes a new instance of the Activity class.
     /// Sets default values for new activity creation.
     /// </summary>
@@ -229,6 +336,9 @@ public class Activity : BaseEntity
         PlayCount = 0;
         AverageCompletionTime = 0;
         AverageStarRating = 0;
+        Questions = new List<ActivityQuestion>();
+        ProgressRecords = new List<UserProgress>();
+        Progress = new List<UserProgress>();
     }
 
     /// <summary>

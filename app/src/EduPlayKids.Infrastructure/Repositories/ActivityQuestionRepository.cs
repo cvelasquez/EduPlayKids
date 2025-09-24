@@ -97,4 +97,13 @@ public class ActivityQuestionRepository : GenericRepository<ActivityQuestion>, I
     {
         throw new NotImplementedException();
     }
+
+    // Implementation of missing methods needed for compilation
+    public async Task<IEnumerable<ActivityQuestion>> GetByActivityIdAsync(int activityId, CancellationToken cancellationToken = default)
+    {
+        return await _context.Set<ActivityQuestion>()
+            .Where(q => q.ActivityId == activityId)
+            .OrderBy(q => q.DisplayOrder)
+            .ToListAsync(cancellationToken);
+    }
 }

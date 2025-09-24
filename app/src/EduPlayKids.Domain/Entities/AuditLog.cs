@@ -57,6 +57,18 @@ public class AuditLog : BaseEntity
     public string? Description { get; set; }
 
     /// <summary>
+    /// Gets or sets the audit log details.
+    /// Alias for Description property for backward compatibility.
+    /// </summary>
+    public string? Details => Description;
+
+    /// <summary>
+    /// Gets the audit log event date.
+    /// Alias for CreatedAt property for backward compatibility.
+    /// </summary>
+    public DateTime EventDate => CreatedAt;
+
+    /// <summary>
     /// Gets or sets the entity type that was affected by the action.
     /// References the domain entity involved in the audit event.
     /// Examples: User, Child, Activity, Session, Settings, etc.

@@ -278,4 +278,26 @@ public interface IActivityRepository : IGenericRepository<Activity>
     Task<IEnumerable<Activity>> GetCompletedActivitiesByChildAsync(int childId, CancellationToken cancellationToken = default);
 
     #endregion
+
+    #region Additional Missing Methods (for compilation fixes)
+
+    /// <summary>
+    /// Gets activities by subject ID for curriculum organization and content delivery.
+    /// Essential for loading subject-specific activities in proper sequence.
+    /// </summary>
+    /// <param name="subjectId">The subject's unique identifier</param>
+    /// <param name="cancellationToken">Cancellation token for async operation</param>
+    /// <returns>Collection of activities for the specified subject</returns>
+    Task<IEnumerable<Activity>> GetBySubjectIdAsync(int subjectId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets a single activity with all its associated questions loaded.
+    /// Optimized for activity delivery with complete question sets.
+    /// </summary>
+    /// <param name="activityId">The activity's unique identifier</param>
+    /// <param name="cancellationToken">Cancellation token for async operation</param>
+    /// <returns>The activity with loaded questions, or null if not found</returns>
+    Task<Activity?> GetByIdWithQuestionsAsync(int activityId, CancellationToken cancellationToken = default);
+
+    #endregion
 }

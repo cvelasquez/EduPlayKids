@@ -132,4 +132,94 @@ public class UserProgressRepository : GenericRepository<UserProgress>, IUserProg
     {
         throw new NotImplementedException();
     }
+
+    // Implementation of missing methods needed for compilation
+    public async Task<List<int>> GetCompletedActivityIdsAsync(int childId, CancellationToken cancellationToken = default)
+    {
+        return await _context.Set<UserProgress>()
+            .Where(up => up.ChildId == childId && up.IsCompleted)
+            .Select(up => up.ActivityId)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<UserProgress>> GetRecentProgressAsync(int childId, int days, CancellationToken cancellationToken = default)
+    {
+        var cutoffDate = DateTime.UtcNow.AddDays(-days);
+        return await _context.Set<UserProgress>()
+            .Where(up => up.ChildId == childId && up.UpdatedAt >= cutoffDate)
+            .OrderByDescending(up => up.UpdatedAt)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<UserProgress>> GetSubjectProgressAsync(int childId, int subjectId, CancellationToken cancellationToken = default)
+    {
+        return await _context.Set<UserProgress>()
+            .Include(up => up.Activity)
+            .Where(up => up.ChildId == childId && up.Activity.SubjectId == subjectId)
+            .OrderByDescending(up => up.UpdatedAt)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<Dictionary<int, object>> GetQuestionAttemptHistoryAsync(int childId, int activityId, CancellationToken cancellationToken = default)
+    {
+        // For now, return empty dictionary - this would need more complex implementation
+        await Task.CompletedTask;
+        return new Dictionary<int, object>();
+    }
+
+    public async Task<bool> HasCompletedActivityAsync(int childId, int activityId, CancellationToken cancellationToken = default)
+    {
+        return await _context.Set<UserProgress>()
+            .AnyAsync(up => up.ChildId == childId && up.ActivityId == activityId && up.IsCompleted, cancellationToken);
+    }
+
+    public async Task<UserProgress> RecordActivityCompletionAsync(int childId, int activityId, int starsEarned, int timeSpentMinutes, int errorsCount, CancellationToken cancellationToken = default)
+    {
+        var progress = await _context.Set<UserProgress>()
+            .FirstOrDefaultAsync(up => up.ChildId == childId && up.ActivityId == activityId, cancellationToken);
+
+        // Get activity to determine total questions
+        var activity = await _context.Set<Activity>()
+            .Include(a => a.Questions)
+            .FirstOrDefaultAsync(a => a.Id == activityId, cancellationToken);
+
+        var totalQuestions = activity?.Questions.Count ?? 0;
+        var correctAnswers = Math.Max(0, totalQuestions - errorsCount);
+
+        if (progress == null)
+        {
+            progress = new UserProgress
+            {
+                ChildId = childId,
+                ActivityId = activityId,
+                IsCompleted = true,
+                StarsEarned = starsEarned,
+                TimeSpentSeconds = timeSpentMinutes * 60, // Convert minutes to seconds
+                TotalQuestions = totalQuestions,
+                CorrectAnswers = correctAnswers,
+                CompletedAt = DateTime.UtcNow
+            };
+            _context.Set<UserProgress>().Add(progress);
+        }
+        else
+        {
+            progress.IsCompleted = true;
+            progress.StarsEarned = starsEarned;
+            progress.TimeSpentSeconds = timeSpentMinutes * 60; // Convert minutes to seconds
+            progress.TotalQuestions = totalQuestions;
+            progress.CorrectAnswers = correctAnswers;
+            progress.CompletedAt = DateTime.UtcNow;
+            progress.UpdatedAt = DateTime.UtcNow;
+        }
+
+        await _context.SaveChangesAsync(cancellationToken);
+        return progress;
+    }
+
+    public async Task<Dictionary<string, object>> GetActivityTypePerformanceAsync(int childId, string activityType, CancellationToken cancellationToken = default)
+    {
+        // For now, return empty dictionary - this would need more complex implementation
+        await Task.CompletedTask;
+        return new Dictionary<string, object>();
+    }
 }

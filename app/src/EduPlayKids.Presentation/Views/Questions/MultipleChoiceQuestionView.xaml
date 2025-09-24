@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:EduPlayKids.Presentation.Models"
+             x:Class="EduPlayKids.Presentation.Views.Questions.MultipleChoiceQuestionView"
+             x:Name="MultipleChoiceView">
+
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <!-- Option Button Style -->
+            <Style x:Key="OptionButtonStyle" TargetType="Button">
+                <Setter Property="FontFamily" Value="NunitoBold" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="CornerRadius" Value="20" />
+                <Setter Property="Padding" Value="20,15" />
+                <Setter Property="Margin" Value="5" />
+                <Setter Property="MinimumHeightRequest" Value="60" />
+                <Setter Property="HorizontalOptions" Value="FillAndExpand" />
+                <Setter Property="BackgroundColor" Value="{StaticResource LightGray}" />
+                <Setter Property="TextColor" Value="{StaticResource DarkBlue}" />
+            </Style>
+
+            <!-- Selected Option Style -->
+            <Style x:Key="SelectedOptionStyle" TargetType="Button" BasedOn="{StaticResource OptionButtonStyle}">
+                <Setter Property="BackgroundColor" Value="{StaticResource Blue}" />
+                <Setter Property="TextColor" Value="{StaticResource White}" />
+            </Style>
+
+            <!-- Correct Option Style -->
+            <Style x:Key="CorrectOptionStyle" TargetType="Button" BasedOn="{StaticResource OptionButtonStyle}">
+                <Setter Property="BackgroundColor" Value="{StaticResource Green}" />
+                <Setter Property="TextColor" Value="{StaticResource White}" />
+            </Style>
+
+            <!-- Incorrect Option Style -->
+            <Style x:Key="IncorrectOptionStyle" TargetType="Button" BasedOn="{StaticResource OptionButtonStyle}">
+                <Setter Property="BackgroundColor" Value="{StaticResource Red}" />
+                <Setter Property="TextColor" Value="{StaticResource White}" />
+            </Style>
+
+            <!-- Option Audio Button Style -->
+            <Style x:Key="OptionAudioButtonStyle" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{StaticResource LightBlue}" />
+                <Setter Property="TextColor" Value="{StaticResource White}" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="CornerRadius" Value="15" />
+                <Setter Property="WidthRequest" Value="30" />
+                <Setter Property="HeightRequest" Value="30" />
+                <Setter Property="Padding" Value="0" />
+            </Style>
+        </ResourceDictionary>
+    </ContentView.Resources>
+
+    <StackLayout Spacing="15">
+
+        <!-- Instructions -->
+        <Label Text="{Binding InstructionText}"
+               FontFamily="NunitoMedium"
+               FontSize="14"
+               TextColor="{StaticResource DarkBlue}"
+               HorizontalOptions="Center"
+               HorizontalTextAlignment="Center"
+               IsVisible="{Binding HasInstructions}"
+               Margin="0,0,0,10" />
+
+        <!-- Options List -->
+        <CollectionView x:Name="OptionsCollectionView"
+                        ItemsSource="{Binding Options}"
+                        SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:MultipleChoiceOption">
+                    <Grid Margin="0,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Option Button -->
+                        <Button Grid.Column="0"
+                                Text="{Binding Text}"
+                                Command="{Binding Source={x:Reference MultipleChoiceView}, Path=BindingContext.SelectOptionCommand}"
+                                CommandParameter="{Binding Index}">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource OptionButtonStyle}">
+                                    <Style.Triggers>
+                                        <!-- Selected State -->
+                                        <DataTrigger TargetType="Button"
+                                                   Binding="{Binding IsSelected}"
+                                                   Value="True">
+                                            <Setter Property="BackgroundColor" Value="{StaticResource Blue}" />
+                                            <Setter Property="TextColor" Value="{StaticResource White}" />
+                                        </DataTrigger>
+
+                                        <!-- Answered State - Show correct/incorrect -->
+                                        <MultiTrigger TargetType="Button">
+                                            <MultiTrigger.Conditions>
+                                                <BindingCondition Binding="{Binding Source={x:Reference MultipleChoiceView}, Path=BindingContext.IsAnswered}" Value="True" />
+                                                <BindingCondition Binding="{Binding IsCorrectAnswer}" Value="True" />
+                                            </MultiTrigger.Conditions>
+                                            <Setter Property="BackgroundColor" Value="{StaticResource Green}" />
+                                            <Setter Property="TextColor" Value="{StaticResource White}" />
+                                        </MultiTrigger>
+
+                                        <MultiTrigger TargetType="Button">
+                                            <MultiTrigger.Conditions>
+                                                <BindingCondition Binding="{Binding Source={x:Reference MultipleChoiceView}, Path=BindingContext.IsAnswered}" Value="True" />
+                                                <BindingCondition Binding="{Binding IsSelected}" Value="True" />
+                                                <BindingCondition Binding="{Binding IsCorrectAnswer}" Value="False" />
+                                            </MultiTrigger.Conditions>
+                                            <Setter Property="BackgroundColor" Value="{StaticResource Red}" />
+                                            <Setter Property="TextColor" Value="{StaticResource White}" />
+                                        </MultiTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+
+                        <!-- Option Audio Button -->
+                        <Button Grid.Column="1"
+                                Text="🔊"
+                                Style="{StaticResource OptionAudioButtonStyle}"
+                                Command="{Binding Source={x:Reference MultipleChoiceView}, Path=BindingContext.PlayOptionAudioCommand}"
+                                CommandParameter="{Binding Index}"
+                                IsVisible="{Binding HasAudio}"
+                                Margin="10,0,0,0" />
+
+                        <!-- Option Image -->
+                        <Image Grid.Column="0"
+                               Source="{Binding ImagePath}"
+                               IsVisible="{Binding HasImage}"
+                               HeightRequest="40"
+                               WidthRequest="40"
+                               Aspect="AspectFit"
+                               HorizontalOptions="Start"
+                               VerticalOptions="Center"
+                               Margin="10,0,0,0" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Submit Button -->
+        <Button Text="Submit Answer ✓"
+                BackgroundColor="{StaticResource Green}"
+                TextColor="{StaticResource White}"
+                FontFamily="NunitoBold"
+                FontSize="16"
+                CornerRadius="25"
+                Padding="30,15"
+                Command="{Binding SubmitAnswerCommand}"
+                IsVisible="{Binding CanSubmitAnswer}"
+                HorizontalOptions="Center"
+                Margin="0,20,0,0" />
+
+        <!-- Selection Indicator for Multiple Selection -->
+        <Label Text="{Binding SelectionStatusText}"
+               FontFamily="NunitoMedium"
+               FontSize="12"
+               TextColor="{StaticResource DarkGray}"
+               HorizontalOptions="Center"
+               IsVisible="{Binding AllowMultipleSelection}"
+               Margin="0,10,0,0" />
+
+    </StackLayout>
+
+</ContentView>

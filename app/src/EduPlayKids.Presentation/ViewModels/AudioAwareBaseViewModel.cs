@@ -415,6 +415,45 @@ public abstract class AudioAwareBaseViewModel : BaseViewModel
         await PlayInstructionAsync("navigation_back");
     }
 
+    /// <summary>
+    /// Plays audio from a specified file path with given type and language.
+    /// Generic method for playing any audio file with proper categorization.
+    /// </summary>
+    /// <param name="audioFilePath">Path to the audio file</param>
+    /// <param name="audioType">Type of audio for proper categorization</param>
+    /// <param name="language">Language for the audio content</param>
+    /// <returns>Task representing the async operation</returns>
+    protected async Task PlayAudioAsync(string audioFilePath, AudioType audioType, string language = "en")
+    {
+        if (!AudioEnabled || _audioService == null) return;
+
+        try
+        {
+            var audioItem = new AudioItem
+            {
+                FilePath = audioFilePath,
+                Type = audioType,
+                Language = language == "es" ? AudioLanguage.Spanish.ToString().ToLowerInvariant() : AudioLanguage.English.ToString().ToLowerInvariant(),
+                Priority = audioType switch
+                {
+                    AudioType.Instruction => AudioPriority.Critical,
+                    AudioType.SuccessFeedback => AudioPriority.High,
+                    AudioType.ErrorFeedback => AudioPriority.High,
+                    AudioType.Achievement => AudioPriority.High,
+                    AudioType.UIInteraction => AudioPriority.Normal,
+                    _ => AudioPriority.Normal
+                }
+            };
+
+            await _audioService.PlayAudioAsync(audioItem);
+            _logger.LogDebug("Playing audio: {FilePath} ({Type})", audioFilePath, audioType);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error playing audio: {FilePath}", audioFilePath);
+        }
+    }
+
     #endregion
 
     #region Event Handlers
@@ -517,4 +556,44 @@ public abstract class AudioAwareBaseViewModel : BaseViewModel
 
 
     #endregion
+    /// <summary>
+    /// Called when the ViewModel is being disposed.
+    /// Performs audio-specific cleanup operations.
+    /// </summary>
+    protected virtual void OnDisposing()
+    {
+        try
+        {
+            // Unsubscribe from audio service events to prevent memory leaks
+            if (_audioService != null)
+            {
+                _audioService.AudioStarted -= OnAudioStarted;
+                _audioService.AudioStopped -= OnAudioStopped;
+                _audioService.AudioError -= OnAudioError;
+            }
+
+            // Stop any playing audio from this ViewModel
+            if (_audioService != null && IsPlayingAudio)
+            {
+                // Use synchronous stopping since we are in cleanup
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        await StopAllAudioAsync(50); // Quick fade-out for cleanup
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Error stopping audio during ViewModel disposal");
+                    }
+                });
+            }
+
+            _logger.LogDebug("AudioAwareBaseViewModel cleanup completed");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during AudioAwareBaseViewModel cleanup");
+        }
+    }
 }

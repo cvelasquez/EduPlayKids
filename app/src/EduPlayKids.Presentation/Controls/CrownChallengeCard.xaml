@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView x:Class="EduPlayKids.App.Controls.CrownChallengeCard"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Name="CrownChallengeRoot">
+
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <!-- Note: Animations are handled programmatically in code-behind for .NET MAUI compatibility -->
+
+            <!-- Crown Challenge Colors -->
+            <Color x:Key="CrownGoldColor">#FFD700</Color>
+            <Color x:Key="CrownPurpleColor">#9C27B0</Color>
+            <Color x:Key="CrownBlueColor">#3F51B5</Color>
+            <Color x:Key="RoyalRedColor">#E91E63</Color>
+            <Color x:Key="ShimmerColor">#FFFFFF</Color>
+
+            <!-- Gradient Backgrounds -->
+            <LinearGradientBrush x:Key="CrownGradient" StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="{StaticResource CrownGoldColor}" Offset="0.0" />
+                <GradientStop Color="{StaticResource CrownPurpleColor}" Offset="0.5" />
+                <GradientStop Color="{StaticResource CrownBlueColor}" Offset="1.0" />
+            </LinearGradientBrush>
+
+            <LinearGradientBrush x:Key="ShimmerGradient" StartPoint="0,0" EndPoint="1,0">
+                <GradientStop Color="Transparent" Offset="0.0" />
+                <GradientStop Color="{StaticResource ShimmerColor}" Offset="0.5" />
+                <GradientStop Color="Transparent" Offset="1.0" />
+            </LinearGradientBrush>
+        </ResourceDictionary>
+    </ContentView.Resources>
+
+    <Grid x:Name="MainContainer"
+          BackgroundColor="Transparent"
+          RowSpacing="0">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Crown Challenge Header -->
+        <Frame x:Name="HeaderFrame"
+               Grid.Row="0"
+               Background="{StaticResource CrownGradient}"
+               CornerRadius="25,25,0,0"
+               HasShadow="True"
+               Padding="0"
+               Margin="10,0">
+
+            <Grid>
+                <!-- Shimmer Effect Overlay -->
+                <Rectangle x:Name="ShimmerOverlay"
+                          Fill="{StaticResource ShimmerGradient}"
+                          Opacity="0.2" />
+
+                <StackLayout Orientation="Horizontal"
+                           Spacing="15"
+                           Padding="20"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center">
+
+                    <!-- Crown Icon -->
+                    <Label x:Name="CrownIcon"
+                           Text="👑"
+                           FontSize="36"
+                           VerticalOptions="Center" />
+
+                    <!-- Title -->
+                    <StackLayout Spacing="2" VerticalOptions="Center">
+                        <Label Text="{Binding Source={x:Reference CrownChallengeRoot}, Path=ChallengeTitle}"
+                               FontFamily="Nunito"
+                               FontSize="20"
+                               FontAttributes="Bold"
+                               TextColor="White"
+                               HorizontalTextAlignment="Start" />
+
+                        <Label Text="{Binding Source={x:Reference CrownChallengeRoot}, Path=ChallengeSubtitle}"
+                               FontFamily="Nunito"
+                               FontSize="14"
+                               TextColor="White"
+                               Opacity="0.9"
+                               HorizontalTextAlignment="Start" />
+                    </StackLayout>
+
+                    <!-- Difficulty Badge -->
+                    <Frame BackgroundColor="{StaticResource RoyalRedColor}"
+                           CornerRadius="15"
+                           Padding="8,4"
+                           HasShadow="False"
+                           VerticalOptions="Center"
+                           IsVisible="{Binding Source={x:Reference CrownChallengeRoot}, Path=ShowDifficultyBadge}">
+
+                        <Label Text="{Binding Source={x:Reference CrownChallengeRoot}, Path=DifficultyText}"
+                               FontFamily="Nunito"
+                               FontSize="12"
+                               FontAttributes="Bold"
+                               TextColor="White"
+                               HorizontalTextAlignment="Center" />
+                    </Frame>
+                </StackLayout>
+            </Grid>
+        </Frame>
+
+        <!-- Main Content Area -->
+        <Frame x:Name="CrownContainer"
+               Grid.Row="1"
+               BackgroundColor="White"
+               CornerRadius="0"
+               HasShadow="True"
+               Padding="25"
+               Margin="10,0">
+
+            <Grid RowSpacing="20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- Achievement Description -->
+                <Frame Grid.Row="0"
+                       BackgroundColor="#F8F9FA"
+                       CornerRadius="15"
+                       Padding="15"
+                       HasShadow="False">
+
+                    <StackLayout Spacing="8">
+                        <Label Text="{Binding Source={x:Reference CrownChallengeRoot}, Path=AchievementTitle}"
+                               FontFamily="Nunito"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource CrownPurpleColor}"
+                               HorizontalTextAlignment="Center" />
+
+                        <Label Text="{Binding Source={x:Reference CrownChallengeRoot}, Path=AchievementDescription}"
+                               FontFamily="Nunito"
+                               FontSize="14"
+                               TextColor="#2E3440"
+                               HorizontalTextAlignment="Center"
+                               LineBreakMode="WordWrap" />
+                    </StackLayout>
+                </Frame>
+
+                <!-- Challenge Preview -->
+                <Frame Grid.Row="1"
+                       BackgroundColor="#E3F2FD"
+                       CornerRadius="20"
+                       Padding="20"
+                       HasShadow="False">
+
+                    <StackLayout Spacing="12">
+                        <Label Text="{Binding Source={x:Reference CrownChallengeRoot}, Path=PreviewTitle}"
+                               FontFamily="Nunito"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource CrownBlueColor}"
+                               HorizontalTextAlignment="Center" />
+
+                        <!-- Preview Content Area -->
+                        <ContentView x:Name="PreviewContentArea"
+                                   Content="{Binding Source={x:Reference CrownChallengeRoot}, Path=PreviewContent}"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"
+                                   MinimumHeightRequest="80" />
+
+                        <!-- Preview Hints -->
+                        <Label Text="{Binding Source={x:Reference CrownChallengeRoot}, Path=PreviewHint}"
+                               FontFamily="Nunito"
+                               FontSize="13"
+                               TextColor="#5E81AC"
+                               HorizontalTextAlignment="Center"
+                               LineBreakMode="WordWrap"
+                               Opacity="0.8" />
+                    </StackLayout>
+                </Frame>
+
+                <!-- Reward Display -->
+                <Frame Grid.Row="2"
+                       BackgroundColor="#FFF3E0"
+                       CornerRadius="20"
+                       Padding="20"
+                       HasShadow="False"
+                       VerticalOptions="Center">
+
+                    <StackLayout Spacing="15" HorizontalOptions="Center">
+                        <Label Text="{Binding Source={x:Reference CrownChallengeRoot}, Path=RewardTitle}"
+                               FontFamily="Nunito"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               TextColor="#FF9800"
+                               HorizontalTextAlignment="Center" />
+
+                        <!-- Reward Icons -->
+                        <StackLayout Orientation="Horizontal"
+                                   Spacing="10"
+                                   HorizontalOptions="Center">
+
+                            <Label Text="{Binding Source={x:Reference CrownChallengeRoot}, Path=RewardIcon1}"
+                                   FontSize="24"
+                                   IsVisible="{Binding Source={x:Reference CrownChallengeRoot}, Path=ShowRewardIcon1}" />
+
+                            <Label Text="{Binding Source={x:Reference CrownChallengeRoot}, Path=RewardIcon2}"
+                                   FontSize="24"
+                                   IsVisible="{Binding Source={x:Reference CrownChallengeRoot}, Path=ShowRewardIcon2}" />
+
+                            <Label Text="{Binding Source={x:Reference CrownChallengeRoot}, Path=RewardIcon3}"
+                                   FontSize="24"
+                                   IsVisible="{Binding Source={x:Reference CrownChallengeRoot}, Path=ShowRewardIcon3}" />
+                        </StackLayout>
+
+                        <Label Text="{Binding Source={x:Reference CrownChallengeRoot}, Path=RewardDescription}"
+                               FontFamily="Nunito"
+                               FontSize="14"
+                               TextColor="#F57C00"
+                               HorizontalTextAlignment="Center"
+                               LineBreakMode="WordWrap" />
+                    </StackLayout>
+                </Frame>
+
+                <!-- Required Stars Display -->
+                <Frame Grid.Row="3"
+                       BackgroundColor="#F1F8E9"
+                       CornerRadius="15"
+                       Padding="15"
+                       HasShadow="False"
+                       IsVisible="{Binding Source={x:Reference CrownChallengeRoot}, Path=ShowRequiredStars}">
+
+                    <StackLayout Orientation="Horizontal"
+                               Spacing="8"
+                               HorizontalOptions="Center">
+
+                        <Label Text="Required:"
+                               FontFamily="Nunito"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#4CAF50"
+                               VerticalOptions="Center" />
+
+                        <StackLayout Orientation="Horizontal" Spacing="2">
+                            <Label Text="⭐" FontSize="16" />
+                            <Label Text="⭐" FontSize="16" />
+                            <Label Text="⭐" FontSize="16" />
+                        </StackLayout>
+
+                        <Label Text="{Binding Source={x:Reference CrownChallengeRoot}, Path=RequiredStarsText}"
+                               FontFamily="Nunito"
+                               FontSize="14"
+                               TextColor="#4CAF50"
+                               VerticalOptions="Center" />
+                    </StackLayout>
+                </Frame>
+            </Grid>
+        </Frame>
+
+        <!-- Action Buttons -->
+        <Frame x:Name="ActionFrame"
+               Grid.Row="2"
+               BackgroundColor="White"
+               CornerRadius="0,0,25,25"
+               HasShadow="True"
+               Padding="20"
+               Margin="10,0">
+
+            <Grid ColumnSpacing="15">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Later Button -->
+                <Button x:Name="LaterButton"
+                        Grid.Column="0"
+                        Text="{Binding Source={x:Reference CrownChallengeRoot}, Path=LaterButtonText}"
+                        Command="{Binding Source={x:Reference CrownChallengeRoot}, Path=LaterCommand}"
+                        BackgroundColor="#81A1C1"
+                        TextColor="White"
+                        FontFamily="Nunito"
+                        FontSize="14"
+                        FontAttributes="Bold"
+                        CornerRadius="25"
+                        HeightRequest="50" />
+
+                <!-- Start Challenge Button -->
+                <Button x:Name="StartChallengeButton"
+                        Grid.Column="1"
+                        Text="{Binding Source={x:Reference CrownChallengeRoot}, Path=StartButtonText}"
+                        Command="{Binding Source={x:Reference CrownChallengeRoot}, Path=StartChallengeCommand}"
+                        Background="{StaticResource CrownGradient}"
+                        TextColor="White"
+                        FontFamily="Nunito"
+                        FontSize="16"
+                        FontAttributes="Bold"
+                        CornerRadius="25"
+                        HeightRequest="55"
+                        IsEnabled="{Binding Source={x:Reference CrownChallengeRoot}, Path=CanStartChallenge}" />
+
+                <!-- Help Button -->
+                <Button x:Name="HelpButton"
+                        Grid.Column="2"
+                        Text="❓"
+                        Command="{Binding Source={x:Reference CrownChallengeRoot}, Path=HelpCommand}"
+                        BackgroundColor="#D08770"
+                        TextColor="White"
+                        FontSize="18"
+                        CornerRadius="25"
+                        HeightRequest="50"
+                        IsVisible="{Binding Source={x:Reference CrownChallengeRoot}, Path=ShowHelpButton}" />
+            </Grid>
+        </Frame>
+
+        <!-- Loading Overlay -->
+        <Grid x:Name="LoadingOverlay"
+              Grid.RowSpan="3"
+              BackgroundColor="#80000000"
+              IsVisible="{Binding Source={x:Reference CrownChallengeRoot}, Path=IsLoading}">
+
+            <Frame BackgroundColor="White"
+                   CornerRadius="20"
+                   Padding="30"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   HasShadow="True">
+
+                <StackLayout Spacing="15" HorizontalOptions="Center">
+                    <ActivityIndicator IsRunning="{Binding Source={x:Reference CrownChallengeRoot}, Path=IsLoading}"
+                                      Color="{StaticResource CrownGoldColor}"
+                                      HeightRequest="40"
+                                      WidthRequest="40" />
+
+                    <Label Text="{Binding Source={x:Reference CrownChallengeRoot}, Path=LoadingText}"
+                           FontFamily="Nunito"
+                           FontSize="16"
+                           TextColor="#2E3440"
+                           HorizontalOptions="Center" />
+                </StackLayout>
+            </Frame>
+        </Grid>
+    </Grid>
+</ContentView>

@@ -1,0 +1,470 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="EduPlayKids.App.Views.ChildFriendlyUIShowcasePage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:EduPlayKids.App.Controls"
+             Title="EduPlayKids UI Showcase"
+             BackgroundColor="#F0F8FF">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <!-- Note: Animations are handled programmatically in code-behind for .NET MAUI compatibility -->
+
+            <!-- Showcase Section Styles -->
+            <Style x:Key="ShowcaseSectionStyle" TargetType="Frame">
+                <Setter Property="BackgroundColor" Value="White" />
+                <Setter Property="CornerRadius" Value="25" />
+                <Setter Property="HasShadow" Value="True" />
+                <Setter Property="Padding" Value="20" />
+                <Setter Property="Margin" Value="15,10" />
+            </Style>
+
+            <Style x:Key="SectionTitleStyle" TargetType="Label">
+                <Setter Property="FontFamily" Value="Nunito" />
+                <Setter Property="FontSize" Value="20" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="TextColor" Value="#2E3440" />
+                <Setter Property="HorizontalTextAlignment" Value="Center" />
+                <Setter Property="Margin" Value="0,0,0,15" />
+            </Style>
+
+            <Style x:Key="DescriptionStyle" TargetType="Label">
+                <Setter Property="FontFamily" Value="Nunito" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="TextColor" Value="#434C5E" />
+                <Setter Property="HorizontalTextAlignment" Value="Center" />
+                <Setter Property="LineBreakMode" Value="WordWrap" />
+                <Setter Property="Margin" Value="0,0,0,15" />
+            </Style>
+
+            <Style x:Key="DemoButtonStyle" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="#4A90E2" />
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="FontFamily" Value="Nunito" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="CornerRadius" Value="25" />
+                <Setter Property="HeightRequest" Value="55" />
+                <Setter Property="Margin" Value="10,5" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ScrollView x:Name="MainScrollView"
+                BackgroundColor="Transparent"
+                VerticalOptions="FillAndExpand">
+
+        <StackLayout Spacing="0" Padding="0,20,0,40">
+
+            <!-- Header Section -->
+            <Frame Style="{StaticResource ShowcaseSectionStyle}" Margin="15,0,15,10">
+                <StackLayout Spacing="15">
+                    <Label Text="🎨 EduPlayKids UI Showcase"
+                           FontFamily="Nunito"
+                           FontSize="28"
+                           FontAttributes="Bold"
+                           TextColor="#4A90E2"
+                           HorizontalTextAlignment="Center" />
+
+                    <Label Text="Child-Friendly Interface Components (Ages 3-8)"
+                           Style="{StaticResource DescriptionStyle}"
+                           FontSize="16"
+                           TextColor="#2E3440" />
+
+                    <Frame BackgroundColor="#E8F5E8"
+                           CornerRadius="15"
+                           Padding="15"
+                           HasShadow="False">
+
+                        <StackLayout Orientation="Horizontal" Spacing="10" HorizontalOptions="Center">
+                            <Label Text="✅" FontSize="16" VerticalOptions="Center" />
+                            <Label Text="WCAG 2.1 AA Compliant • Large Touch Targets • Audio Feedback"
+                                   FontFamily="Nunito"
+                                   FontSize="12"
+                                   TextColor="#4CAF50"
+                                   VerticalOptions="Center"
+                                   HorizontalTextAlignment="Center" />
+                        </StackLayout>
+                    </Frame>
+                </StackLayout>
+            </Frame>
+
+            <!-- Star Rating Control Showcase -->
+            <Frame Style="{StaticResource ShowcaseSectionStyle}">
+                <StackLayout Spacing="15">
+                    <Label Text="⭐ Star Rating System" Style="{StaticResource SectionTitleStyle}" />
+
+                    <Label Text="Interactive star rating with celebration animations, audio feedback, and positive reinforcement messaging."
+                           Style="{StaticResource DescriptionStyle}" />
+
+                    <!-- Star Rating Demo -->
+                    <controls:StarRatingControl x:Name="DemoStarRating"
+                                              StarsEarned="0"
+                                              Title="Try the Stars!"
+                                              Message="Tap to see the magic!"
+                                              IsInteractive="True"
+                                              ShowGlowEffect="True"
+                                              Language="en" />
+
+                    <!-- Demo Controls -->
+                    <Grid ColumnSpacing="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Column="0"
+                                Text="1 Star"
+                                Style="{StaticResource DemoButtonStyle}"
+                                BackgroundColor="#FFD700"
+                                Clicked="OnSetStarsClicked"
+                                CommandParameter="1" />
+
+                        <Button Grid.Column="1"
+                                Text="2 Stars"
+                                Style="{StaticResource DemoButtonStyle}"
+                                BackgroundColor="#A3BE8C"
+                                Clicked="OnSetStarsClicked"
+                                CommandParameter="2" />
+
+                        <Button Grid.Column="2"
+                                Text="3 Stars"
+                                Style="{StaticResource DemoButtonStyle}"
+                                BackgroundColor="#D08770"
+                                Clicked="OnSetStarsClicked"
+                                CommandParameter="3" />
+                    </Grid>
+                </StackLayout>
+            </Frame>
+
+            <!-- Crown Challenge Showcase -->
+            <Frame Style="{StaticResource ShowcaseSectionStyle}">
+                <StackLayout Spacing="15">
+                    <Label Text="👑 Crown Challenge System" Style="{StaticResource SectionTitleStyle}" />
+
+                    <Label Text="Advanced challenge presentation for high-performing learners with royal theme and special rewards."
+                           Style="{StaticResource DescriptionStyle}" />
+
+                    <!-- Crown Challenge Demo -->
+                    <controls:CrownChallengeCard x:Name="DemoCrownChallenge"
+                                               ChallengeTitle="Master of Numbers"
+                                               ChallengeSubtitle="Advanced Mathematics Challenge"
+                                               DifficultyText="Advanced"
+                                               ShowDifficultyBadge="True"
+                                               AchievementTitle="Royal Achievement"
+                                               AchievementDescription="Complete 5 perfect math activities to earn your crown!"
+                                               PreviewTitle="Challenge Preview"
+                                               PreviewHint="Solve advanced counting and addition problems"
+                                               RewardTitle="Royal Rewards"
+                                               RewardIcon1="👑"
+                                               RewardIcon2="🏆"
+                                               RewardIcon3="⭐"
+                                               ShowRewardIcon1="True"
+                                               ShowRewardIcon2="True"
+                                               ShowRewardIcon3="True"
+                                               RewardDescription="Crown Badge + Special Crown Activities"
+                                               RequiredStarsText="in previous activities"
+                                               ShowRequiredStars="True"
+                                               StartButtonText="Accept Challenge"
+                                               LaterButtonText="Maybe Later"
+                                               CanStartChallenge="True"
+                                               ShowHelpButton="True" />
+
+                    <Button Text="🎭 Toggle Challenge Animation"
+                            Style="{StaticResource DemoButtonStyle}"
+                            BackgroundColor="#9C27B0"
+                            Clicked="OnCrownChallengeAnimationClicked" />
+                </StackLayout>
+            </Frame>
+
+            <!-- Achievement Celebration Showcase -->
+            <Frame Style="{StaticResource ShowcaseSectionStyle}">
+                <StackLayout Spacing="15">
+                    <Label Text="🎉 Achievement Celebrations" Style="{StaticResource SectionTitleStyle}" />
+
+                    <Label Text="Full-screen celebration overlay with confetti, achievements display, and motivational messaging."
+                           Style="{StaticResource DescriptionStyle}" />
+
+                    <!-- Achievement Demo Controls -->
+                    <Grid ColumnSpacing="10" RowSpacing="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <Button Grid.Row="0" Grid.Column="0"
+                                Text="🏆 Perfect Score"
+                                Style="{StaticResource DemoButtonStyle}"
+                                BackgroundColor="#FFD700"
+                                Clicked="OnShowAchievementClicked"
+                                CommandParameter="perfect" />
+
+                        <Button Grid.Row="0" Grid.Column="1"
+                                Text="🎯 Great Work"
+                                Style="{StaticResource DemoButtonStyle}"
+                                BackgroundColor="#4CAF50"
+                                Clicked="OnShowAchievementClicked"
+                                CommandParameter="great" />
+
+                        <Button Grid.Row="1" Grid.Column="0"
+                                Text="🌟 First Try"
+                                Style="{StaticResource DemoButtonStyle}"
+                                BackgroundColor="#FF9800"
+                                Clicked="OnShowAchievementClicked"
+                                CommandParameter="first" />
+
+                        <Button Grid.Row="1" Grid.Column="1"
+                                Text="🚀 Level Up"
+                                Style="{StaticResource DemoButtonStyle}"
+                                BackgroundColor="#E91E63"
+                                Clicked="OnShowAchievementClicked"
+                                CommandParameter="levelup" />
+                    </Grid>
+
+                    <!-- Achievement Celebration View -->
+                    <controls:AchievementCelebrationView x:Name="DemoAchievementCelebration"
+                                                        IsVisible="False"
+                                                        Title="🎉 Amazing Work!"
+                                                        CelebrationIcon="🎊"
+                                                        StarsEarnedText="Stars Earned"
+                                                        PerformanceMessage="Perfect performance!"
+                                                        EncouragingMessage="You're doing incredible!"
+                                                        MotivationalMessage="Keep up the fantastic learning!"
+                                                        ShowAchievements="True"
+                                                        AchievementTitle="New Achievements"
+                                                        AchievementDescription="You've unlocked special rewards!"
+                                                        ShowProgress="True"
+                                                        ProgressTitle="Learning Progress"
+                                                        ProgressValue="0.75"
+                                                        ProgressText="75% Complete - Almost there!"
+                                                        ContinueButtonText="Continue Learning"
+                                                        ShareButtonText="Celebrate More"
+                                                        ShowShareButton="True"
+                                                        AllowTapToDismiss="True" />
+                </StackLayout>
+            </Frame>
+
+            <!-- Progress Dashboard Showcase -->
+            <Frame Style="{StaticResource ShowcaseSectionStyle}">
+                <StackLayout Spacing="15">
+                    <Label Text="📊 Progress Dashboard" Style="{StaticResource SectionTitleStyle}" />
+
+                    <Label Text="Child-friendly progress tracking with visual indicators, learning streaks, and motivational elements."
+                           Style="{StaticResource DescriptionStyle}" />
+
+                    <!-- Progress Dashboard Demo -->
+                    <controls:ProgressDashboardControl x:Name="DemoProgressDashboard"
+                                                     ChildAvatar="🧒"
+                                                     WelcomeMessage="Hello, Little Scholar!"
+                                                     MotivationalMessage="You're learning so much!"
+                                                     OverallProgressPercentage="0.65"
+                                                     ProgressDescription="Great progress!"
+                                                     CurrentLevelText="Level 4"
+                                                     PointsText="320 Stars"
+                                                     MathProgress="0.75"
+                                                     ReadingProgress="0.60"
+                                                     ScienceProgress="0.45"
+                                                     LogicProgress="0.80"
+                                                     ConceptsProgress="0.55"
+                                                     MathProgressText="75%"
+                                                     ReadingProgressText="60%"
+                                                     ScienceProgressText="45%"
+                                                     LogicProgressText="80%"
+                                                     ConceptsProgressText="55%"
+                                                     StreakDays="5"
+                                                     StreakMessage="Amazing streak!"
+                                                     WeeklyStreakText="M T W T F"
+                                                     ShowAchievements="True"
+                                                     AchievementsTitle="Recent Achievements"
+                                                     NextChallengeIcon="🔢"
+                                                     NextChallengeName="Advanced Counting"
+                                                     NextChallengeDescription="Count objects up to 20 with fun animations!"
+                                                     StartChallengeButtonText="Start Learning!"
+                                                     Language="en" />
+
+                    <!-- Progress Demo Controls -->
+                    <Grid ColumnSpacing="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Column="0"
+                                Text="📈 Add Progress"
+                                Style="{StaticResource DemoButtonStyle}"
+                                BackgroundColor="#4CAF50"
+                                Clicked="OnAddProgressClicked" />
+
+                        <Button Grid.Column="1"
+                                Text="🏆 Add Achievement"
+                                Style="{StaticResource DemoButtonStyle}"
+                                BackgroundColor="#FF9800"
+                                Clicked="OnAddAchievementClicked" />
+                    </Grid>
+                </StackLayout>
+            </Frame>
+
+            <!-- Child Psychology Features Showcase -->
+            <Frame Style="{StaticResource ShowcaseSectionStyle}">
+                <StackLayout Spacing="15">
+                    <Label Text="🧠 Child Psychology Features" Style="{StaticResource SectionTitleStyle}" />
+
+                    <Label Text="Designed specifically for cognitive development and positive learning experiences in children ages 3-8."
+                           Style="{StaticResource DescriptionStyle}" />
+
+                    <!-- Features Grid -->
+                    <Grid ColumnSpacing="15" RowSpacing="15">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <!-- Feature Cards -->
+                        <Frame Grid.Row="0" Grid.Column="0" BackgroundColor="#E3F2FD" CornerRadius="15" Padding="15" HasShadow="False">
+                            <StackLayout Spacing="8" HorizontalOptions="Center">
+                                <Label Text="👆" FontSize="24" HorizontalOptions="Center" />
+                                <Label Text="Large Touch Targets" FontFamily="Nunito" FontSize="12" FontAttributes="Bold"
+                                       TextColor="#1976D2" HorizontalTextAlignment="Center" />
+                                <Label Text="60dp minimum for small hands" FontFamily="Nunito" FontSize="10"
+                                       TextColor="#1976D2" HorizontalTextAlignment="Center" />
+                            </StackLayout>
+                        </Frame>
+
+                        <Frame Grid.Row="0" Grid.Column="1" BackgroundColor="#E8F5E8" CornerRadius="15" Padding="15" HasShadow="False">
+                            <StackLayout Spacing="8" HorizontalOptions="Center">
+                                <Label Text="🎨" FontSize="24" HorizontalOptions="Center" />
+                                <Label Text="High Contrast" FontFamily="Nunito" FontSize="12" FontAttributes="Bold"
+                                       TextColor="#388E3C" HorizontalTextAlignment="Center" />
+                                <Label Text="7:1 ratio for accessibility" FontFamily="Nunito" FontSize="10"
+                                       TextColor="#388E3C" HorizontalTextAlignment="Center" />
+                            </StackLayout>
+                        </Frame>
+
+                        <Frame Grid.Row="1" Grid.Column="0" BackgroundColor="#FFF3E0" CornerRadius="15" Padding="15" HasShadow="False">
+                            <StackLayout Spacing="8" HorizontalOptions="Center">
+                                <Label Text="🔊" FontSize="24" HorizontalOptions="Center" />
+                                <Label Text="Audio Feedback" FontFamily="Nunito" FontSize="12" FontAttributes="Bold"
+                                       TextColor="#F57C00" HorizontalTextAlignment="Center" />
+                                <Label Text="Bilingual voice guidance" FontFamily="Nunito" FontSize="10"
+                                       TextColor="#F57C00" HorizontalTextAlignment="Center" />
+                            </StackLayout>
+                        </Frame>
+
+                        <Frame Grid.Row="1" Grid.Column="1" BackgroundColor="#F3E5F5" CornerRadius="15" Padding="15" HasShadow="False">
+                            <StackLayout Spacing="8" HorizontalOptions="Center">
+                                <Label Text="😊" FontSize="24" HorizontalOptions="Center" />
+                                <Label Text="Positive Only" FontFamily="Nunito" FontSize="12" FontAttributes="Bold"
+                                       TextColor="#7B1FA2" HorizontalTextAlignment="Center" />
+                                <Label Text="No negative language" FontFamily="Nunito" FontSize="10"
+                                       TextColor="#7B1FA2" HorizontalTextAlignment="Center" />
+                            </StackLayout>
+                        </Frame>
+
+                        <Frame Grid.Row="2" Grid.Column="0" BackgroundColor="#FFFDE7" CornerRadius="15" Padding="15" HasShadow="False">
+                            <StackLayout Spacing="8" HorizontalOptions="Center">
+                                <Label Text="🎭" FontSize="24" HorizontalOptions="Center" />
+                                <Label Text="Age-Appropriate" FontFamily="Nunito" FontSize="12" FontAttributes="Bold"
+                                       TextColor="#F9A825" HorizontalTextAlignment="Center" />
+                                <Label Text="Animations &amp; visuals" FontFamily="Nunito" FontSize="10"
+                                       TextColor="#F9A825" HorizontalTextAlignment="Center" />
+                            </StackLayout>
+                        </Frame>
+
+                        <Frame Grid.Row="2" Grid.Column="1" BackgroundColor="#FCE4EC" CornerRadius="15" Padding="15" HasShadow="False">
+                            <StackLayout Spacing="8" HorizontalOptions="Center">
+                                <Label Text="🏆" FontSize="24" HorizontalOptions="Center" />
+                                <Label Text="Gamification" FontFamily="Nunito" FontSize="12" FontAttributes="Bold"
+                                       TextColor="#C2185B" HorizontalTextAlignment="Center" />
+                                <Label Text="Stars, levels, achievements" FontFamily="Nunito" FontSize="10"
+                                       TextColor="#C2185B" HorizontalTextAlignment="Center" />
+                            </StackLayout>
+                        </Frame>
+
+                        <Frame Grid.Row="3" Grid.ColumnSpan="2" BackgroundColor="#E0F2F1" CornerRadius="15" Padding="15" HasShadow="False">
+                            <StackLayout Spacing="8" HorizontalOptions="Center">
+                                <Label Text="🔒" FontSize="24" HorizontalOptions="Center" />
+                                <Label Text="COPPA Compliant &amp; Child-Safe Design" FontFamily="Nunito" FontSize="12" FontAttributes="Bold"
+                                       TextColor="#00695C" HorizontalTextAlignment="Center" />
+                                <Label Text="Privacy-focused with parental controls and safe interactions" FontFamily="Nunito" FontSize="10"
+                                       TextColor="#00695C" HorizontalTextAlignment="Center" />
+                            </StackLayout>
+                        </Frame>
+                    </Grid>
+                </StackLayout>
+            </Frame>
+
+            <!-- Language Toggle Section -->
+            <Frame Style="{StaticResource ShowcaseSectionStyle}">
+                <StackLayout Spacing="15">
+                    <Label Text="🌍 Bilingual Support" Style="{StaticResource SectionTitleStyle}" />
+
+                    <Label Text="All components support Spanish and English with cultural adaptation for Hispanic families."
+                           Style="{StaticResource DescriptionStyle}" />
+
+                    <Grid ColumnSpacing="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Column="0"
+                                Text="🇺🇸 English"
+                                Style="{StaticResource DemoButtonStyle}"
+                                BackgroundColor="#4169E1"
+                                Clicked="OnLanguageChanged"
+                                CommandParameter="en" />
+
+                        <Button Grid.Column="1"
+                                Text="🇪🇸 Español"
+                                Style="{StaticResource DemoButtonStyle}"
+                                BackgroundColor="#E91E63"
+                                Clicked="OnLanguageChanged"
+                                CommandParameter="es" />
+                    </Grid>
+                </StackLayout>
+            </Frame>
+
+            <!-- Testing &amp; Validation Section -->
+            <Frame Style="{StaticResource ShowcaseSectionStyle}">
+                <StackLayout Spacing="15">
+                    <Label Text="🧪 Testing &amp; Validation" Style="{StaticResource SectionTitleStyle}" />
+
+                    <Label Text="Comprehensive testing demonstrates child psychology compliance and accessibility standards."
+                           Style="{StaticResource DescriptionStyle}" />
+
+                    <Button Text="🔍 Run Accessibility Test"
+                            Style="{StaticResource DemoButtonStyle}"
+                            BackgroundColor="#2E7D32"
+                            Clicked="OnRunAccessibilityTestClicked" />
+
+                    <Frame x:Name="TestResultsFrame"
+                           BackgroundColor="#E8F5E8"
+                           CornerRadius="15"
+                           Padding="15"
+                           HasShadow="False"
+                           IsVisible="False">
+
+                        <Label x:Name="TestResultsLabel"
+                               FontFamily="Nunito"
+                               FontSize="14"
+                               TextColor="#2E7D32"
+                               HorizontalTextAlignment="Center"
+                               LineBreakMode="WordWrap" />
+                    </Frame>
+                </StackLayout>
+            </Frame>
+
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

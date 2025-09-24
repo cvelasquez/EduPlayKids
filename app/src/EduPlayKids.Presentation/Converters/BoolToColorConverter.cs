@@ -16,7 +16,7 @@ public class BoolToColorConverter : IValueConverter
     /// <param name="parameter">Optional parameter for custom colors.</param>
     /// <param name="culture">The culture info.</param>
     /// <returns>Color based on boolean value.</returns>
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is bool boolValue)
         {
@@ -45,7 +45,7 @@ public class BoolToColorConverter : IValueConverter
     /// <param name="parameter">The parameter.</param>
     /// <param name="culture">The culture info.</param>
     /// <returns>Not implemented - throws NotImplementedException.</returns>
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotImplementedException("BoolToColorConverter.ConvertBack is not implemented.");
     }

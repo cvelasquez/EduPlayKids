@@ -7,6 +7,12 @@ namespace EduPlayKids.Application.Models.Audio;
 public class AudioItem
 {
     /// <summary>
+    /// Gets or sets the unique identifier for this audio item.
+    /// Used for tracking, caching, and event correlation.
+    /// </summary>
+    public string Id { get; set; } = Guid.NewGuid().ToString();
+
+    /// <summary>
     /// Gets or sets the file path or URL to the audio content.
     /// Can be a local asset path, cached file path, or remote URL.
     /// </summary>
@@ -22,6 +28,14 @@ public class AudioItem
     /// Gets or sets the type of audio content for appropriate handling and volume control.
     /// </summary>
     public AudioType AudioType { get; set; } = AudioType.UIInteraction;
+    /// <summary>
+    /// Gets or sets the type of audio content (alias for AudioType for test compatibility).
+    /// </summary>
+    public AudioType Type
+    {
+        get => AudioType;
+        set => AudioType = value;
+    }
 
     /// <summary>
     /// Gets or sets the playback priority for managing multiple simultaneous audio requests.
@@ -92,6 +106,18 @@ public class AudioItem
     /// Allows for fine-tuned control over audio behavior.
     /// </summary>
     public AudioPlaybackSettings? PlaybackSettings { get; set; }
+
+    /// <summary>
+    /// Gets or sets the session ID for tracking audio playback across related activities.
+    /// Used for analytics and session management.
+    /// </summary>
+    public string? SessionId { get; set; }
+
+    /// <summary>
+    /// Gets or sets the timestamp when this audio item was created.
+    /// Used for caching, analytics, and debugging purposes.
+    /// </summary>
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     /// <summary>
     /// Initializes a new instance of the AudioItem class with default settings.
@@ -233,6 +259,7 @@ public class AudioItem
     {
         var clone = new AudioItem
         {
+            Id = Id,
             FilePath = FilePath,
             LocalizationKey = LocalizationKey,
             AudioType = AudioType,
@@ -246,7 +273,9 @@ public class AudioItem
             InterruptLowerPriority = InterruptLowerPriority,
             CacheAfterPlayback = CacheAfterPlayback,
             MaxDuration = MaxDuration,
-            PlaybackSettings = PlaybackSettings?.Clone()
+            PlaybackSettings = PlaybackSettings?.Clone(),
+            SessionId = SessionId,
+            CreatedAt = CreatedAt
         };
 
         if (Metadata != null)

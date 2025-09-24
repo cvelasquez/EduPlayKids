@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:EduPlayKids.Presentation.Models"
+             x:Class="EduPlayKids.Presentation.Views.Questions.BaseQuestionView"
+             x:Name="BaseQuestionViewControl">
+
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <!-- Question Container Style -->
+            <Style x:Key="QuestionContainerStyle" TargetType="Frame">
+                <Setter Property="BackgroundColor" Value="{StaticResource White}" />
+                <Setter Property="HasShadow" Value="True" />
+                <Setter Property="CornerRadius" Value="16" />
+                <Setter Property="Padding" Value="20" />
+                <Setter Property="Margin" Value="10" />
+            </Style>
+
+            <!-- Question Text Style -->
+            <Style x:Key="QuestionTextStyle" TargetType="Label">
+                <Setter Property="FontFamily" Value="NunitoBold" />
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="TextColor" Value="{StaticResource DarkBlue}" />
+                <Setter Property="HorizontalOptions" Value="Center" />
+                <Setter Property="HorizontalTextAlignment" Value="Center" />
+                <Setter Property="Margin" Value="0,0,0,20" />
+            </Style>
+
+            <!-- Hint Text Style -->
+            <Style x:Key="HintTextStyle" TargetType="Label">
+                <Setter Property="FontFamily" Value="NunitoMedium" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="TextColor" Value="{StaticResource Orange}" />
+                <Setter Property="HorizontalOptions" Value="Center" />
+                <Setter Property="HorizontalTextAlignment" Value="Center" />
+                <Setter Property="Margin" Value="0,10,0,0" />
+            </Style>
+
+            <!-- Explanation Text Style -->
+            <Style x:Key="ExplanationTextStyle" TargetType="Label">
+                <Setter Property="FontFamily" Value="NunitoMedium" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="TextColor" Value="{StaticResource Green}" />
+                <Setter Property="HorizontalOptions" Value="Center" />
+                <Setter Property="HorizontalTextAlignment" Value="Center" />
+                <Setter Property="Margin" Value="0,10,0,0" />
+            </Style>
+
+            <!-- Audio Button Style -->
+            <Style x:Key="AudioButtonStyle" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{StaticResource LightBlue}" />
+                <Setter Property="TextColor" Value="{StaticResource White}" />
+                <Setter Property="FontFamily" Value="NunitoBold" />
+                <Setter Property="FontSize" Value="24" />
+                <Setter Property="CornerRadius" Value="25" />
+                <Setter Property="WidthRequest" Value="50" />
+                <Setter Property="HeightRequest" Value="50" />
+            </Style>
+
+            <!-- Hint Button Style -->
+            <Style x:Key="HintButtonStyle" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{StaticResource Orange}" />
+                <Setter Property="TextColor" Value="{StaticResource White}" />
+                <Setter Property="FontFamily" Value="NunitoBold" />
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="CornerRadius" Value="20" />
+                <Setter Property="Padding" Value="16,8" />
+            </Style>
+
+            <!-- Success/Error Message Style -->
+            <Style x:Key="MessageStyle" TargetType="Label">
+                <Setter Property="FontFamily" Value="NunitoBold" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="HorizontalOptions" Value="Center" />
+                <Setter Property="HorizontalTextAlignment" Value="Center" />
+                <Setter Property="Margin" Value="0,10,0,0" />
+            </Style>
+        </ResourceDictionary>
+    </ContentView.Resources>
+
+    <Frame Style="{StaticResource QuestionContainerStyle}">
+        <StackLayout Spacing="15">
+
+            <!-- Question Header with Audio -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Question Text -->
+                <Label Grid.Column="0"
+                       Text="{Binding QuestionText}"
+                       Style="{StaticResource QuestionTextStyle}" />
+
+                <!-- Audio Button -->
+                <Button Grid.Column="1"
+                        Text="🔊"
+                        Style="{StaticResource AudioButtonStyle}"
+                        Command="{Binding PlayAudioCommand}"
+                        IsVisible="{Binding HasAudio}" />
+            </Grid>
+
+            <!-- Question Image -->
+            <Image Source="{Binding ImagePath}"
+                   IsVisible="{Binding HasImage}"
+                   HeightRequest="200"
+                   Aspect="AspectFit"
+                   Margin="0,0,0,10" />
+
+            <!-- Interactive Content Area -->
+            <ContentView x:Name="InteractiveContentArea"
+                         Content="{Binding InteractiveContent}"
+                         MinimumHeightRequest="200" />
+
+            <!-- Hint Section -->
+            <StackLayout IsVisible="{Binding ShowHints}"
+                         Orientation="Horizontal"
+                         HorizontalOptions="Center"
+                         Spacing="10">
+                <Label Text="💡" FontSize="16" />
+                <Label Text="{Binding HintText}"
+                       Style="{StaticResource HintTextStyle}" />
+            </StackLayout>
+
+            <!-- Hint Button -->
+            <Button Text="Need Help? 🤔"
+                    Style="{StaticResource HintButtonStyle}"
+                    Command="{Binding ShowHintCommand}"
+                    IsVisible="{Binding CanShowHints}"
+                    HorizontalOptions="Center" />
+
+            <!-- Feedback Section -->
+            <StackLayout IsVisible="{Binding IsAnswered}"
+                         Spacing="5">
+
+                <!-- Success/Error Message -->
+                <Label IsVisible="{Binding IsCorrect}">
+                    <Label.Style>
+                        <Style TargetType="Label" BasedOn="{StaticResource MessageStyle}">
+                            <Setter Property="TextColor" Value="{StaticResource Green}" />
+                        </Style>
+                    </Label.Style>
+                    <Label.Text>
+                        <MultiBinding StringFormat="🌟 {0}">
+                            <Binding Path="SuccessMessage" />
+                        </MultiBinding>
+                    </Label.Text>
+                </Label>
+
+                <Label IsVisible="{Binding IsIncorrect}">
+                    <Label.Style>
+                        <Style TargetType="Label" BasedOn="{StaticResource MessageStyle}">
+                            <Setter Property="TextColor" Value="{StaticResource Red}" />
+                        </Style>
+                    </Label.Style>
+                    <Label.Text>
+                        <MultiBinding StringFormat="😊 {0}">
+                            <Binding Path="EncouragementMessage" />
+                        </MultiBinding>
+                    </Label.Text>
+                </Label>
+
+                <!-- Explanation -->
+                <Label Text="{Binding ExplanationText}"
+                       Style="{StaticResource ExplanationTextStyle}"
+                       IsVisible="{Binding ShowExplanation}" />
+
+                <!-- Try Again Button -->
+                <Button Text="Try Again! 🔄"
+                        BackgroundColor="{StaticResource Blue}"
+                        TextColor="{StaticResource White}"
+                        FontFamily="NunitoBold"
+                        CornerRadius="25"
+                        Padding="20,10"
+                        Command="{Binding TryAgainCommand}"
+                        IsVisible="{Binding CanTryAgain}"
+                        HorizontalOptions="Center"
+                        Margin="0,10,0,0" />
+            </StackLayout>
+
+            <!-- Progress Indicator -->
+            <StackLayout Orientation="Horizontal"
+                         HorizontalOptions="Center"
+                         Spacing="5"
+                         Margin="0,10,0,0"
+                         IsVisible="{Binding ShowProgress}">
+                <Label Text="Attempt:"
+                       FontFamily="NunitoMedium"
+                       FontSize="12"
+                       TextColor="{StaticResource DarkGray}" />
+                <Label Text="{Binding AttemptCount}"
+                       FontFamily="NunitoBold"
+                       FontSize="12"
+                       TextColor="{StaticResource DarkBlue}" />
+                <Label Text="/"
+                       FontFamily="NunitoMedium"
+                       FontSize="12"
+                       TextColor="{StaticResource DarkGray}" />
+                <Label Text="{Binding MaxAttempts}"
+                       FontFamily="NunitoMedium"
+                       FontSize="12"
+                       TextColor="{StaticResource DarkGray}" />
+            </StackLayout>
+
+        </StackLayout>
+    </Frame>
+
+</ContentView>

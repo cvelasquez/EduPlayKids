@@ -6,8 +6,12 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+    <!-- Exclude Android-specific references for class libraries -->
+    <DefineConstants Condition="'$(TargetFramework)' == 'net8.0-android'">$(DefineConstants);ANDROID</DefineConstants>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <!-- Android-specific configurations -->
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
 </Project>

@@ -275,4 +275,80 @@ public interface IUserProgressRepository : IGenericRepository<UserProgress>
     Task<Dictionary<string, object>> GetComparativePerformanceDataAsync(int? activityId = null, string? ageGroup = null, CancellationToken cancellationToken = default);
 
     #endregion
+
+    #region Additional Missing Methods (for compilation fixes)
+
+    /// <summary>
+    /// Gets list of completed activity IDs for a specific child.
+    /// Used for determining which activities are unlocked and which need to be shown.
+    /// </summary>
+    /// <param name="childId">The child's unique identifier</param>
+    /// <param name="cancellationToken">Cancellation token for async operation</param>
+    /// <returns>List of completed activity IDs</returns>
+    Task<List<int>> GetCompletedActivityIdsAsync(int childId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets recent progress records for a child within a specified number of days.
+    /// Used for analyzing recent learning patterns and performance.
+    /// </summary>
+    /// <param name="childId">The child's unique identifier</param>
+    /// <param name="days">Number of days to look back for recent progress</param>
+    /// <param name="cancellationToken">Cancellation token for async operation</param>
+    /// <returns>Collection of recent progress records</returns>
+    Task<IEnumerable<UserProgress>> GetRecentProgressAsync(int childId, int days, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets progress records for a child filtered by subject.
+    /// Used for subject-specific progress analysis and reporting.
+    /// </summary>
+    /// <param name="childId">The child's unique identifier</param>
+    /// <param name="subjectId">The subject's unique identifier</param>
+    /// <param name="cancellationToken">Cancellation token for async operation</param>
+    /// <returns>Collection of progress records for the subject</returns>
+    Task<IEnumerable<UserProgress>> GetSubjectProgressAsync(int childId, int subjectId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets question attempt history for adaptive learning and difficulty adjustment.
+    /// Used for tracking individual question performance and learning analytics.
+    /// </summary>
+    /// <param name="childId">The child's unique identifier</param>
+    /// <param name="activityId">The activity's unique identifier</param>
+    /// <param name="cancellationToken">Cancellation token for async operation</param>
+    /// <returns>Dictionary containing question attempt history</returns>
+    Task<Dictionary<int, object>> GetQuestionAttemptHistoryAsync(int childId, int activityId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Checks if a child has completed a specific activity.
+    /// Used for prerequisite validation and content unlocking logic.
+    /// </summary>
+    /// <param name="childId">The child's unique identifier</param>
+    /// <param name="activityId">The activity's unique identifier</param>
+    /// <param name="cancellationToken">Cancellation token for async operation</param>
+    /// <returns>True if the activity has been completed</returns>
+    Task<bool> HasCompletedActivityAsync(int childId, int activityId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Records the completion of an activity with comprehensive progress data.
+    /// Used for creating detailed progress records when activities are finished.
+    /// </summary>
+    /// <param name="childId">The child's unique identifier</param>
+    /// <param name="activityId">The activity's unique identifier</param>
+    /// <param name="starsEarned">Number of stars earned (1-3)</param>
+    /// <param name="timeSpentMinutes">Time spent on the activity in minutes</param>
+    /// <param name="errorsCount">Number of errors made during the activity</param>
+    /// <param name="cancellationToken">Cancellation token for async operation</param>
+    /// <returns>The created progress record</returns>
+    Task<UserProgress> RecordActivityCompletionAsync(int childId, int activityId, int starsEarned, int timeSpentMinutes, int errorsCount, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets performance data for specific activity types to analyze learning patterns.
+    /// Used for understanding how children perform across different activity types.
+    /// </summary>
+    /// <param name="childId">The child's unique identifier</param>
+    /// <param name="activityType">The activity type to analyze</param>
+    /// <param name="cancellationToken">Cancellation token for async operation</param>
+    /// <returns>Dictionary containing activity type performance metrics</returns>
+    Task<Dictionary<string, object>> GetActivityTypePerformanceAsync(int childId, string activityType, CancellationToken cancellationToken = default);
+
+    #endregion
 }

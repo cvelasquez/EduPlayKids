@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView x:Class="EduPlayKids.App.Controls.AchievementCelebrationView"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Name="CelebrationRoot">
+
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <!-- Note: Animations are handled programmatically in code-behind for .NET MAUI compatibility -->
+
+            <!-- Child-Friendly Color Palette -->
+            <Color x:Key="CelebrationGold">#FFD700</Color>
+            <Color x:Key="HappyBlue">#4A90E2</Color>
+            <Color x:Key="JoyfulGreen">#A3BE8C</Color>
+            <Color x:Key="ExcitementOrange">#FF9800</Color>
+            <Color x:Key="RoyalPurple">#9C27B0</Color>
+            <Color x:Key="ChildSafeWhite">#FEFEFE</Color>
+
+            <!-- Gradients for magical effects -->
+            <LinearGradientBrush x:Key="CelebrationGradient" StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="{StaticResource CelebrationGold}" Offset="0.0" />
+                <GradientStop Color="{StaticResource ExcitementOrange}" Offset="0.5" />
+                <GradientStop Color="{StaticResource RoyalPurple}" Offset="1.0" />
+            </LinearGradientBrush>
+
+            <RadialGradientBrush x:Key="GlowGradient" Center="0.5,0.5" Radius="0.8">
+                <GradientStop Color="#80FFEB3B" Offset="0.0" />
+                <GradientStop Color="#40FFD700" Offset="0.7" />
+                <GradientStop Color="Transparent" Offset="1.0" />
+            </RadialGradientBrush>
+        </ResourceDictionary>
+    </ContentView.Resources>
+
+    <!-- Main Celebration Container -->
+    <Grid x:Name="CelebrationOverlay"
+          BackgroundColor="#E0000000"
+          IsVisible="{Binding Source={x:Reference CelebrationRoot}, Path=IsVisible}">
+
+        <!-- Background Glow Effect -->
+        <Ellipse x:Name="BackgroundGlow"
+                 Fill="{StaticResource GlowGradient}"
+                 WidthRequest="400"
+                 HeightRequest="400"
+                 HorizontalOptions="Center"
+                 VerticalOptions="Center"
+                 Opacity="0.6" />
+
+        <!-- Confetti Layer (behind main content) -->
+        <Grid x:Name="ConfettiLayer" InputTransparent="True">
+            <!-- Confetti Particles positioned randomly -->
+            <Label x:Name="Confetti1" Text="🎉" FontSize="24" TextColor="Red"
+                   HorizontalOptions="Start" VerticalOptions="Start"
+                   Margin="50,100,0,0" Opacity="0" />
+            <Label x:Name="Confetti2" Text="🎊" FontSize="20" TextColor="Blue"
+                   HorizontalOptions="End" VerticalOptions="Start"
+                   Margin="0,80,60,0" Opacity="0" />
+            <Label x:Name="Confetti3" Text="⭐" FontSize="18" TextColor="Gold"
+                   HorizontalOptions="Center" VerticalOptions="Start"
+                   Margin="0,60,0,0" Opacity="0" />
+            <Label x:Name="Confetti4" Text="🌟" FontSize="22" TextColor="Yellow"
+                   HorizontalOptions="Start" VerticalOptions="Start"
+                   Margin="100,120,0,0" Opacity="0" />
+            <Label x:Name="Confetti5" Text="🎉" FontSize="19" TextColor="Green"
+                   HorizontalOptions="End" VerticalOptions="Start"
+                   Margin="0,110,100,0" Opacity="0" />
+            <Label x:Name="Confetti6" Text="🎊" FontSize="21" TextColor="Purple"
+                   HorizontalOptions="Center" VerticalOptions="Start"
+                   Margin="80,90,0,0" Opacity="0" />
+        </Grid>
+
+        <!-- Main Celebration Content -->
+        <Frame x:Name="CelebrationContainer"
+               Background="{StaticResource ChildSafeWhite}"
+               CornerRadius="30"
+               HasShadow="True"
+               Padding="0"
+               Margin="20"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"
+               MaximumWidthRequest="400"
+               Scale="1"
+               Opacity="1">
+
+            <Grid RowSpacing="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- Celebration Header with Gradient -->
+                <Frame Grid.Row="0"
+                       Background="{StaticResource CelebrationGradient}"
+                       CornerRadius="30,30,0,0"
+                       Padding="20"
+                       HasShadow="False">
+
+                    <StackLayout Spacing="8" HorizontalOptions="Center">
+                        <!-- Celebration Icon -->
+                        <Label x:Name="CelebrationIconLabel"
+                               Text="{Binding Source={x:Reference CelebrationRoot}, Path=CelebrationIcon}"
+                               FontSize="48"
+                               HorizontalOptions="Center" />
+
+                        <!-- Main Title -->
+                        <Label x:Name="CelebrationTitle"
+                               Text="{Binding Source={x:Reference CelebrationRoot}, Path=Title}"
+                               FontFamily="Nunito"
+                               FontSize="24"
+                               FontAttributes="Bold"
+                               TextColor="White"
+                               HorizontalTextAlignment="Center"
+                               LineBreakMode="WordWrap" />
+                    </StackLayout>
+                </Frame>
+
+                <!-- Star Rating Display -->
+                <Frame Grid.Row="1"
+                       x:Name="StarContainer"
+                       BackgroundColor="Transparent"
+                       Padding="20"
+                       HasShadow="False"
+                       Scale="0">
+
+                    <StackLayout Spacing="15" HorizontalOptions="Center">
+                        <!-- Stars Earned Title -->
+                        <Label Text="{Binding Source={x:Reference CelebrationRoot}, Path=StarsEarnedText}"
+                               FontFamily="Nunito"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource HappyBlue}"
+                               HorizontalTextAlignment="Center" />
+
+                        <!-- Star Display -->
+                        <StackLayout Orientation="Horizontal"
+                                   Spacing="8"
+                                   HorizontalOptions="Center">
+                            <Label x:Name="Star1" Text="⭐" FontSize="40" TextColor="#C0C0C0" />
+                            <Label x:Name="Star2" Text="⭐" FontSize="40" TextColor="#C0C0C0" />
+                            <Label x:Name="Star3" Text="⭐" FontSize="40" TextColor="#C0C0C0" />
+                        </StackLayout>
+
+                        <!-- Performance Message -->
+                        <Label Text="{Binding Source={x:Reference CelebrationRoot}, Path=PerformanceMessage}"
+                               FontFamily="Nunito"
+                               FontSize="16"
+                               TextColor="{StaticResource JoyfulGreen}"
+                               HorizontalTextAlignment="Center"
+                               LineBreakMode="WordWrap"
+                               Margin="10,0" />
+                    </StackLayout>
+                </Frame>
+
+                <!-- Achievement Badges (if any) -->
+                <Frame Grid.Row="2"
+                       BackgroundColor="#F8F9FA"
+                       CornerRadius="20"
+                       Padding="20"
+                       Margin="20,0"
+                       HasShadow="False"
+                       IsVisible="{Binding Source={x:Reference CelebrationRoot}, Path=ShowAchievements}">
+
+                    <StackLayout Spacing="12">
+                        <Label Text="{Binding Source={x:Reference CelebrationRoot}, Path=AchievementTitle}"
+                               FontFamily="Nunito"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource RoyalPurple}"
+                               HorizontalTextAlignment="Center" />
+
+                        <!-- Achievement Icons -->
+                        <StackLayout x:Name="AchievementIcons"
+                                   Orientation="Horizontal"
+                                   Spacing="15"
+                                   HorizontalOptions="Center">
+                            <!-- Achievement icons will be added dynamically -->
+                        </StackLayout>
+
+                        <Label Text="{Binding Source={x:Reference CelebrationRoot}, Path=AchievementDescription}"
+                               FontFamily="Nunito"
+                               FontSize="14"
+                               TextColor="#666"
+                               HorizontalTextAlignment="Center"
+                               LineBreakMode="WordWrap" />
+                    </StackLayout>
+                </Frame>
+
+                <!-- Encouraging Message -->
+                <Frame Grid.Row="3"
+                       BackgroundColor="#E8F5E8"
+                       CornerRadius="20"
+                       Padding="20"
+                       Margin="20,0"
+                       HasShadow="False">
+
+                    <StackLayout Spacing="8" HorizontalOptions="Center">
+                        <Label Text="{Binding Source={x:Reference CelebrationRoot}, Path=EncouragingMessage}"
+                               FontFamily="Nunito"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource JoyfulGreen}"
+                               HorizontalTextAlignment="Center"
+                               LineBreakMode="WordWrap" />
+
+                        <Label Text="{Binding Source={x:Reference CelebrationRoot}, Path=MotivationalMessage}"
+                               FontFamily="Nunito"
+                               FontSize="14"
+                               TextColor="#2E7D32"
+                               HorizontalTextAlignment="Center"
+                               LineBreakMode="WordWrap" />
+                    </StackLayout>
+                </Frame>
+
+                <!-- Progress Indicator (optional) -->
+                <Frame Grid.Row="4"
+                       BackgroundColor="#FFF3E0"
+                       CornerRadius="20"
+                       Padding="20"
+                       Margin="20,0"
+                       HasShadow="False"
+                       IsVisible="{Binding Source={x:Reference CelebrationRoot}, Path=ShowProgress}">
+
+                    <StackLayout Spacing="10">
+                        <Label Text="{Binding Source={x:Reference CelebrationRoot}, Path=ProgressTitle}"
+                               FontFamily="Nunito"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource ExcitementOrange}"
+                               HorizontalTextAlignment="Center" />
+
+                        <ProgressBar x:Name="CelebrationProgress"
+                                   Progress="{Binding Source={x:Reference CelebrationRoot}, Path=ProgressValue}"
+                                   ProgressColor="{StaticResource ExcitementOrange}"
+                                   BackgroundColor="#FFE0B2"
+                                   HeightRequest="12" />
+
+                        <Label Text="{Binding Source={x:Reference CelebrationRoot}, Path=ProgressText}"
+                               FontFamily="Nunito"
+                               FontSize="14"
+                               TextColor="#F57C00"
+                               HorizontalTextAlignment="Center" />
+                    </StackLayout>
+                </Frame>
+
+                <!-- Action Buttons -->
+                <Frame Grid.Row="5"
+                       BackgroundColor="Transparent"
+                       Padding="20"
+                       HasShadow="False">
+
+                    <Grid ColumnSpacing="15">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Continue Learning Button -->
+                        <Button x:Name="ContinueButton"
+                                Grid.Column="0"
+                                Text="{Binding Source={x:Reference CelebrationRoot}, Path=ContinueButtonText}"
+                                Command="{Binding Source={x:Reference CelebrationRoot}, Path=ContinueCommand}"
+                                BackgroundColor="{StaticResource HappyBlue}"
+                                TextColor="White"
+                                FontFamily="Nunito"
+                                FontSize="16"
+                                FontAttributes="Bold"
+                                CornerRadius="25"
+                                HeightRequest="55" />
+
+                        <!-- Share/Celebrate More Button -->
+                        <Button x:Name="ShareButton"
+                                Grid.Column="1"
+                                Text="{Binding Source={x:Reference CelebrationRoot}, Path=ShareButtonText}"
+                                Command="{Binding Source={x:Reference CelebrationRoot}, Path=ShareCommand}"
+                                BackgroundColor="{StaticResource JoyfulGreen}"
+                                TextColor="White"
+                                FontFamily="Nunito"
+                                FontSize="16"
+                                FontAttributes="Bold"
+                                CornerRadius="25"
+                                HeightRequest="55"
+                                IsVisible="{Binding Source={x:Reference CelebrationRoot}, Path=ShowShareButton}" />
+                    </Grid>
+                </Frame>
+            </Grid>
+        </Frame>
+
+        <!-- Continuous Sparkle Effects -->
+        <Grid x:Name="SparkleLayer" InputTransparent="True">
+            <Label x:Name="Sparkle1" Text="✨" FontSize="16" TextColor="Gold"
+                   HorizontalOptions="Start" VerticalOptions="Start"
+                   Margin="40,200,0,0" Opacity="0.7" />
+            <Label x:Name="Sparkle2" Text="✨" FontSize="18" TextColor="Silver"
+                   HorizontalOptions="End" VerticalOptions="End"
+                   Margin="0,0,50,150" Opacity="0.6" />
+        </Grid>
+
+        <!-- Tap to Dismiss (invisible button) -->
+        <Button x:Name="DismissButton"
+                BackgroundColor="Transparent"
+                BorderColor="Transparent"
+                Clicked="OnDismissClicked"
+                IsVisible="{Binding Source={x:Reference CelebrationRoot}, Path=AllowTapToDismiss}" />
+    </Grid>
+</ContentView>

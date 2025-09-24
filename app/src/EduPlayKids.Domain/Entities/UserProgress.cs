@@ -62,6 +62,12 @@ public class UserProgress : AuditableEntity
     public int CorrectAnswers { get; set; } = 0;
 
     /// <summary>
+    /// Gets or sets the number of incorrect answers given.
+    /// Used for performance analytics and star rating calculations.
+    /// </summary>
+    public int ErrorsCount { get; set; } = 0;
+
+    /// <summary>
     /// Gets or sets the total number of questions in the activity.
     /// Used for calculating completion percentage and accuracy.
     /// </summary>
@@ -78,6 +84,15 @@ public class UserProgress : AuditableEntity
     /// Tracks initial engagement with the content.
     /// </summary>
     public DateTime? FirstAttemptAt { get; set; }
+
+    /// <summary>
+    /// Gets or sets the date when the activity was started (alias for FirstAttemptAt for test compatibility).
+    /// </summary>
+    public DateTime? StartedAt
+    {
+        get => FirstAttemptAt;
+        set => FirstAttemptAt = value;
+    }
 
     /// <summary>
     /// Gets or sets the date when the activity was completed.
@@ -179,6 +194,7 @@ public class UserProgress : AuditableEntity
         TotalScore = 0;
         AttemptCount = 0;
         CorrectAnswers = 0;
+        ErrorsCount = 0;
         TimeSpentSeconds = 0;
         HintsUsed = 0;
         NeededExtraHelp = false;
@@ -186,6 +202,16 @@ public class UserProgress : AuditableEntity
         IsCrownChallenge = false;
         NeedsSync = false;
     }
+
+    /// <summary>
+    /// Gets the user ID (alias for ChildId for ViewModel compatibility).
+    /// </summary>
+    public int UserId => ChildId;
+
+    /// <summary>
+    /// Gets the time spent on this activity in minutes (calculated property).
+    /// </summary>
+    public double TimeSpentMinutes => Math.Round(TimeSpentSeconds / 60.0, 1);
 
     /// <summary>
     /// Calculates the accuracy percentage for this activity.
@@ -204,7 +230,7 @@ public class UserProgress : AuditableEntity
     public double GetCompletionPercentage()
     {
         if (TotalQuestions == 0) return 0;
-        var answeredQuestions = CorrectAnswers + (TotalQuestions - CorrectAnswers);
+        var answeredQuestions = CorrectAnswers + ErrorsCount;
         return Math.Round((double)answeredQuestions / TotalQuestions * 100, 1);
     }
 
@@ -227,8 +253,7 @@ public class UserProgress : AuditableEntity
     {
         if (!IsCompleted) return 0;
 
-        var errors = TotalQuestions - CorrectAnswers;
-        return errors switch
+        return ErrorsCount switch
         {
             0 => 3,
             1 or 2 => 2,
@@ -259,6 +284,7 @@ public class UserProgress : AuditableEntity
 
         // Update answers (this could be refined based on whether it's a retry)
         CorrectAnswers = Math.Max(CorrectAnswers, correctInThisAttempt);
+        ErrorsCount = questionsAnswered - correctInThisAttempt;
 
         // Check if completed
         if (questionsAnswered >= TotalQuestions && !IsCompleted)
